@@ -1,0 +1,290 @@
+{
+    "java": {
+        "info": "https://download.eclipse.org/jdtls/",
+        "info-init-options": "https://github.com/eclipse-jdtls/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line",
+        "info-import-build": "https://www.javahotchocolate.com/tutorials/build-path.html",
+        "info-external-class-paths": "https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3291",
+        "link": "https://download.eclipse.org/jdtls/milestones/?d",
+        "command": "lsp-ws-proxy --listen 4114 -- jdtls",
+        "alt-command": "lsp-ws-proxy -- jdtls",
+        "alt-command2": "java-language-server",
+        "socket": "ws://127.0.0.1:4114/?name=jdtls",
+        "alt-socket": "ws://127.0.0.1:3030/?name=java-language-server",
+        "initialization-options": {
+            "bundles": [
+                "intellicode-core.jar"
+            ],
+            "workspaceFolders": [
+                "file://"
+            ],
+            "extendedClientCapabilities": {
+                "classFileContentsSupport": true,
+                "executeClientCommandSupport": true
+            },
+            "settings": {
+                "java": {
+                    "autobuild": {
+                        "enabled": false
+                    },
+                    "completion": {
+                        "enabled": true,
+                        "importOrder": [
+                            "java",
+                            "javax",
+                            "org",
+                            "com"
+                        ]
+                    },
+                    "configuration": {
+                        "maven": {
+                            "userSettings": "{user.home}/.config/jdtls/settings.xml",
+                            "globalSettings": "{user.home}/.config/jdtls/settings.xml"
+                        },
+                        "runtimes": [
+                            {
+                                "name": "JavaSE-17",
+                                "path": "/usr/lib/jvm/default-runtime",
+                                "javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
+                                "default": true
+                            }
+                        ]
+                    },
+                    "classPath": [
+                        "{user.home}/.config/jdtls/m2/repository/**/*-sources.jar",
+                        "lib/**/*-sources.jar"
+                    ],
+                    "docPath": [
+                        "{user.home}/.config/jdtls/m2/repository/**/*-javadoc.jar",
+                        "lib/**/*-javadoc.jar"
+                    ],
+                    "silentNotification": true,
+                    "project": {
+                        "encoding": "ignore",
+                        "outputPath": "bin",
+                        "referencedLibraries": [
+                            "lib/**/*.jar",
+                            "{user.home}/.config/jdtls/m2/repository/**/*.jar"
+                        ],
+                        "importOnFirstTimeStartup": "automatic",
+                        "importHint": true,
+                        "resourceFilters": [
+                            "node_modules",
+                            "\\.git"
+                        ],
+                        "sourcePaths": [
+                            "src",
+                            "{user.home}/.config/jdtls/m2/repository/**/*.jar"
+                        ]
+                    },
+                    "sources": {
+                        "organizeImports": {
+                            "starThreshold": 99,
+                            "staticStarThreshold": 99
+                        }
+                    },
+                    "imports": {
+                        "gradle": {
+                            "wrapper": {
+                                "checksums": []
+                            }
+                        }
+                    },
+                    "import": {
+                        "maven": {
+                            "enabled": true,
+                            "offline": {
+                                "enabled": false
+                            },
+                            "disableTestClasspathFlag": false
+                        },
+                        "gradle": {
+                            "enabled": true,
+                            "wrapper": {
+                                "enabled": true
+                            },
+                            "version": "",
+                            "home": "abs(static/gradle-7.3.3)",
+                            "java": {
+                                "home": "abs(static/launch_jres/17.0.6-linux-x86_64)"
+                            },
+                            "offline": {
+                                "enabled": false
+                            },
+                            "arguments": [],
+                            "jvmArguments": [],
+                            "user": {
+                                "home": ""
+                            },
+                            "annotationProcessing": {
+                                "enabled": true
+                            }
+                        },
+                        "exclusions": [
+                            "**/node_modules/**",
+                            "**/.metadata/**",
+                            "**/archetype-resources/**",
+                            "**/META-INF/maven/**"
+                        ],
+                        "generatesMetadataFilesAtProjectRoot": false
+                    },
+                    "maven": {
+                        "downloadSources": true,
+                        "updateSnapshots": true
+                    },
+                    "signatureHelp": {
+                        "enabled": true,
+                        "description": {
+                            "enabled": true
+                        }
+                    },
+                    "implementationsCodeLens": {
+                        "enabled": true
+                    }
+                }
+            }
+        }
+    },
+    "python": {
+        "info": "https://github.com/python-lsp/python-lsp-server",
+        "command": "lsp-ws-proxy -- pylsp",
+        "alt-command": "pylsp",
+        "alt-command2": "lsp-ws-proxy --listen 4114 -- pylsp",
+        "alt-command3": "pylsp --ws --port 4114",
+        "socket": "ws://127.0.0.1:9999/?name=pylsp",
+        "initialization-options": {
+            "pyls": {
+                "plugins": {
+                    "pycodestyle": {
+                        "enabled": false
+                    },
+                    "pydocstyle": {
+                        "enabled": false
+                    },
+                    "pyflakes": {
+                        "enabled": false
+                    },
+                    "pylint": {
+                        "enabled": false
+                    },
+                    "mccabe": {
+                        "enabled": false
+                    }
+                }
+            },
+            "pylsp": {
+                "plugins": {
+                    "pycodestyle": {
+                        "enabled": false
+                    },
+                    "pydocstyle": {
+                        "enabled": false
+                    },
+                    "pyflakes": {
+                        "enabled": false
+                    },
+                    "pylint": {
+                        "enabled": false
+                    },
+                    "mccabe": {
+                        "enabled": false
+                    },
+                    "ruff": true,
+                    "pylsp_rope": {
+                        "rename": true
+                    },
+                    "rope_rename": {
+                        "enabled": true
+                    },
+                    "rope_autoimport": {
+                        "enabled": true
+                    },
+                    "rope_completion": {
+                        "enabled": true,
+                        "eager": true
+                    },
+                    "jedi_rename": {
+                        "enabled": true
+                    },
+                    "jedi_completion": {
+                        "enabled": true,
+                        "include_class_objects": true,
+                        "include_function_objects": true,
+                        "fuzzy": true
+                    },
+                    "jedi":{
+                        "extra_paths": [
+                            "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
+                        ],
+                        "root_dir": ""
+                    }
+                }
+            }
+        }
+    },
+    "python - jedi-language-server": {
+        "hidden": true,
+        "info": "https://pypi.org/project/jedi-language-server/",
+        "command": "jedi-language-server",
+        "alt-command": "lsp-ws-proxy --listen 3030 -- jedi-language-server",
+        "socket": "ws://127.0.0.1:3030/?name=jedi-language-server",
+        "initialization-options": {
+            "jediSettings": {
+                "autoImportModules": [],
+                "caseInsensitiveCompletion": true,
+                "debug": false
+            },
+            "completion": {
+                "disableSnippets": false,
+                "resolveEagerly": false,
+                "ignorePatterns": []
+            },
+            "markupKindPreferred": "markdown",
+            "workspace": {
+                "extraPaths": [
+                    "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
+                ],
+                "environmentPath": "{user.home}/Portable_Apps/py-venvs/gtk-apps-venv/venv/bin/python",
+                "symbols": {
+                    "ignoreFolders": [".nox", ".tox", ".venv", "__pycache__", "venv"],
+                    "maxSymbols": 20
+                }
+            }
+        }
+    },
+    "cpp": {
+        "info": "https://clangd.llvm.org/",
+        "command": "lsp-ws-proxy -- clangd",
+        "alt-command": "clangd",
+        "socket": "ws://127.0.0.1:3030/?name=clangd",
+        "initialization-options": {}
+    },
+    "sh": {
+        "info": "",
+        "command": "",
+        "alt-command": "",
+        "socket": "ws://127.0.0.1:3030/?name=shell",
+        "initialization-options": {}
+    },
+    "go": {
+        "info": "https://pkg.go.dev/golang.org/x/tools/gopls#section-readme",
+        "command": "lsp-ws-proxy -- gopls",
+        "alt-command": "gopls",
+        "socket": "ws://127.0.0.1:3030/?name=gopls",
+        "initialization-options": {}
+    },
+    "lua": {
+        "info": "https://github.com/LuaLS/lua-language-server",
+        "command": "lsp-ws-proxy -- lua-language-server",
+        "alt-command": "lua-language-server",
+        "socket": "ws://127.0.0.1:3030/?name=gopls",
+        "initialization-options": {}
+    },
+    "c": {
+        "hidden": true,
+        "info": "https://clangd.llvm.org/",
+        "command": "lsp-ws-proxy -- clangd",
+        "alt-command": "clangd",
+        "socket": "ws://127.0.0.1:3030/?name=clangd",
+        "initialization-options": {}
+    }
+}

@@ -1,0 +1,14 @@
+/* TAGS */
+
+
+/* IDs */
+
+
+/* CLASSES */
+.ace_editor, .ace_gutter {
+     background-color: rgba(0, 0, 0, 0.0) !important;
+}
+
+.ace_autocomplete {
+    background-color: #25282c !important;
+}

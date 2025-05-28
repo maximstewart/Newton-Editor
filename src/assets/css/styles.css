@@ -1,0 +1,116 @@
+/* TAGS */
+
+html {
+/*
+    background-color: rgba(64, 64, 64, 0.64);
+    background-color: rgb(40, 44, 52);
+*/
+    background-color: rgba(40, 44, 52, 0.64);
+    color: rgba(255, 255, 255, 0.64);
+}
+
+body {
+    background-color: rgba(64, 64, 64, 0.0)
+}
+
+
+/* IDs */
+
+
+/* CLASSES */
+
+.tabs {
+    display: flex;
+    overflow: auto;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.4em;
+    padding-top: 0.4em;
+}
+
+
+/*
+.tab {
+    float: left;
+    clear: left;
+    display: contents;
+}
+*/
+
+.tab {
+    display: flex;
+    overflow: auto;
+    float: left;
+    margin-right: 0.5em;
+
+    border-radius: 1em 1em 0em 0em;
+
+    border-top-style: solid;
+    border-top-color: #ffffff64;
+    border-top-width: 2px;
+
+    border-left-style: solid;
+    border-left-color: #ffffff64;
+    border-left-width: 2px;
+
+    border-right-style: solid;
+    border-right-color: #ffffff64;
+    border-right-width: 2px;
+
+}
+
+
+
+
+
+.scroller {
+/*
+    -webkit-scrollbar-color: #00000084 #ffffff64;
+	scrollbar-color: #00000084 #ffffff64;
+*/
+    -webkit-scrollbar-color: #00000084 #ffffff06;
+	-webkit-scrollbar-width: thin;
+	scrollbar-color: #00000084 #ffffff06;
+	scrollbar-width: thin;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.page-alert-zone-container {
+    position: sticky;
+    top: 0em;
+    z-index: 2;
+}
+
+
+
+.searching,
+.search-success,
+.search-fail {
+    border-style: solid;
+    color: rgba(125, 125, 125, 1) !important;
+}
+
+.searching      {
+    border-color: rgba(0, 225, 225, 0.64) !important;
+}
+.search-success {
+    background: rgba(136, 204, 39, 0.12) !important;
+    border-color: rgba(136, 204, 39, 1) !important;
+}
+.search-fail    {
+    background: rgba(170, 18, 18, 0.12) !important;
+    border-color: rgba(200, 18, 18, 1) !important;
+}
+
+/* Other message text colors */
+.error   { color: rgb(170, 18, 18); }
+.warning { color: rgb(255, 168, 0); }
+.success { color: rgb(136, 204, 39); }
