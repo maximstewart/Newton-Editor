@@ -199,8 +199,8 @@
                         "enabled": true
                     },
                     "rope_completion": {
-                        "enabled": true,
-                        "eager": true
+                        "enabled": false,
+                        "eager": false
                     },
                     "jedi_rename": {
                         "enabled": true

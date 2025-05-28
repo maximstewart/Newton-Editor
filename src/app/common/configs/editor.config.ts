@@ -8,6 +8,7 @@ export const EditorSettings: any = {
         behavioursEnabled: true,
         fontSize: "12px",
         theme: "ace/theme/one_dark",
+        mode: "ace/mode/text",
         printMarginColumn: 80,
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,

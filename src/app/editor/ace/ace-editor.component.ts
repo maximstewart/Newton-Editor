@@ -5,6 +5,8 @@ import { AceLanguageClient, LanguageClientConfig } from 'ace-linters/build/ace-l
 // Import Ace and its modes/themes so that `ace` global is defined
 import * as ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/theme-one_dark';
+import "ace-builds/src-noconflict/ext-language_tools";
+
 import { LanguageProvider } from "ace-linters";
 
 import { EditorSettings } from "../../common/configs/editor.config";
@@ -76,23 +78,16 @@ export class AceEditorComponent {
         if (Object.keys(this.lspConfigData).length !== 0) {
 //            _initializationOptions = this.lspConfigData[ this.editor.session.getMode() ]["initialization-options"];
             _initializationOptions = this.lspConfigData[ "python" ]["initialization-options"];
-//            _initializationOptions = this.lspConfigData[ "java" ]["initialization-options"];
-//            _initializationOptions = this.lspConfigData[ "cpp" ]["initialization-options"];
-            console.log(_initializationOptions.toString());
         }
 
         let servers: LanguageClientConfig[] = [
             {
                 module: () => import("ace-linters/build/language-client"),
                 modes: "python",
-//                modes: "java",
-//                modes: "cpp",
                 type: "socket",
                 socket: new WebSocket("ws://127.0.0.1:9999/python"),
-//                socket: new WebSocket("ws://127.0.0.1:9999/?name=clangd"),
-//                socket: new WebSocket("ws://127.0.0.1:9999/?name=jdtls"),
 //                socket: new WebSocket("ws://127.0.0.1:9999/?name=pylsp"),
-//                initializationOptions: _initializationOptions
+                initializationOptions: _initializationOptions
             }
         ];
 
