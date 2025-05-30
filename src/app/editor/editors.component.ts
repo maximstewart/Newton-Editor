@@ -86,7 +86,7 @@ export class EditorsComponent {
 	        let editorComponent = this.editors.get(this.activeEditor)?.instance;
 	        let editor = editorComponent.editor;
 	        editor?.setSession(session);
-	        // editorComponent.registerEditorToLSP();
+	        editorComponent.registerEditorToLSPMode();
         });
     }
 

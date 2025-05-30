@@ -11,7 +11,7 @@ import { LanguageProvider } from "ace-linters";
 })
 export class LSPService {
     lspConfigData!: {};
-    languageProvider!: any;
+    languageProviders: {} = {};
 
     constructor() {
         this.loadLSPService();
@@ -29,47 +29,45 @@ export class LSPService {
 
                 this.lspConfigData = {};
             }
-        }).then(() => {
-            this.loadLanguageProviders();
         });
     }
 
     public registerEditor(editor: any): void {
-        this.languageProvider.registerEditor(editor);
+        let modeParts = editor.getSession()["$modeId"].split("/");
+        let mode      = modeParts[ modeParts.length - 1 ];
+
+        if ( !this.languageProviders[mode] ) {
+            this.languageProviders[mode] = this.getLanguageProviderWithClientServer(mode);
+        }
+
+        this.languageProviders[mode].registerEditor(editor);
     }
 
     private getLspConfigData(): Promise<string> {
         return window.fs.getLspConfigData();
     }
 
-    private loadLanguageProviders(): void {
-        this.languageProvider = this.getLanguageProviderWithClientServers();
-//        this.languageProvider = this.getLanguageProviderWithWebWorker();
-    }
-
-    private getLanguageProviderWithClientServers() {
+    private getLanguageProviderWithClientServer(mode: string) {
         let _initializationOptions = {};
 
         if (Object.keys(this.lspConfigData).length !== 0) {
-//            _initializationOptions = this.lspConfigData[ this.editor.session.getMode() ]["initialization-options"];
-            _initializationOptions = this.lspConfigData[ "python" ]["initialization-options"];
+            _initializationOptions = this.lspConfigData[mode]["initialization-options"];
         }
 
         let servers: LanguageClientConfig[] = [
             {
                 module: () => import("ace-linters/build/language-client"),
-                modes: "python",
+                modes: mode,
                 type: "socket",
-                socket: new WebSocket("ws://127.0.0.1:9999/python"),
-//                socket: new WebSocket("ws://127.0.0.1:9999/?name=pylsp"),
+                socket: new WebSocket(`ws://127.0.0.1:9999/${mode}`),
+                // socket: new WebSocket("ws://127.0.0.1:9999/?name=pylsp"),
                 initializationOptions: _initializationOptions
             }
         ];
 
         return AceLanguageClient.for(servers);
     }
- 
- 
+
     private getLanguageProviderWithWebWorker() {
         let worker = new Worker(new URL('./webworker.js', import.meta.url));
         return LanguageProvider.create(worker);
