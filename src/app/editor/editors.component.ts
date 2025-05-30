@@ -50,28 +50,19 @@ export class EditorsComponent {
 
 
     public ngAfterViewInit(): void {
-        this.editorsService.getData$().pipe(
+        this.loadSubscribers();
+
+        let editor = this.createEditor();
+        this.activeEditor = editor.instance.uuid;
+        this.createEditor();
+    }
+
+    loadSubscribers() {
+        this.editorsService.newActiveEditor$().pipe(
             takeUntil(this.unsubscribe)
-        ).subscribe((data: ServiceMessage) => {
-            if (data.action === "set-editor")
-                this.activeEditor = data.uuid;
+        ).subscribe((uuid: string) => {
+            this.activeEditor = uuid;
         });
-
-        this.getLspConfigData().then((lspConfigData: string) => {
-            this.lspConfigData = JSON.parse(lspConfigData);
-
-            if (this.lspConfigData["message"]) {
-                console.log(
-                    "Warning: LSP this.lspConfigData is a 'message'",
-                    this.lspConfigData
-                );
-                this.lspConfigData = {};
-            }
-
-            let editor = this.createEditor();
-            this.activeEditor = editor.instance.uuid;
-            this.createEditor();
-        })
     }
 
     ngOnDestroy() {
@@ -79,15 +70,10 @@ export class EditorsComponent {
         this.unsubscribe.complete();
     }
 
-    private getLspConfigData(): Promise<string> {
-        return window.fs.getLspConfigData();
-    }
-
     private createEditor() {
         const component = this.containerRef.createComponent(AceEditorComponent);
         component.instance.editorSettings = this.editorSettings;
         component.instance.uuid = uuid.v4();
-        component.instance.lspConfigData = this.lspConfigData;
         this.editors.set(component.instance.uuid, component)
 
         return component;
@@ -97,8 +83,10 @@ export class EditorsComponent {
         this.loadFilesList(event).then((session: EditSession | undefined | null) => {
 	        if ( !session ) return;
 
-	        let editor = this.editors.get(this.activeEditor)?.instance.editor;
+	        let editorComponent = this.editors.get(this.activeEditor)?.instance;
+	        let editor = editorComponent.editor;
 	        editor?.setSession(session);
+	        // editorComponent.registerEditorToLSP();
         });
     }
 
