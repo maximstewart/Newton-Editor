@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('main', {
 contextBridge.exposeInMainWorld('fs', {
     getLspConfigData: () => ipcRenderer.invoke("getLspConfigData"),
     getFileContents: (file) => ipcRenderer.invoke("getFileContents", file),
+    openFiles: (startPath) => ipcRenderer.invoke("openFiles", startPath),
     saveFile: (path, content) => ipcRenderer.invoke("saveFile", path, content),
     saveFileAs: (content) => ipcRenderer.invoke("saveFileAs", content),
     getPathForFile: (file) => webUtils.getPathForFile(file),

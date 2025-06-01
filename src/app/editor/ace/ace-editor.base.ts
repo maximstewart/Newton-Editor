@@ -1,6 +1,7 @@
 import { Directive, ElementRef, Input, ViewChild } from '@angular/core';
 
 import { EditorSettings } from "../../common/configs/editor.config";
+import { NewtonFile } from '../../common/types/file.type';
 
 
 
@@ -12,6 +13,7 @@ export class AceEditorBase {
     uuid!: string;
     cutBuffer: string = "";
     timerId: number   = -1;
+    activeFile!: NewtonFile;
 
 
     constructor(
@@ -22,9 +24,25 @@ export class AceEditorBase {
         console.log(this.editor.getSession()["$modeId"])
     }
 
+    protected openFiles() {
+        let startDir = "";
+        if (this.activeFile) {
+            let pathParts = this.activeFile.path.split("/");
+            pathParts.pop();
+            startDir = pathParts.join( '/' );
+        }
+
+        window.fs.openFiles(startDir);
+    }
+
     protected saveFile() {
-        const text = this.editor.session.getValue();
-//        window.fs.saveFile(text);
+        if (!this.activeFile) {
+            this.saveFileAs();
+            return;
+        }
+
+        const text = this.activeFile.session.getValue();
+        window.fs.saveFile(this.activeFile.path, text);
     }
 
     protected saveFileAs() {

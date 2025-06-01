@@ -110,6 +110,13 @@ export class AceEditorComponent extends AceEditorBase {
                  },
                  readOnly: true
             }, {
+                 name: "openFiles",
+                 bindKey: {win: "ctrl-o", mac: "ctrl-o"},
+                 exec: () => {
+                     this.openFiles();
+                 },
+                 readOnly: true
+            }, {
                  name: "saveFile",
                  bindKey: {win: "ctrl-s", mac: "ctrl-s"},
                  exec: () => {

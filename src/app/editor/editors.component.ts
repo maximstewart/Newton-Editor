@@ -75,8 +75,8 @@ export class EditorsComponent {
                 this.addTab(file);
             }
 
-            let session = this.files.get(paths[ paths.length - 1 ]).session;
-            this.setSession(session);
+            let file = this.files.get(paths[ paths.length - 1 ]);
+            this.setSession(file);
         });
 
         window.main.onMenuActions(async (action: string) => {
@@ -85,6 +85,9 @@ export class EditorsComponent {
 
             switch ( action ) {
                 case "new-file":
+                    break;
+                case "open-files":
+                    editorComponent.openFiles();
                     break;
                 case "save-file":
                     editorComponent.saveFile();
@@ -130,23 +133,25 @@ export class EditorsComponent {
     }
 
     protected onFileDropped(files: any) {
-        this.loadFilesList(files).then((session: EditSession | undefined | null) => {
-            this.setSession(session);
+        this.loadFilesList(files).then((file: NewtonFile | undefined | null) => {
+            this.setSession(file);
         });
     }
 
-    private async setSession(session: EditSession | undefined | null) {
-        if ( !session ) return;
+    private async setSession(file: NewtonFile | undefined | null) {
+        if ( !file ) return;
+        let editorComponent        = this.getActiveEditorComponent();
+        let editor                 = editorComponent.editor;
 
-        let editor          = this.getActiveEditor();
-        editor?.setSession(session);
+        editorComponent.activeFile = file;
+        editor.setSession(file.session);
     }
 
     private getSession() {
         let editorComponent = this.editors.get(this.activeEditor)?.instance;
         let editor          = editorComponent.editor;
 
-        return editor?.getSession();
+        return editor.getSession();
     }
 
     private getActiveEditorComponent(): any {
@@ -159,7 +164,7 @@ export class EditorsComponent {
         return editor;
     }
 
-    private async loadFilesList(files: Array<NewtonFile>): Promise<EditSession | undefined | null> {
+    private async loadFilesList(files: Array<NewtonFile>): Promise<NewtonFile | undefined | null> {
 	    for (let i = 0; i < files.length; i++) {
 		    const file = files[i];
 		    const path = window.fs.getPathForFile(file);
@@ -171,7 +176,7 @@ export class EditorsComponent {
 		    this.addTab(file);
 	    }
 
-	    return files[ files.length - 1 ].session;
+	    return files[ files.length - 1 ];
     }
 
     private async addFile(path: string, file: NewtonFile): Promise<void> {

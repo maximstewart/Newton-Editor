@@ -2,7 +2,7 @@
     "name": "Newton Editor",
     "version": "0.0.1",
     "description": "A uniquly simple quasi-IDE for hardcore developers.",
-    "main": "main.js",
+    "main": "newton/main.js",
     "scripts": {
         "app": "ng build --base-href ./ && electron . --trace-warnings --start-as=build",
         "electron-build": "electron . --trace-warnings --start-as=build",
