@@ -5,7 +5,7 @@
     "main": "newton/main.js",
     "scripts": {
         "app": "ng build --base-href ./ && electron . --trace-warnings --start-as=build",
-        "electron-build": "electron . --trace-warnings --start-as=build",
+        "electron-start": "electron . --trace-warnings --start-as=build",
         "electron-concurrently": "concurrently 'ng serve' 'electron . --trace-warnings --start-as=ng-serve'",
         "ng-serve": "ng serve",
         "ng-build": "ng build",
