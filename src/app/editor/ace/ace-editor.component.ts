@@ -109,6 +109,20 @@ export class AceEditorComponent extends AceEditorBase {
                      this.editor.session.destroy();
                  },
                  readOnly: true
+            }, {
+                 name: "saveFile",
+                 bindKey: {win: "ctrl-s", mac: "ctrl-s"},
+                 exec: () => {
+                     this.saveFile();
+                 },
+                 readOnly: true
+            }, {
+                 name: "saveFileAs",
+                 bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
+                 exec: () => {
+                     this.saveFileAs();
+                 },
+                 readOnly: true
             }
         ]);
 

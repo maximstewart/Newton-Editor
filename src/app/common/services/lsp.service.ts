@@ -50,7 +50,7 @@ export class LSPService {
     private getLanguageProviderWithClientServer(mode: string) {
         let _initializationOptions = {};
 
-        if (Object.keys(this.lspConfigData).length !== 0) {
+        if ( Object.keys(this.lspConfigData).length !== 0 && this.lspConfigData[mode] ) {
             _initializationOptions = this.lspConfigData[mode]["initialization-options"];
         }
 

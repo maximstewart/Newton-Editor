@@ -15,15 +15,15 @@ export const EditorSettings: any = {
         enableSnippets: true,
         highlightActiveLine: true,
         enableMultiselect: true,
-        tabSize: 4,
         useSoftTabs: true,
+        tabSize: 4,
+        navigateWithinSoftTabs: true,
         tooltipFollowsMouse: true,
         wrapBehavioursEnabled: false,
         scrollPastEnd: 0.5,
         mergeUndoDeltas: false,
         showGutter: true,
         customScrollbar: true,
-        navigateWithinSoftTabs: true,
         scrollSpeed: 5
     }
 };

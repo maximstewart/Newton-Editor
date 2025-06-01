@@ -4,7 +4,7 @@ try {
 
 
 
-const { app, ipcMain } = require('electron');
+const { app, ipcMain, dialog } = require('electron');
 const { newton } = require('./app');
 const path = require('node:path');
 const fs   = require('node:fs');
@@ -42,9 +42,36 @@ const loadArgs = () => {
 
 }
 
+const saveFile = (path, content)  => {
+    console.log("...");
+}
+
+const saveFileAs = (content) => {
+    console.log(content);
+    dialog.showSaveDialog((fileName) => {
+        console.log(fileName);
+
+        if (fileName === undefined){
+            console.log("You didn't save the file");
+            return;
+        }
+
+        // fileName is a string that contains the path and filename created in the save file dialog.
+        fs.writeFile(fileName, content, (err) => {
+            if(err){
+                alert("An error ocurred creating the file "+ err.message)
+            }
+
+            alert("The file has been succesfully saved");
+        });
+    });
+}
+
 const loadHandlers = () => {
     ipcMain.handle('getLspConfigData', (eve) => newton.getLspConfigData());
     ipcMain.handle('getFileContents', (eve, file) => newton.getFileContents(file));
+    ipcMain.handle('saveFile', (eve, path, content) => saveFile(path, "Some text to save into the file"));
+    ipcMain.handle('saveFileAs', (eve, content) => saveFileAs("Some text to save into the file"));
 }
 
 app.whenReady().then(() => {

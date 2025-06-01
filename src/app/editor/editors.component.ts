@@ -51,8 +51,9 @@ export class EditorsComponent {
 
     public ngAfterViewInit(): void {
         this.loadSubscribers();
+        this.loadMainSubscribers();
 
-        let editor = this.createEditor();
+        let editor        = this.createEditor();
         this.activeEditor = editor.instance.uuid;
         this.createEditor();
     }
@@ -62,6 +63,55 @@ export class EditorsComponent {
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
             this.activeEditor = uuid;
+        });
+    }
+
+    loadMainSubscribers() {
+        window.fs.onLoadFiles(async (paths: []) => {
+            for (let i = 0; i < paths.length; i++) {
+                let file = new File([], "") as NewtonFile;
+
+                await this.addFile(paths[i], file);
+                this.addTab(file);
+            }
+
+            let session = this.files.get(paths[ paths.length - 1 ]).session;
+            this.setSession(session);
+        });
+
+        window.main.onMenuActions(async (action: string) => {
+            let editorComponent = this.getActiveEditorComponent();
+            let editor          = editorComponent.editor;
+
+            switch ( action ) {
+                case "new-file":
+                    break;
+                case "save-file":
+                    editorComponent.saveFile();
+                    break;
+                case "save-file-as":
+                    editorComponent.saveFileAs();
+                    break;
+                case "cut":
+                    editorComponent.cutText();
+                    break;
+                case "copy":
+                    editorComponent.copyText();
+                   break;
+                case "paste":
+                    editorComponent.pasteText();
+                    break;
+                case "zoom-in":
+                    editorComponent.zoomIn()
+                    break;
+                case "zoom-out":
+                    editorComponent.zoomOut()
+                    break;
+                case "show-about":
+                    break;
+                default:
+                    editor.execCommand(action);
+            }
         });
     }
 
@@ -79,14 +129,34 @@ export class EditorsComponent {
         return component;
     }
 
-    protected onFileDropped(event: any) {
-        this.loadFilesList(event).then((session: EditSession | undefined | null) => {
-	        if ( !session ) return;
-
-	        let editorComponent = this.editors.get(this.activeEditor)?.instance;
-	        let editor          = editorComponent.editor;
-	        editor?.setSession(session);
+    protected onFileDropped(files: any) {
+        this.loadFilesList(files).then((session: EditSession | undefined | null) => {
+            this.setSession(session);
         });
+    }
+
+    private async setSession(session: EditSession | undefined | null) {
+        if ( !session ) return;
+
+        let editor          = this.getActiveEditor();
+        editor?.setSession(session);
+    }
+
+    private getSession() {
+        let editorComponent = this.editors.get(this.activeEditor)?.instance;
+        let editor          = editorComponent.editor;
+
+        return editor?.getSession();
+    }
+
+    private getActiveEditorComponent(): any {
+        return this.editors.get(this.activeEditor)?.instance;
+    }
+
+    private getActiveEditor(): any {
+        let editorComponent = this.editors.get(this.activeEditor)?.instance;
+        let editor          = editorComponent.editor;
+        return editor;
     }
 
     private async loadFilesList(files: Array<NewtonFile>): Promise<EditSession | undefined | null> {
@@ -96,7 +166,7 @@ export class EditorsComponent {
 
 		    if (!file || !path) continue;
 		    if ( this.files.get(path) ) continue;
-		    
+
 		    await this.addFile(path, file);
 		    this.addTab(file);
 	    }
@@ -104,7 +174,7 @@ export class EditorsComponent {
 	    return files[ files.length - 1 ].session;
     }
 
-    private async addFile(path: string, file: NewtonFile) {
+    private async addFile(path: string, file: NewtonFile): Promise<void> {
 	    try {
 	        let pathParts = path.split("/");
 	        file.fname    = pathParts[ pathParts.length - 1 ];
