@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { EditorsService } from '../../../common/services/editor/editors.service';
+
 
 
 @Component({
@@ -10,21 +12,31 @@ import { Component } from '@angular/core';
     templateUrl: './tab.component.html',
     styleUrl: './tab.component.css',
     host: {
-        'class': 'col'
-//        'class': 'col tab'
+        'class': ''
     }
 })
 export class TabComponent {
 
     title: string;
+    path: string;
+    ref: any;
 
 
-    constructor() {
+    constructor(
+        private editorsService: EditorsService,
+    ) {
         this.title = "[NO TITLE]";
     }
 
     ngOnDestroy() {
     }
 
+    setTabToEditor() {
+        this.editorsService.setTabToEditor(this.path);
+    }
 
+    closeTab() {
+        this.editorsService.closeTab(this.path);
+        this.ref.destroy();
+    }
 }

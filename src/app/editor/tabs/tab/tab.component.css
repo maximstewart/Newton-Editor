@@ -5,18 +5,14 @@
 }
 
 
-/*
-.tab {
-    float: left;
-    clear: left;
-    display: flow;
-}
-*/
-
-
 .title {
     margin-left: 2em;
     margin-right: 2em;
+    font-size: 4em;
+}
+
+.title:hover {
+    cursor: pointer;
 }
 
 .close-button {
@@ -24,7 +20,6 @@
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.64);
     border-width: 1px;
-    border-radius: 0em 1em 0em 0em;
 }
 
 .close-button:hover {

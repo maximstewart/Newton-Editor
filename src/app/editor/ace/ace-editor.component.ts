@@ -144,4 +144,11 @@ export class AceEditorComponent extends AceEditorBase {
         });
     }
 
+    public newBuffer() {
+        let buffer = ace.createEditSession([""]);
+        this.editor.setSession(buffer);
+        this.activeFile = null;
+
+    }
+
 }

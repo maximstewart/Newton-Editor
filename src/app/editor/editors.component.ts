@@ -64,6 +64,34 @@ export class EditorsComponent {
         ).subscribe((uuid: string) => {
             this.activeEditor = uuid;
         });
+
+        this.editorsService.loadTabToEditor$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((path: string) => {
+            let file            = this.files.get(path);
+            let editorComponent = this.getActiveEditorComponent();
+            let editor          = editorComponent.editor;
+
+            editorComponent.activeFile = file;
+            editor.setSession(file.session);
+        });
+
+        this.editorsService.closeTabRequested$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((path: string) => {
+            let file    = this.files.get(path);
+            let editors = [...this.editors.values()];
+
+            for (let i = 0; i < editors.length; i++) {
+                let editorComponent = editors[i].instance;
+                if (editorComponent.editor.session == file.session) {
+                    editorComponent.newBuffer();
+                }
+            }
+
+            file.session.destroy();
+            this.files.delete(path);
+        });
     }
 
     loadMainSubscribers() {
@@ -205,6 +233,7 @@ export class EditorsComponent {
         message.action  = "create-tab";
         message.message = file.fname;
         message.uuid    = file.hash;
+        message.data    = file.path;
 
         this.tabsService.setData(message);
     }

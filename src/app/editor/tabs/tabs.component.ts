@@ -37,7 +37,7 @@ export class TabsComponent {
             takeUntil(this.unsubscribe)
         ).subscribe((data: ServiceMessage) => {
             if (data.action === "create-tab")
-                this.createTab(data.message, data.uuid);
+                this.createTab(data.message, data.uuid, data.data);
         });
     }
 
@@ -46,9 +46,12 @@ export class TabsComponent {
         this.unsubscribe.complete();
     }
 
-    private createTab(title: string, uuid: string) {
+    private createTab(title: string, uuid: string, path: string) {
         const component = this.containerRef.createComponent(TabComponent);
         component.instance.title = title;
+        component.instance.path  = path;
+        component.instance.ref   = component;
+
         this.tabs.set(uuid, component)
 
         return component;

@@ -40,9 +40,8 @@ body {
     display: flex;
     overflow: auto;
     float: left;
-    margin-right: 0.5em;
-
-    border-radius: 1em 1em 0em 0em;
+    margin-right: 2em;
+    font-size: 0.2em;
 
     border-top-style: solid;
     border-top-color: #ffffff64;
