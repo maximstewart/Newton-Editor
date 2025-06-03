@@ -6,6 +6,29 @@
 /***************************************************************************************************
  * Zone JS is required by Angular itself.
  */
+
+
 import 'zone.js';  // Included with Angular CLI.
 
-// If you need other polyfills, add them here.
+
+declare global {
+    interface Window {
+        electron: {
+            node: () => Promise<string>,
+            chrome: () => Promise<string>,
+            electron: () => Promise<string>,
+        },
+        main: {
+            onMenuActions: (arg0: any) => Promise<string>,
+        },
+        fs: {
+            getLspConfigData: () => Promise<string>,
+            getFileContents: (arg0: any) => Promise<string>,
+            openFiles: (arg0) => Promise<string>,
+            saveFile: (arg0: any, arg1: any) => Promise<string>,
+            saveFileAs: (arg0: any) => Promise<string>,
+            getPathForFile: any,
+            onLoadFiles: (arg0: any) => Promise<string>,
+        }
+    }
+}
