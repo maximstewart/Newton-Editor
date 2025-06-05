@@ -1,0 +1,26 @@
+.tab,
+.title,
+.close-button {
+    color: rgba(255, 255, 255, 0.64);
+}
+
+.tab:hover {
+    cursor: pointer;
+}
+
+.title {
+    margin-left: 2em;
+    margin-right: 2em;
+    font-size: 4em;
+}
+
+.close-button {
+    background: rgba(116, 0, 0, 0.64);
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.64);
+    border-width: 1px;
+}
+
+.close-button:hover {
+    background: rgba(256, 0, 0, 0.64);
+}

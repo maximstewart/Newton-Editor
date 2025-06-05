@@ -1,2 +1,21 @@
-<ng-container #containerRef>
-</ng-container>
+<div cdkDropList
+     cdkDropListSortingDisabled
+     cdkDropListLockAxis="x"
+     cdkDropListOrientation="horizontal"
+     (cdkDropListDropped)="dropped($event)"
+     (click)="handleAction($event)"
+>
+
+    <div *ngFor="let tab of tabs"
+        cdkDrag
+        (cdkDragMoved)="moved($event)"
+        title="{{tab.path}}"
+        uuid="{{tab.uuid}}"
+        path="{{tab.path}}"
+        class="tab noselect"
+    >
+        <span class="title">{{tab.title}}</span>
+        <button class="close-button">X</button>
+    </div>
+
+</div>

@@ -10,6 +10,7 @@ import {
 import { NewtonFile } from '../types/file.type';
 
 
+
 @Directive({
     selector: '[dropzone]'
 })
@@ -17,21 +18,24 @@ export class DndDirective {
     @HostBinding('class.fileover') fileOver!: boolean;
     @Output() fileDropped = new EventEmitter<any>();
 
-    @HostListener('dragover', ['$event']) onDragOver(evt: any) {
+    @HostListener('dragover', ['$event'])
+    onDragOver(evt: any) {
         evt.preventDefault();
         evt.stopPropagation();
 
         this.fileOver = true;
     }
 
-    @HostListener('dragleave', ['$event']) public onDragLeave(evt: any) {
+    @HostListener('dragleave', ['$event'])
+    public onDragLeave(evt: any) {
         evt.preventDefault();
         evt.stopPropagation();
 
         this.fileOver = false;
     }
 
-    @HostListener('drop', ['$event']) public ondrop(evt: any) {
+    @HostListener('drop', ['$event'])
+    publicondrop(evt: any) {
         evt.preventDefault();
         evt.stopPropagation();
 
