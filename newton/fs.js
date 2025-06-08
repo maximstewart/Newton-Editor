@@ -5,11 +5,26 @@ const os   = require('os')
 
 
 
-const BASE_PATH       = '../dist/app';
-const LSP_CONFIG_PATH = `${BASE_PATH}/resources/lsp-servers-config.json`;
-let window            = null;
+const HOME_DIR              = os.homedir();
+const BASE_PATH             = '../dist/app';
+const CONFIG_PATH           = path.join(HOME_DIR, "/.config/newton/");
+const SETTINGS_CONFIG_PATH  = path.join(CONFIG_PATH, "/settings.json");
+const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json")
+let window                  = null;
 
 
+const getIconPath = () => {
+    return path.join(CONFIG_PATH, "./icons/newton.png");
+}
+
+const getSettingsConfigData = () => {
+    return getFileContents(SETTINGS_CONFIG_PATH);
+}
+
+const getLspConfigData = () => {
+    const config = getFileContents(LSP_CONFIG_PATH, useRelativePath = true);
+    return config.replaceAll("{user.home}", HOME_DIR);
+}
 
 const getFileContents = (_path, useRelativePath = false) => {
     console.log(`Getting Contents For: ${_path}`);
@@ -23,11 +38,6 @@ const getFileContents = (_path, useRelativePath = false) => {
     } catch(err) {
         return `{"message": {"type": "error", "text": "Error: Could not read  ${_path}"}}`;
     }
-}
-
-const getLspConfigData = () => {
-    const config = getFileContents(LSP_CONFIG_PATH, true);
-    return config.replaceAll("{user.home}", os.homedir());
 }
 
 const saveFile = (fpath, content)  => {
@@ -52,7 +62,7 @@ const openFiles = (startPath) => {
     dialog.showOpenDialog(
         {
             title: "Open File(s):",
-            defaultPath: (startPath) ? startPath : os.homedir(),
+            defaultPath: (startPath) ? startPath : HOME_DIR,
             filters: [
                 { name: "All Files", extensions: ["*"]                               },
                 { name: "c",         extensions: [".h", ".c"]                        },
@@ -90,8 +100,10 @@ module.exports = {
         openFiles: openFiles,
         saveFile: saveFile,
         saveFileAs: saveFileAs,
+        getIconPath: getIconPath,
         getFileContents: getFileContents,
         getLspConfigData: getLspConfigData,
+        getSettingsConfigData: getSettingsConfigData,
         setWindow: setWindow
     }
 };

@@ -52,10 +52,10 @@ app.whenReady().then(() => {
     loadArgs();
     loadHandlers();
 
+    newton.settings.loadsettings();
     let window = newton.createWindow(startType, isDebug, args);
-
     newton.fs.setWindow(window);
-})
+});
  
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -67,7 +67,9 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     };
-})
+
+    newton.settings.saveConfig();
+});
 
 process.on('uncaughtException', (error) => {
     if (error.message != null) {

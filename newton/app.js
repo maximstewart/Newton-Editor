@@ -2,6 +2,7 @@ const { BrowserWindow } = require('electron');
 const path = require('node:path');
 
 const { menu } = require('./menu');
+const { settingsManager } = require('./settings-manager');
 const { newtonFs } = require('./fs');
 
 
@@ -15,16 +16,19 @@ let args = [];
 // Note:  https://tinydew4.gitbooks.io/electron/content/api/browser-window.html
 const createWindow = (startType = "build", debug = false, args = []) => {
     this.args = args;
+    let data  = settingsManager.getConfig();
 
     const win = new BrowserWindow({
         title: "Newton",
-        width:  800,
-        height: 600,
-        minWidth:  800,
-        minHeight: 600,
+        x: data["config"]["main_window_x"],
+        y: data["config"]["main_window_y"],
+        width:  data["config"]["main_window_width"],
+        height: data["config"]["main_window_height"],
+        minWidth:  data["config"]["main_window_min_width"],
+        minHeight: data["config"]["main_window_min_height"],
         show: false,
         transparent: true,
-        icon: path.join(__dirname, ICON_PATH),
+        icon: settingsManager.getIconPath(),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -75,5 +79,6 @@ module.exports = {
     newton: {
         createWindow: createWindow,
         fs: newtonFs,
+        settings: settingsManager
     }
 };
