@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electron', {
     chrome: () => process.versions.chrome,
     electron: () => process.versions.electron,
 });
+
 contextBridge.exposeInMainWorld('main', {
     onMenuActions: (callback) => ipcRenderer.on('menu-actions', (_event, action) => callback(action)),
 });

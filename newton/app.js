@@ -40,7 +40,8 @@ const createWindow = (startType = "build", debug = false, args = []) => {
     });
 
     win.once('ready-to-show', () => {
-        win.show()
+        win.show();
+        win.webContents.send('load-files', args);
     });
 
     menu.load(win);
