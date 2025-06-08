@@ -6,7 +6,7 @@ const os   = require('os')
 
 
 const HOME_DIR              = os.homedir();
-const BASE_PATH             = '../dist/app';
+const BASE_PATH             = '../build/app';
 const CONFIG_PATH           = path.join(HOME_DIR, "/.config/newton/");
 const SETTINGS_CONFIG_PATH  = path.join(CONFIG_PATH, "/settings.json");
 const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json")

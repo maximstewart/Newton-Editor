@@ -35,8 +35,9 @@ const loadArgs = () => {
     args = process.argv.slice(4);  // remove up to --start-as ...
     args.forEach((val, index, array) => {
         console.log(index + ': ' + val);
-        console.log();
     }); 
+
+    console.log("\n\n");
 }
 
 const loadHandlers = () => {

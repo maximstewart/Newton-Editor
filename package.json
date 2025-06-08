@@ -1,11 +1,17 @@
 {
-    "name": "Newton Editor",
-    "version": "0.0.1",
+    "name": "Newton",
     "description": "A uniquly simple quasi-IDE for hardcore developers.",
+    "version": "0.0.1",
+    "author": "ITDominator",
+    "license": "GPL-2.0-only",
     "main": "newton/main.js",
+    "private": true,
     "scripts": {
         "app": "ng build --base-href ./ && electron . --trace-warnings --start-as=build",
         "electron-start": "electron . --trace-warnings --start-as=build",
+        "electron-pack": "electron-builder --dir",
+        "electron-dist": "electron-builder",
+        "electron-dist-all": "electron-builder -mwl",
         "electron-concurrently": "concurrently 'ng serve' 'electron . --trace-warnings --start-as=ng-serve'",
         "ng-serve": "ng serve",
         "ng-build": "ng build",
@@ -13,15 +19,31 @@
         "ng-test": "ng test",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "private": true,
-    "author": "ITDominator",
-    "license": "GPL-2.0-only",
+    "build": {
+        "appId": "newton",
+        "icon": "./icos/",
+        "files": [
+            "newton/",
+            "build/"
+        ],
+        "mac": {
+            "category": "public.app-category.developer-tools"
+        },
+        "win": {
+            "target": "portable"
+        },
+        "linux": {
+            "target": "AppImage",
+            "category": "Development"
+        }
+    },
+    "postinstall": "electron-builder install-app-deps",
     "dependencies": {
+        "@angular/cdk": "19.2.0",
         "@angular/cli": "19.2.9",
         "@angular/common": "19.2.0",
         "@angular/compiler": "19.2.0",
         "@angular/core": "19.2.0",
-        "@angular/cdk": "19.2.0",
         "@angular/forms": "19.2.0",
         "@angular/platform-browser": "19.2.0",
         "@angular/platform-browser-dynamic": "19.2.0",
@@ -45,6 +67,7 @@
         "@types/jasmine": "5.1.0",
         "@types/node": "18.18.0",
         "concurrently": "9.1.2",
+        "electron-builder": "26.0.12",
         "electron": "36.2.0",
         "electron-reloader": "1.2.3",
         "jasmine-core": "5.6.0",

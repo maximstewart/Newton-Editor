@@ -6,7 +6,7 @@ const { settingsManager } = require('./settings-manager');
 const { newtonFs } = require('./fs');
 
 
-const BASE_PATH = '../dist/app';
+const BASE_PATH = '../build/app';
 const ICON_PATH = `${BASE_PATH}/resources/newton.png`;
 
 let args = [];
@@ -31,6 +31,7 @@ const createWindow = (startType = "build", debug = false, args = []) => {
         icon: settingsManager.getIconPath(),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
             contextIsolation: true,
             enableRemoteModule: false,
             plugins: true,
