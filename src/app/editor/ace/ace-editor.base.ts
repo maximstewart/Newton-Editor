@@ -1,4 +1,5 @@
 import { Directive, ElementRef, Input, ViewChild } from '@angular/core';
+import * as uuid from 'uuid';
 
 import { EditorSettings } from "../../common/configs/editor.config";
 import { NewtonFile } from '../../common/types/file.type';
@@ -17,7 +18,9 @@ export class AceEditorBase {
 
 
     constructor(
-    ) {}
+    ) {
+        this.uuid = uuid.v4();
+    }
 
 
     protected search() {

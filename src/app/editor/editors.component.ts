@@ -1,6 +1,5 @@
 import { Component, ElementRef, ViewChild, TemplateRef, ComponentRef, ViewContainerRef } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import * as uuid from 'uuid';
 
 import { EditSession } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
@@ -154,7 +153,6 @@ export class EditorsComponent {
     private createEditor() {
         const component = this.containerRef.createComponent(AceEditorComponent);
         component.instance.editorSettings = this.editorSettings;
-        component.instance.uuid = uuid.v4();
         this.editors.set(component.instance.uuid, component)
 
         return component;
