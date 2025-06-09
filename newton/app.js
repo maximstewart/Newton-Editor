@@ -2,6 +2,7 @@ const { BrowserWindow } = require('electron');
 const path = require('node:path');
 
 const { menu } = require('./menu');
+const { argsParser } = require('./args-parser');
 const { settingsManager } = require('./settings-manager');
 const { newtonFs } = require('./fs');
 
@@ -72,7 +73,6 @@ const createWindow = (startType = "build", debug = false, args = []) => {
 //    });
 
     return win;
-
 }
 
 
@@ -80,7 +80,8 @@ const createWindow = (startType = "build", debug = false, args = []) => {
 module.exports = {
     newton: {
         createWindow: createWindow,
+        args: argsParser,
+        settings: settingsManager,
         fs: newtonFs,
-        settings: settingsManager
     }
 };
