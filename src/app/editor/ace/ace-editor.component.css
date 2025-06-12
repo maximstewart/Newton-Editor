@@ -21,3 +21,8 @@
 }
 
 
+.active-editor {
+    border-style: solid;
+    border-width: thin;
+    border-color: rgba(124, 124, 124, 1);
+}

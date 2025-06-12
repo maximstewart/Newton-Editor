@@ -15,6 +15,7 @@ export class AceEditorBase {
     cutBuffer: string = "";
     timerId: number   = -1;
     activeFile!: NewtonFile;
+    isDefault: boolean = false;
 
 
     constructor(
@@ -22,6 +23,14 @@ export class AceEditorBase {
         this.uuid = uuid.v4();
     }
 
+
+    public addActiveStyling() {
+        this.editorElm.nativeElement.classList.add("active-editor")
+    }
+
+    public removeActiveStyling() {
+        this.editorElm.nativeElement.classList.remove("active-editor")
+    }
 
     protected search() {
         console.log(this.editor.getSession()["$modeId"])

@@ -1,3 +1,7 @@
+/* Using older build flow b/c of this issue:
+    https://github.com/issues/created?issue=mkslanc%7Cace-linters%7C172
+*/
+
 {
     "$schema":"./node_modules/@angular/cli/lib/config/schema.json",
     "version":1,

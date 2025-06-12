@@ -28,14 +28,6 @@ body {
 }
 
 
-/*
-.tab {
-    float: left;
-    clear: left;
-    display: contents;
-}
-*/
-
 .tab {
     display: flex;
     overflow: auto;

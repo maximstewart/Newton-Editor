@@ -52,8 +52,10 @@ export class EditorsComponent {
         this.loadSubscribers();
         this.loadMainSubscribers();
 
-        let editor        = this.createEditor();
-        this.activeEditor = editor.instance.uuid;
+        let editor                = this.createEditor();
+        this.activeEditor         = editor.instance.uuid;
+        editor.instance.isDefault = true;
+
         this.createEditor();
     }
 
@@ -61,7 +63,9 @@ export class EditorsComponent {
         this.editorsService.newActiveEditor$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
+            this.editors.get(this.activeEditor).instance.removeActiveStyling();
             this.activeEditor = uuid;
+            this.editors.get(this.activeEditor).instance.addActiveStyling();
         });
 
         this.editorsService.loadTabToEditor$().pipe(

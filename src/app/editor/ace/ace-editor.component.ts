@@ -35,6 +35,10 @@ export class AceEditorComponent extends AceEditorBase {
 
 
     public ngAfterViewInit(): void {
+        if (this.isDefault) {
+            this.addActiveStyling();
+        }
+
         this.loadAce();
     }
 
