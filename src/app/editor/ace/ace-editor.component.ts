@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 // Import Ace and its modes/themes so that `ace` global is defined
-import * as ace from 'ace-builds/src-noconflict/ace';
-import 'ace-builds/src-noconflict/theme-one_dark';
+import * as ace from "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/theme-one_dark";
+import "ace-builds/src-noconflict/theme-dracula";
 import "ace-builds/src-noconflict/ext-language_tools";
 
+import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
 import { LSPService } from '../../common/services/lsp.service';
 
@@ -27,6 +29,7 @@ export class AceEditorComponent extends AceEditorBase {
 
 
     constructor(
+        private infoBarService: InfoBarService,
         private editorsService: EditorsService,
         private lspService: LSPService
     ) {
@@ -62,14 +65,14 @@ export class AceEditorComponent extends AceEditorBase {
                  exec: () => {
                      this.movelinesUp();
                  },
-                 readOnly: true
+                 readOnly: false
              }, {
                  name: "movelinesDown",
                  bindKey: {win: "ctrl-down", mac: "ctrl-down"},
                  exec: () => {
                      this.movelinesDown();
                  },
-                 readOnly: true
+                 readOnly: false
              },
              {
                  name: "duplicateLines",
@@ -77,7 +80,7 @@ export class AceEditorComponent extends AceEditorBase {
                  exec: () => {
                      this.duplicateLines();
                  },
-                 readOnly: true
+                 readOnly: false
              }, {
                  name: "zoomIn",
                  bindKey: {win: "ctrl-=", mac: "ctrl-="},
@@ -98,61 +101,95 @@ export class AceEditorComponent extends AceEditorBase {
                  exec: () => {
                      this.cutToBuffer();
                  },
-                 readOnly: true
+                 readOnly: false
             }, {
                  name: "pasteCutBuffer",
                  bindKey: {win: "ctrl-u", mac: "ctrl-u"},
                  exec: () => {
                      this.pasteCutBuffer();
                  },
-                 readOnly: true
+                 readOnly: false
             }, {
                  name: "destroySession",
                  bindKey: {win: "ctrl-w", mac: "ctrl-w"},
                  exec: () => {
                      this.editor.session.destroy();
                  },
-                 readOnly: true
+                 readOnly: false
             }, {
                  name: "openFiles",
                  bindKey: {win: "ctrl-o", mac: "ctrl-o"},
                  exec: () => {
                      this.openFiles();
                  },
-                 readOnly: true
+                 readOnly: false
             }, {
                  name: "saveFile",
                  bindKey: {win: "ctrl-s", mac: "ctrl-s"},
                  exec: () => {
                      this.saveFile();
                  },
-                 readOnly: true
+                 readOnly: false
             }, {
                  name: "saveFileAs",
                  bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
                  exec: () => {
                      this.saveFileAs();
                  },
-                 readOnly: true
+                 readOnly: false
             }
         ]);
 
-        // Note: https://github.com/mkslanc/ace-linters/blob/c286d85c558530aa1b0597d02108bc782abd4736/packages/ace-linters/src/language-provider.ts#L277
-        //       found on focus ^ might have other signals we can watch like session being set, etc.
+
+        // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
+        this.editor.on("click", () => {
+            this.updateInfoBar();
+        });
+
+        this.editor.on("input", () => {
+            this.updateInfoBar();
+        });
+
+        this.editor.on("keyboardActivity", (e) => {
+            switch(e.command.name) {
+                case "golineup":
+                case "golinedown":
+                case "gotoleft":
+                case "gotoright":
+                    this.infoBarService.setInfoBarCursorPos(
+                        this.editor.getCursorPosition()
+                    );
+                    break;
+                default:
+                    break;
+            }
+        });
+
         this.editor.on("focus", () => {
             this.editorsService.setActiveEditor(this.uuid);
         });
 
         this.editor.on("changeSession", (session) => {
             this.lspService.registerEditor(this.editor);
+            this.updateInfoBar();
         });
+    }
+
+    public updateInfoBar() {
+        this.infoBarService.setInfoBarFPath(this.activeFile?.path)
+        this.infoBarService.setInfoBarCursorPos(
+            this.editor.getCursorPosition()
+        );
+        this.infoBarService.setInfoBarFType(
+            this.editor.session.getMode()["$id"]
+        );
     }
 
     public newBuffer() {
         let buffer = ace.createEditSession([""]);
         this.editor.setSession(buffer);
         this.activeFile = null;
-
+        this.updateInfoBar();
     }
 
 }

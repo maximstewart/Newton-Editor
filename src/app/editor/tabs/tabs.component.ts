@@ -21,7 +21,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     templateUrl: './tabs.component.html',
     styleUrl: './tabs.component.css',
     host: {
-        'class': 'tabs scroller'
+        'class': 'row tabs scroller'
     }
 })
 export class TabsComponent {

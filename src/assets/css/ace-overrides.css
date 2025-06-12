@@ -12,3 +12,8 @@
 .ace_autocomplete {
     background-color: #25282c !important;
 }
+
+.ace_sb-v,
+.ace_sb-h {
+    width: 0.8em !important;
+}

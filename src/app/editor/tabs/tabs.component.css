@@ -1,7 +1,22 @@
-.tab,
-.title,
-.close-button {
-    color: rgba(255, 255, 255, 0.64);
+.tab {
+    display: flex;
+    overflow: auto;
+    float: left;
+    margin-right: 2em;
+    font-size: 0.2em;
+
+    border-top-style: solid;
+    border-top-color: #ffffff64;
+    border-top-width: 2px;
+
+    border-left-style: solid;
+    border-left-color: #ffffff64;
+    border-left-width: 2px;
+
+    border-right-style: solid;
+    border-right-color: #ffffff64;
+    border-right-width: 2px;
+
 }
 
 .tab:hover {

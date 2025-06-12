@@ -33,7 +33,7 @@ export class AceEditorBase {
     }
 
     protected search() {
-        console.log(this.editor.getSession()["$modeId"])
+        console.log(this.editor.session.getMode()["$id"]);
     }
 
     protected openFiles() {
