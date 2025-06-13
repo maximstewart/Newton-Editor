@@ -27,6 +27,7 @@ declare global {
             openFiles: (arg0) => Promise<string>,
             saveFile: (arg0: any, arg1: any) => Promise<string>,
             saveFileAs: (arg0: any) => Promise<string>,
+            closeFile: (arg0: any) => Promise<string>,
             getPathForFile: any,
             onLoadFiles: (arg0: any) => Promise<string>,
         }

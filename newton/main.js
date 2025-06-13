@@ -11,15 +11,17 @@ const { newton } = require('./app');
 
 const loadHandlers = () => {
     ipcMain.handle('getLspConfigData', (eve) => newton.fs.getLspConfigData());
-    ipcMain.handle('getFileContents', (eve, file) => newton.fs.getFileContents(file));
+    ipcMain.handle('getFileContents', (eve, path) => newton.fs.getFileContents(path));
     ipcMain.handle('openFiles', (eve, startPath) => newton.fs.openFiles(startPath));
     ipcMain.handle('saveFile', (eve, path, content) => newton.fs.saveFile(path, content));
+    ipcMain.handle('closeFile', (eve, path) => newton.fs.closeFile(path));
     ipcMain.handle('saveFileAs', (eve, content) => newton.fs.saveFileAs(content));
 }
 
 
 app.whenReady().then(() => {
     newton.args.loadArgs();
+    newton.fs.loadFilesWatcher();
     loadHandlers();
 
     newton.settings.loadsettings();

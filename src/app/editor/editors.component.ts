@@ -94,6 +94,7 @@ export class EditorsComponent {
 
             file.session.destroy();
             this.files.delete(path);
+            window.fs.closeFile(path);
         });
     }
 

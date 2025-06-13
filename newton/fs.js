@@ -5,13 +5,13 @@ const os         = require('os')
 const chokidar   = require('chokidar');
 
 
-
 const HOME_DIR              = os.homedir();
 const BASE_PATH             = '../build/app';
 const CONFIG_PATH           = path.join(HOME_DIR, "/.config/newton/");
 const SETTINGS_CONFIG_PATH  = path.join(CONFIG_PATH, "/settings.json");
 const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json")
 let window                  = null;
+let watcher                 = null;
 
 
 const getIconPath = () => {
@@ -34,7 +34,9 @@ const getFileContents = (_path, useRelativePath = false) => {
         if (!useRelativePath) {
             return fs.readFileSync(_path, 'utf8');
         } else {
-            return fs.readFileSync(path.join(__dirname, _path), 'utf8');
+            let fpath = path.join(__dirname, _path);
+            watcher.add(fpath);
+            return fs.readFileSync(fpath, 'utf8');
         }
     } catch(err) {
         return `{"message": {"type": "error", "text": "Error: Could not read  ${_path}"}}`;
@@ -56,6 +58,7 @@ const saveFileAs = (content) => {
         }
 
         saveFile(response.filePath, content);
+        watcher.add(response.filePath);
     });
 }
 
@@ -87,13 +90,40 @@ const openFiles = (startPath) => {
         }
 
         window.webContents.send('load-files', response.filePaths);
+        watcher.add(response.filePaths);
     });
 }
+
 
 const setWindow = (win) => {
         window = win;
 }
 
+const loadFilesWatcher = () => {
+    watcher = chokidar.watch([], {});
+
+    watcher.on('change', (fpath) => {
+        console.log("File (changed) : ", fpath);
+    }).on('unlink', (fpath) => {
+        console.log("File (unlinked) : ", fpath);
+    });
+
+    /*
+    watcher = chokidar.watch([], {
+      ignored: (path, stats) => stats?.isFile() && !path.endsWith('.js'), // only watch js files
+      persistent: true,
+    });
+    */
+}
+
+const unwatchFile = async (fpath) => {
+    console.log("File (unwatch) : ", fpath);
+    await watcher.unwatch(fpath);
+}
+
+const closeFile = (fpath) => {
+    unwatchFile(fpath);
+}
 
 
 module.exports = {
@@ -101,10 +131,13 @@ module.exports = {
         openFiles: openFiles,
         saveFile: saveFile,
         saveFileAs: saveFileAs,
+        closeFile: closeFile,
         getIconPath: getIconPath,
         getFileContents: getFileContents,
         getLspConfigData: getLspConfigData,
         getSettingsConfigData: getSettingsConfigData,
-        setWindow: setWindow
+        setWindow: setWindow,
+        loadFilesWatcher: loadFilesWatcher,
+        unwatchFile: unwatchFile,
     }
 };
