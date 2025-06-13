@@ -7,7 +7,7 @@ import { NewtonFile } from '../../common/types/file.type';
 
 
 @Directive()
-export class AceEditorBase {
+export class NewtonEditorBase {
     @ViewChild('editor') editorElm!: ElementRef;
     @Input() editorSettings!: typeof EditorSettings;
     editor!: any;
@@ -30,6 +30,10 @@ export class AceEditorBase {
 
     public removeActiveStyling() {
         this.editorElm.nativeElement.classList.remove("active-editor")
+    }
+
+    public commander() {
+        this.editor.execCommand("openCommandPalette");
     }
 
     protected search() {

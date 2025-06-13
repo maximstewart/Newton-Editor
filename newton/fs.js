@@ -1,7 +1,8 @@
 const { dialog } = require('electron');
-const path = require('node:path');
-const fs   = require('node:fs');
-const os   = require('os')
+const path       = require('node:path');
+const fs         = require('node:fs');
+const os         = require('os')
+const chokidar   = require('chokidar');
 
 
 

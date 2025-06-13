@@ -2,6 +2,20 @@
 
 
 /* IDs */
+#ace_settingsmenu, #kbshortcutmenu {
+    background-color: rgba(0, 0, 0, 0.0);
+    color: rgba(255, 255, 255, 1.0);
+    box-shadow: -1px 4px 5px rgba(124, 124, 124, 0.64);
+    padding: 1em 0.5em 2em 1em;
+    overflow: auto;
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+    right: 0;
+    top: 0;
+    z-index: 9991;
+    cursor: default;
+}
 
 
 /* CLASSES */
@@ -11,6 +25,23 @@
 
 .ace_autocomplete {
     background-color: #25282c !important;
+}
+
+.ace_editor.ace_autocomplete {
+    width: 300px;
+    z-index: 200000;
+    border: 1px lightgray solid;
+    position: fixed;
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    line-height: 1.4;
+    background-color: rgba(0, 0, 0, 0.0);
+    color: rgba(255, 255, 255, 1.0);
+}
+
+.ace_selected {
+    background: rgba(249, 148, 6, 0.64);
+    color: rgba(0, 0, 0, 1.0);
+    /* color: rgba(255, 255, 255, 1.0); */
 }
 
 .ace_sb-v,

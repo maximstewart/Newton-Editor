@@ -2,30 +2,32 @@ import { Component } from "@angular/core";
 
 // Import Ace and its modes/themes so that `ace` global is defined
 import * as ace from "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/ext-settings_menu";
+import "ace-builds/src-noconflict/ext-command_bar";
+import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-one_dark";
 import "ace-builds/src-noconflict/theme-dracula";
-import "ace-builds/src-noconflict/ext-language_tools";
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
 import { LSPService } from '../../common/services/lsp.service';
 
-import { AceEditorBase } from './ace-editor.base';
+import { NewtonEditorBase } from './newton-editor.base';
 
 
 
 @Component({
-    selector: 'ace-editor',
+    selector: 'newton-editor',
     standalone: true,
     imports: [
     ],
-    templateUrl: './ace-editor.component.html',
-    styleUrl: './ace-editor.component.css',
+    templateUrl: './newton-editor.component.html',
+    styleUrl: './newton-editor.component.css',
     host: {
         'class': 'col'
     }
 })
-export class AceEditorComponent extends AceEditorBase {
+export class NewtonEditorComponent extends NewtonEditorBase {
 
 
     constructor(
@@ -52,7 +54,14 @@ export class AceEditorComponent extends AceEditorBase {
         this.editor.setOptions( this.editorSettings.CONFIG );
         // this.editor.commands.addCommands( this.editorSettings.KEYBINDINGS );
         this.editor.commands.addCommands([
-             {
+            {
+                name: "openCommandPalette2",
+                bindKey: {linux: "Command-Shift-/|F1", win: "Ctrl-Shift-/|F1"},
+                exec: () => {
+                    this.commander();
+                },
+                 readOnly: false
+            }, {
                  name: "search",
                  bindKey: {win: "ctrl-f", mac: "ctrl-f"},
                  exec: () => {
@@ -142,6 +151,10 @@ export class AceEditorComponent extends AceEditorBase {
 
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
+        this.editor.on("changeStatus", (e) => {
+            console.log(e);
+        });
+
         this.editor.on("click", () => {
             this.updateInfoBar();
         });

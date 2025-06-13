@@ -4,7 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { EditSession } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
 
-import { AceEditorComponent } from "./ace/ace-editor.component";
+import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
 import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
 
@@ -31,7 +31,7 @@ export class EditorsComponent {
     private unsubscribe = new Subject<void>();
 
     @ViewChild('containerRef', {read: ViewContainerRef}) containerRef!: ViewContainerRef;
-    editors: Map<string, ComponentRef<AceEditorComponent>>;
+    editors: Map<string, ComponentRef<NewtonEditorComponent>>;
     editorSettings: typeof EditorSettings;
     files: Map<string, NewtonFile>;
     activeEditor!: string;
@@ -43,7 +43,7 @@ export class EditorsComponent {
         private tabsService: TabsService
     ) {
         this.editorSettings = EditorSettings;
-        this.editors = new Map<string, ComponentRef<AceEditorComponent>>();
+        this.editors = new Map<string, ComponentRef<NewtonEditorComponent>>();
         this.files   = new Map<string, NewtonFile>();
     }
 
@@ -141,6 +141,8 @@ export class EditorsComponent {
                 case "zoom-out":
                     editorComponent.zoomOut()
                     break;
+                case "open-settings":
+                    editor.showSettingsMenu();
                 case "show-about":
                     break;
                 default:
@@ -155,7 +157,7 @@ export class EditorsComponent {
     }
 
     private createEditor() {
-        const component = this.containerRef.createComponent(AceEditorComponent);
+        const component = this.containerRef.createComponent(NewtonEditorComponent);
         component.instance.editorSettings = this.editorSettings;
         this.editors.set(component.instance.uuid, component)
 

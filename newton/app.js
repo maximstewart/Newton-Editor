@@ -1,10 +1,11 @@
-const { BrowserWindow } = require('electron');
-const path = require('node:path');
+const { BrowserWindow }   = require('electron');
+const path                = require('node:path');
 
-const { menu } = require('./menu');
-const { argsParser } = require('./args-parser');
+const { menu }            = require('./menu');
+const { systemTray }      = require('./system-tray');
+const { argsParser }      = require('./args-parser');
 const { settingsManager } = require('./settings-manager');
-const { newtonFs } = require('./fs');
+const { newtonFs }        = require('./fs');
 
 
 const BASE_PATH = '../build/app';
@@ -47,6 +48,7 @@ const createWindow = (startType = "build", debug = false, args = []) => {
     });
 
     menu.load(win);
+    systemTray.load(menu.menuStruct);
 
     // win.setAutoHideMenuBar(true)
 
