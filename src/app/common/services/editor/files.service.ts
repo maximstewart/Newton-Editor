@@ -1,0 +1,90 @@
+import { Injectable } from '@angular/core';
+
+import { EditSession } from 'ace-builds';
+import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
+
+import { TabsService } from './tabs/tabs.service';
+
+import { NewtonFile } from '../../types/file.type';
+import { ServiceMessage } from '../../types/service-message.type';
+
+
+
+@Injectable({
+    providedIn: 'root'
+})
+export class FilesService {
+    files: Map<string, NewtonFile>;
+
+
+    constructor(
+        private tabsService: TabsService,
+    ) {
+        this.files = new Map<string, NewtonFile>();
+    }
+
+
+    get(path: string): NewtonFile {
+        return this.files.get(path);
+    }
+
+    delete(file: NewtonFile) {
+        file.session.destroy();
+        window.fs.closeFile(file.path);
+        this.files.delete(file.path);
+    }
+
+    set(file: NewtonFile) {
+        this.files.set(file.path, file);
+    }
+
+
+
+    async loadFilesList(files: Array<NewtonFile>): Promise<NewtonFile | undefined | null> {
+	    for (let i = 0; i < files.length; i++) {
+		    const file = files[i];
+		    const path = window.fs.getPathForFile(file);
+
+		    if (!file || !path) continue;
+		    if ( this.files.get(path) ) continue;
+
+		    await this.addFile(path, file);
+		    this.addTab(file);
+	    }
+
+	    return files[ files.length - 1 ];
+    }
+
+    async addFile(path: string, file: NewtonFile): Promise<void> {
+	    try {
+	        let pathParts = path.split("/");
+	        file.fname    = pathParts[ pathParts.length - 1 ];
+	        file.path     = path;
+	        file.hash     = btoa(file.path);
+	        let data      = await window.fs.getFileContents(file.path);
+            file.session  = new EditSession(data);
+
+            file.session.setMode(
+                getModeForPath( file.path ).mode
+            );
+            
+            this.files.set(file.path, file);
+	    } catch (error) {
+		    console.log(
+		        `----  Error  ----\nPath: ${path}\nMessage: ${error}`
+		    );
+	    }
+    }
+
+    async addTab(file: NewtonFile) {
+        let message     = new ServiceMessage();
+        message.action  = "create-tab";
+        message.message = file.fname;
+        message.uuid    = file.hash;
+        message.data    = file.path;
+
+        this.tabsService.setData(message);
+    }
+
+
+}
