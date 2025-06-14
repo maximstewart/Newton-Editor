@@ -24,7 +24,7 @@ import { NewtonEditorBase } from './newton-editor.base';
     templateUrl: './newton-editor.component.html',
     styleUrl: './newton-editor.component.css',
     host: {
-        'class': 'col'
+        'class': 'col col-6'
     }
 })
 export class NewtonEditorComponent extends NewtonEditorBase {

@@ -197,6 +197,59 @@ export class EditorsComponent {
         this.unsubscribe.complete();
     }
 
+    // Note: Only really works with 2 editors and very brittle logic.
+    protected setEditorSize(event: any) {
+        let lEditorComponent = null;
+        let rEditorComponent = null;
+        let lSize = 6;
+        let rSize = 6;
+
+        if (
+            event.target.parentElement.classList.contains("editor-left-size")
+        ) {
+            lSize   = parseInt(
+                event.target.classList[1].split("-")[1]
+            );
+            rSize   = 12 - lSize;
+
+            lEditorComponent = this.editorsService.get(this.activeEditor);
+            if (lEditorComponent.leftSiblingUUID) {
+                rEditorComponent = lEditorComponent;
+                lEditorComponent = this.editorsService.get(lEditorComponent.leftSiblingUUID);
+            } else {
+                rEditorComponent = this.editorsService.get(lEditorComponent.rightSiblingUUID);
+            }
+        } else {
+            rSize   = parseInt(
+                event.target.classList[1].split("-")[1]
+            );
+            lSize   = 12 - rSize;
+            rEditorComponent = this.editorsService.get(this.activeEditor);
+            if (rEditorComponent.rightSiblingUUID) {
+                lEditorComponent = rEditorComponent;
+                rEditorComponent = this.editorsService.get(rEditorComponent.rightSiblingUUID);
+            } else {
+                lEditorComponent = this.editorsService.get(rEditorComponent.leftSiblingUUID);
+            }
+        }
+
+        let lElm = lEditorComponent.editorElm.nativeElement.parentElement;
+        let rElm = rEditorComponent.editorElm.nativeElement.parentElement;
+
+        lElm.setAttribute(
+            'class',
+            (lSize == 0) ? "hidden" : `col col-${lSize}`
+        );
+
+        rElm.setAttribute(
+            'class',
+            (rSize == 0) ? "hidden" : `col col-${rSize}`
+        );
+
+        if (lSize == 0) rEditorComponent.editor.focus();
+        if (rSize == 0) lEditorComponent.editor.focus();
+    }
+
     private createEditor() {
         const component = this.containerRef.createComponent(NewtonEditorComponent);
         component.instance.editorSettings = this.editorsService.editorSettings;

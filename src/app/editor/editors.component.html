@@ -1,6 +1,38 @@
 <div class="col">
+
     <div class="row dropzone" #dropzone dropzone (fileDropped)="onFileDropped($event)">
         <ng-container #containerRef>
         </ng-container>
     </div>
+    <div class="row">
+        <div class="col editor-left-size" (click)="setEditorSize($event)">
+            <div class="editor-size-button size-12">
+                100%
+            </div>
+            <div class="editor-size-button size-8">
+                75%
+            </div>
+            <div class="editor-size-button size-6">
+                50%
+            </div>
+            <div class="editor-size-button size-2">
+                25%
+            </div>
+        </div>
+        <div class="col editor-right-size" (click)="setEditorSize($event)">
+            <div class="editor-size-button size-12">
+                100%
+            </div>
+            <div class="editor-size-button size-8">
+                75%
+            </div>
+            <div class="editor-size-button size-6">
+                50%
+            </div>
+            <div class="editor-size-button size-2">
+                25%
+            </div>
+        </div>
+    </div>
+
 <div>

@@ -38,6 +38,10 @@ body {
 
 
 
+.hidden {
+    display: none;
+}
+
 .scroller {
 /*
     -webkit-scrollbar-color: #00000084 #ffffff64;

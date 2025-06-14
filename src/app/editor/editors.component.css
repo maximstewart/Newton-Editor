@@ -1,3 +1,20 @@
 .dropzone {
-    height: 92vh;
+    height: 90vh;
+}
+
+.editor-size-button {
+    text-align: center;
+    width: 4em;
+    color: rgba(225, 225, 225, 0.64);
+    border-style: solid;
+    border-width: thin;
+    border-color: rgba(124, 124, 124, 0.64);
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    float: left;
+}
+
+.editor-size-button:hover {
+    cursor: pointer;
+    border-color: rgba(0, 124, 0, 0.64);
 }
