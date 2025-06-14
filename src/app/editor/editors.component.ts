@@ -8,7 +8,6 @@ import { FilesService } from '../common/services/editor/files.service';
 import { DndDirective } from '../common/directives/dnd.directive';
 import { NewtonFile } from '../common/types/file.type';
 import { ServiceMessage } from '../common/types/service-message.type';
-import { EditorSettings } from "../common/configs/editor.config";
 
 
 
@@ -28,8 +27,6 @@ export class EditorsComponent {
     private unsubscribe = new Subject<void>();
 
     @ViewChild('containerRef', {read: ViewContainerRef}) containerRef!: ViewContainerRef;
-    editors: Map<string, ComponentRef<NewtonEditorComponent>>;
-    editorSettings: typeof EditorSettings;
     activeEditor!: string;
 
 
@@ -37,8 +34,6 @@ export class EditorsComponent {
         private editorsService: EditorsService,
         private filesService: FilesService
     ) {
-        this.editorSettings = EditorSettings;
-        this.editors = new Map<string, ComponentRef<NewtonEditorComponent>>();
     }
 
 
@@ -60,27 +55,27 @@ export class EditorsComponent {
         this.editorsService.selectSessionLeftRequested$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
-            let editorComponent  = this.editors.get(uuid).instance;
+            let editorComponent  = this.editorsService.get(uuid);
             if (!editorComponent.leftSiblingUUID) return;
-            let siblingComponent = this.editors.get(editorComponent.leftSiblingUUID).instance;
+            let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
             siblingComponent.editor.focus()
         });
 
         this.editorsService.selectSessionRightRequested$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
-            let editorComponent  = this.editors.get(uuid).instance;
+            let editorComponent  = this.editorsService.get(uuid);
             if (!editorComponent.rightSiblingUUID) return;
-            let siblingComponent = this.editors.get(editorComponent.rightSiblingUUID).instance;
+            let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
             siblingComponent.editor.focus()
         });
 
         this.editorsService.moveSessionLeftRequested$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
-            let editorComponent  = this.editors.get(uuid).instance;
+            let editorComponent  = this.editorsService.get(uuid);
             if (!editorComponent.leftSiblingUUID) return;
-            let siblingComponent = this.editors.get(editorComponent.leftSiblingUUID).instance;
+            let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
             let session = editorComponent.editor.getSession();
             let siblingSession = siblingComponent.editor.getSession();
 
@@ -93,9 +88,9 @@ export class EditorsComponent {
         this.editorsService.moveSessionRightRequested$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
-            let editorComponent  = this.editors.get(uuid).instance;
+            let editorComponent  = this.editorsService.get(uuid);
             if (!editorComponent.rightSiblingUUID) return;
-            let siblingComponent = this.editors.get(editorComponent.rightSiblingUUID).instance;
+            let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
             let session = editorComponent.editor.getSession();
             let siblingSession = siblingComponent.editor.getSession();
 
@@ -108,9 +103,9 @@ export class EditorsComponent {
         this.editorsService.newActiveEditor$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
-            this.editors.get(this.activeEditor).instance.removeActiveStyling();
+            this.editorsService.get(this.activeEditor).removeActiveStyling();
             this.activeEditor = uuid;
-            this.editors.get(this.activeEditor).instance.addActiveStyling();
+            this.editorsService.get(this.activeEditor).addActiveStyling();
         });
 
         this.editorsService.loadTabToEditor$().pipe(
@@ -128,7 +123,7 @@ export class EditorsComponent {
             takeUntil(this.unsubscribe)
         ).subscribe((path: string) => {
             let file    = this.filesService.get(path);
-            let editors = [...this.editors.values()];
+            let editors = this.editorsService.getEditorsAsArray();
 
             for (let i = 0; i < editors.length; i++) {
                 let editorComponent = editors[i].instance;
@@ -204,8 +199,8 @@ export class EditorsComponent {
 
     private createEditor() {
         const component = this.containerRef.createComponent(NewtonEditorComponent);
-        component.instance.editorSettings = this.editorSettings;
-        this.editors.set(component.instance.uuid, component)
+        component.instance.editorSettings = this.editorsService.editorSettings;
+        this.editorsService.set(component.instance.uuid, component)
 
         return component;
     }
@@ -226,18 +221,18 @@ export class EditorsComponent {
     }
 
     private getSession() {
-        let editorComponent = this.editors.get(this.activeEditor)?.instance;
+        let editorComponent = this.editorsService.get(this.activeEditor);
         let editor          = editorComponent.editor;
 
         return editor.getSession();
     }
 
     private getActiveEditorComponent(): any {
-        return this.editors.get(this.activeEditor)?.instance;
+        return this.editorsService.get(this.activeEditor);
     }
 
     private getActiveEditor(): any {
-        let editorComponent = this.editors.get(this.activeEditor)?.instance;
+        let editorComponent = this.editorsService.get(this.activeEditor);
         let editor          = editorComponent.editor;
         return editor;
     }
