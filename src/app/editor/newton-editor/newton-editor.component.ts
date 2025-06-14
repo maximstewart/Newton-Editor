@@ -56,7 +56,7 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         this.editor.commands.addCommands([
             {
                 name: "openCommandPalette2",
-                bindKey: {linux: "Command-Shift-/|F1", win: "Ctrl-Shift-/|F1"},
+                bindKey: {linux: "Command-shift-/|F1", win: "ctrl-shift-/|F1"},
                 exec: () => {
                     this.commander();
                 },
@@ -68,6 +68,34 @@ export class NewtonEditorComponent extends NewtonEditorBase {
                      this.search();
                  },
                  readOnly: true
+            }, {
+                 name: "selectSessionLeft",
+                 bindKey: {win: "ctrl-pageup", mac: "ctrl-pageup"},
+                 exec: () => {
+                     this.selectSessionLeft();
+                 },
+                 readOnly: false
+            }, {
+                 name: "selectSessionRight",
+                 bindKey: {win: "ctrl-pagedown", mac: "ctrl-pagedown"},
+                 exec: () => {
+                     this.selectSessionRight();
+                 },
+                 readOnly: false
+            }, {
+                 name: "moveSessionLeft",
+                 bindKey: {win: "ctrl-shift-up", mac: "ctrl-shift-up"},
+                 exec: () => {
+                     this.moveSessionLeft();
+                 },
+                 readOnly: false
+            }, {
+                 name: "moveSessionRight",
+                 bindKey: {win: "ctrl-shift-down", mac: "ctrl-shift-down"},
+                 exec: () => {
+                     this.moveSessionRight();
+                 },
+                 readOnly: false
              }, {
                  name: "movelinesUp",
                  bindKey: {win: "ctrl-up", mac: "ctrl-up"},
@@ -151,8 +179,8 @@ export class NewtonEditorComponent extends NewtonEditorBase {
 
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
-        this.editor.on("changeStatus", (e) => {
-            console.log(e);
+        this.editor.on("focus", (e) => {
+            this.updateInfoBar();
         });
 
         this.editor.on("click", () => {
@@ -203,6 +231,22 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         this.editor.setSession(buffer);
         this.activeFile = null;
         this.updateInfoBar();
+    }
+
+    public selectSessionLeft() {
+        this.editorsService.selectSessionLeft(this.uuid);
+    }
+
+    public selectSessionRight() {
+        this.editorsService.selectSessionRight(this.uuid);
+    }
+
+    public moveSessionLeft() {
+        this.editorsService.moveSessionLeft(this.uuid);
+    }
+
+    public moveSessionRight() {
+        this.editorsService.moveSessionRight(this.uuid);
     }
 
 }

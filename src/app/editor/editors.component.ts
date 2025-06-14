@@ -52,14 +52,65 @@ export class EditorsComponent {
         this.loadSubscribers();
         this.loadMainSubscribers();
 
-        let editor                = this.createEditor();
-        this.activeEditor         = editor.instance.uuid;
-        editor.instance.isDefault = true;
+        let leftEditor                       = this.createEditor();
+        let rightEditor                      = this.createEditor();
 
-        this.createEditor();
+        this.activeEditor                    = leftEditor.instance.uuid;
+        leftEditor.instance.isDefault        = true;
+        leftEditor.instance.rightSiblingUUID = rightEditor.instance.uuid;
+        rightEditor.instance.leftSiblingUUID = leftEditor.instance.uuid;
     }
 
     loadSubscribers() {
+
+        this.editorsService.selectSessionLeftRequested$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((uuid: string) => {
+            let editorComponent  = this.editors.get(uuid).instance;
+            if (!editorComponent.leftSiblingUUID) return;
+            let siblingComponent = this.editors.get(editorComponent.leftSiblingUUID).instance;
+            siblingComponent.editor.focus()
+        });
+
+        this.editorsService.selectSessionRightRequested$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((uuid: string) => {
+            let editorComponent  = this.editors.get(uuid).instance;
+            if (!editorComponent.rightSiblingUUID) return;
+            let siblingComponent = this.editors.get(editorComponent.rightSiblingUUID).instance;
+            siblingComponent.editor.focus()
+        });
+
+        this.editorsService.moveSessionLeftRequested$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((uuid: string) => {
+            let editorComponent  = this.editors.get(uuid).instance;
+            if (!editorComponent.leftSiblingUUID) return;
+            let siblingComponent = this.editors.get(editorComponent.leftSiblingUUID).instance;
+            let session = editorComponent.editor.getSession();
+            let siblingSession = siblingComponent.editor.getSession();
+
+            if (session == siblingSession) return;
+            siblingComponent.editor.setSession(session);
+            editorComponent.newBuffer();
+            siblingComponent.editor.focus()
+        });
+
+        this.editorsService.moveSessionRightRequested$().pipe(
+            takeUntil(this.unsubscribe)
+        ).subscribe((uuid: string) => {
+            let editorComponent  = this.editors.get(uuid).instance;
+            if (!editorComponent.rightSiblingUUID) return;
+            let siblingComponent = this.editors.get(editorComponent.rightSiblingUUID).instance;
+            let session = editorComponent.editor.getSession();
+            let siblingSession = siblingComponent.editor.getSession();
+
+            if (session == siblingSession) return;
+            siblingComponent.editor.setSession(session);
+            editorComponent.newBuffer();
+            siblingComponent.editor.focus()
+        });
+
         this.editorsService.newActiveEditor$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((uuid: string) => {
@@ -96,6 +147,7 @@ export class EditorsComponent {
             this.files.delete(path);
             window.fs.closeFile(path);
         });
+
     }
 
     loadMainSubscribers() {

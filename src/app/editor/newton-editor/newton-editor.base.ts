@@ -12,6 +12,8 @@ export class NewtonEditorBase {
     @Input() editorSettings!: typeof EditorSettings;
     editor!: any;
     uuid!: string;
+    leftSiblingUUID!: string;
+    rightSiblingUUID!: string;
     cutBuffer: string = "";
     timerId: number   = -1;
     activeFile!: NewtonFile;
