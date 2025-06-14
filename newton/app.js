@@ -6,6 +6,7 @@ const { systemTray }      = require('./system-tray');
 const { argsParser }      = require('./args-parser');
 const { settingsManager } = require('./settings-manager');
 const { newtonFs }        = require('./fs');
+const { newtonIPC }       = require('./ipc');
 
 
 const BASE_PATH = '../build/app';
@@ -85,5 +86,6 @@ module.exports = {
         args: argsParser,
         settings: settingsManager,
         fs: newtonFs,
+        ipc: newtonIPC,
     }
 };

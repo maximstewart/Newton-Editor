@@ -1,15 +1,15 @@
-const { dialog } = require('electron');
-const path       = require('node:path');
-const fs         = require('node:fs');
-const os         = require('os')
-const chokidar   = require('chokidar');
+const { dialog }     = require('electron');
+const path           = require('node:path');
+const fs             = require('node:fs');
+const os             = require('os');
+const chokidar       = require('chokidar');
 
 
 const HOME_DIR              = os.homedir();
 const BASE_PATH             = '../build/app';
 const CONFIG_PATH           = path.join(HOME_DIR, "/.config/newton/");
 const SETTINGS_CONFIG_PATH  = path.join(CONFIG_PATH, "/settings.json");
-const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json")
+const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json");
 let window                  = null;
 let watcher                 = null;
 
@@ -43,10 +43,14 @@ const getFileContents = (_path, useRelativePath = false) => {
     }
 }
 
+const setWindow = (win) => {
+        window = win;
+}
+
 const saveFile = (fpath, content)  => {
     fs.writeFile(fpath, content, (err) => {
         if (!err) return
-        console.error("An error ocurred writing to the file " + err.message)
+        console.error("An error ocurred writing to the file " + err.message);
     });
 }
 
@@ -94,26 +98,14 @@ const openFiles = (startPath) => {
     });
 }
 
-
-const setWindow = (win) => {
-        window = win;
-}
-
 const loadFilesWatcher = () => {
     watcher = chokidar.watch([], {});
 
     watcher.on('change', (fpath) => {
-        console.log("File (changed) : ", fpath);
+        console.debug("File (changed) : ", fpath);
     }).on('unlink', (fpath) => {
-        console.log("File (unlinked) : ", fpath);
+        console.debug("File (unlinked) : ", fpath);
     });
-
-    /*
-    watcher = chokidar.watch([], {
-      ignored: (path, stats) => stats?.isFile() && !path.endsWith('.js'), // only watch js files
-      persistent: true,
-    });
-    */
 }
 
 const unwatchFile = async (fpath) => {
@@ -126,8 +118,10 @@ const closeFile = (fpath) => {
 }
 
 
+
 module.exports = {
     newtonFs: {
+        setWindow: setWindow,
         openFiles: openFiles,
         saveFile: saveFile,
         saveFileAs: saveFileAs,
@@ -136,7 +130,6 @@ module.exports = {
         getFileContents: getFileContents,
         getLspConfigData: getLspConfigData,
         getSettingsConfigData: getSettingsConfigData,
-        setWindow: setWindow,
         loadFilesWatcher: loadFilesWatcher,
         unwatchFile: unwatchFile,
     }

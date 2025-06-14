@@ -1,12 +1,15 @@
 try {
     require('electron-reloader')(module)
-} catch {}
-
+} catch(error) {
+    console.log(error);
+}
 
 const { app, ipcMain } = require('electron');
 
 const { newton } = require('./app');
 
+
+let window = null;
 
 
 const loadHandlers = () => {
@@ -18,28 +21,42 @@ const loadHandlers = () => {
     ipcMain.handle('saveFileAs', (eve, content) => newton.fs.saveFileAs(content));
 }
 
-
-app.whenReady().then(() => {
-    newton.args.loadArgs();
-    newton.fs.loadFilesWatcher();
-    loadHandlers();
-
-    newton.settings.loadsettings();
-    let window = newton.createWindow(
+const createWindow = () => {
+    window = newton.createWindow(
         newton.args.getStartType(),
         newton.args.debugMode(),
         newton.args.getArgs(),
     );
+}
+
+
+app.whenReady().then(async () => {
+    newton.args.loadArgs();
+
+    if ( !await newton.ipc.isIPCServerUp() ) {
+        newton.ipc.loadIPCServer();
+    } else {
+        console.log("IPCServer: Is loaded... sending files to existing app.");
+        await newton.ipc.sendFilesToIPC(
+            newton.args.getArgs()
+        );
+        app.quit();
+    }
+
+    newton.settings.loadsettings();
+    newton.fs.loadFilesWatcher();
+
+    loadHandlers();
+    createWindow();
+
     newton.fs.setWindow(window);
+    newton.fs.ipc.setWindow(window);
+
 });
  
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        newton.createWindow(
-            newton.args.getStartType(),
-            newton.args.debugMode(),
-            newton.args.getArgs(),
-        );
+        createWindow();
     };
 });
 
