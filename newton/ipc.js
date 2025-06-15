@@ -41,14 +41,14 @@ const loadIPCServer = (fpath) => {
     });
 
     ipcServer.listen(ipcServerPort, () => {
-        console.debug(`IPCServer is up on port ${ipcServerPort}`);
+        console.debug("IPCServer (start) : Started on port ", ipcServerPort, " .");
     });
 
 }
 
 const isIPCServerUp = async () => {
     const response = await fetch(`${ipcServerURL}/is-up`).catch((err) => {
-        console.debug(err);
+        console.debug("IPCServer (status) : Not up; okay to start.");
         return {
             text: () => {
                 return "no";

@@ -48,14 +48,14 @@
                         ],
                         "scripts":[
                         ],
-                        "optimization": false
+                        "optimization": true
                     },
                     "configurations":{
                         "production":{
                             "budgets":[
                                 {
                                     "type":"initial",
-                                    "maximumWarning":"5MB",
+                                    "maximumWarning":"15MB",
                                     "maximumError":"50MB"
                                 },
                                 {

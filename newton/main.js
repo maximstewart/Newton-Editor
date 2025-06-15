@@ -1,9 +1,3 @@
-try {
-    require('electron-reloader')(module)
-} catch(error) {
-    console.log(error);
-}
-
 const { app, ipcMain } = require('electron');
 
 const { newton } = require('./app');
