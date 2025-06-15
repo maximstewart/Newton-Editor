@@ -144,6 +144,8 @@ export class EditorsComponent {
             for (let i = 0; i < paths.length; i++) {
                 let file = new File([], "") as NewtonFile;
 
+                if ( this.filesService.get(paths[i]) ) continue;
+
                 await this.filesService.addFile(paths[i], file);
                 this.filesService.addTab(file);
             }

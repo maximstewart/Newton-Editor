@@ -37,7 +37,7 @@ app.whenReady().then(async () => {
         newton.ipc.loadIPCServer();
     } else {
         console.log("IPCServer: Is loaded... sending files to existing app.");
-        await newton.ipc.sendFilesToIPC(
+        newton.ipc.sendFilesToIPC(
             newton.args.getArgs()
         );
         app.quit();
