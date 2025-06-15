@@ -34,12 +34,13 @@ const createWindow = (startType = "build", debug = false, args = []) => {
         icon: settingsManager.getIconPath(),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
+            backgroundThrottling: false,
+            webSecurity: true,
+            sandbox: true,
             nodeIntegration: false,
             contextIsolation: true,
             enableRemoteModule: false,
             plugins: true,
-            webSecurity: true,
-            sandbox: true,
         }
     });
 

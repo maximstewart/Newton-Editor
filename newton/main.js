@@ -1,9 +1,15 @@
 const { app, ipcMain } = require('electron');
 
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
 const { newton } = require('./app');
 
 
+
 let window = null;
+
 
 
 const loadHandlers = () => {

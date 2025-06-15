@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil } from 'rxjs';
@@ -34,7 +34,8 @@ export class TabsComponent {
 
     constructor(
         private editorsService: EditorsService,
-        private tabsService: TabsService
+        private tabsService: TabsService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
     }
 
@@ -54,7 +55,8 @@ export class TabsComponent {
     }
 
     private createTab(title: string, uuid: string, path: string): void {
-        this.tabs.push({title: title, path: path, uuid: uuid})
+        this.tabs.push({title: title, path: path, uuid: uuid});
+        this.changeDetectorRef.detectChanges();
     }
 
     handleAction(event: any): void {
