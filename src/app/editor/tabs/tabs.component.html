@@ -4,6 +4,7 @@
      cdkDropListOrientation="horizontal"
      (cdkDropListDropped)="dropped($event)"
      (click)="handleAction($event)"
+     class="display-contents"
 >
 
     <div *ngFor="let tab of tabs"

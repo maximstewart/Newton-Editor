@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, TemplateRef, ComponentRef, ViewContai
 import { Subject, takeUntil } from 'rxjs';
 
 import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
+import { FilesModalComponent } from "./modals/files-modal.component";
 import { EditorsService } from '../common/services/editor/editors.service';
 import { FilesService } from '../common/services/editor/files.service';
 
@@ -15,7 +16,8 @@ import { ServiceMessage } from '../common/types/service-message.type';
     selector: 'editors',
     standalone: true,
     imports: [
-        DndDirective
+        DndDirective,
+        FilesModalComponent
     ],
     templateUrl: './editors.component.html',
     styleUrl: './editors.component.css',

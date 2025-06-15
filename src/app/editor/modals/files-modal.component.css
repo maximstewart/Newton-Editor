@@ -1,0 +1,16 @@
+.modal-column {
+    min-height: 24em;
+    max-height: 24em;
+    overflow: auto;
+}
+
+.close-button {
+    background: rgba(116, 0, 0, 0.64);
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.64);
+    border-width: 1px;
+}
+
+.close-button:hover {
+    background: rgba(256, 0, 0, 0.64);
+}

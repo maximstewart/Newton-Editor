@@ -9,8 +9,9 @@ import "ace-builds/src-noconflict/theme-one_dark";
 import "ace-builds/src-noconflict/theme-dracula";
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
-import { EditorsService } from '../../common/services/editor/editors.service';
+import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
 import { LSPService } from '../../common/services/lsp.service';
+import { EditorsService } from '../../common/services/editor/editors.service';
 
 import { NewtonEditorBase } from './newton-editor.base';
 
@@ -33,7 +34,8 @@ export class NewtonEditorComponent extends NewtonEditorBase {
     constructor(
         private infoBarService: InfoBarService,
         private editorsService: EditorsService,
-        private lspService: LSPService
+        private lspService: LSPService,
+        private filesModalService: FilesModalService
     ) {
         super();
     }
@@ -172,6 +174,13 @@ export class NewtonEditorComponent extends NewtonEditorBase {
                  bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
                  exec: () => {
                      this.saveFileAs();
+                 },
+                 readOnly: false
+            }, {
+                 name: "showModal",
+                 bindKey: {win: "ctrl-b", mac: "ctrl-b"},
+                 exec: () => {
+                     this.filesModalService.showFilesModal();
                  },
                  readOnly: false
             }

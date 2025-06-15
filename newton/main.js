@@ -50,7 +50,7 @@ app.whenReady().then(async () => {
     createWindow();
 
     newton.fs.setWindow(window);
-    newton.fs.ipc.setWindow(window);
+    newton.ipc.setWindow(window);
 
 });
  

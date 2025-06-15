@@ -21,7 +21,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     templateUrl: './tabs.component.html',
     styleUrl: './tabs.component.css',
     host: {
-        'class': 'row tabs scroller'
+        'class': 'tabs scroller'
     }
 })
 export class TabsComponent {
@@ -42,8 +42,9 @@ export class TabsComponent {
         this.tabsService.getData$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((data: ServiceMessage) => {
-            if (data.action === "create-tab")
+            if (data.action === "create-tab") {
                 this.createTab(data.message, data.uuid, data.data);
+            }
         });
     }
 

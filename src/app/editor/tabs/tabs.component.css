@@ -1,6 +1,9 @@
+.display-contents {
+    display: contents;
+}
+
 .tab {
     display: flex;
-    overflow: auto;
     float: left;
     margin-right: 2em;
     font-size: 0.2em;
