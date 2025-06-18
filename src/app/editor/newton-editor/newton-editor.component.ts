@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 // Import Ace and its modes/themes so that `ace` global is defined
 import * as ace from "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-settings_menu";
+import "ace-builds/src-noconflict/ext-keybinding_menu";
 import "ace-builds/src-noconflict/ext-command_bar";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-one_dark";
@@ -54,138 +55,36 @@ export class NewtonEditorComponent extends NewtonEditorBase {
 
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
-        // this.editor.commands.addCommands( this.editorSettings.KEYBINDINGS );
-        this.editor.commands.addCommands([
-            {
-                name: "openCommandPalette2",
-                bindKey: {linux: "Command-shift-/|F1", win: "ctrl-shift-/|F1"},
-                exec: () => {
-                    this.commander();
-                },
-                 readOnly: false
-            }, {
-                 name: "search",
-                 bindKey: {win: "ctrl-f", mac: "ctrl-f"},
-                 exec: () => {
-                     this.search();
-                 },
-                 readOnly: true
-            }, {
-                 name: "selectSessionLeft",
-                 bindKey: {win: "ctrl-pageup", mac: "ctrl-pageup"},
-                 exec: () => {
-                     this.selectSessionLeft();
-                 },
-                 readOnly: false
-            }, {
-                 name: "selectSessionRight",
-                 bindKey: {win: "ctrl-pagedown", mac: "ctrl-pagedown"},
-                 exec: () => {
-                     this.selectSessionRight();
-                 },
-                 readOnly: false
-            }, {
-                 name: "moveSessionLeft",
-                 bindKey: {win: "ctrl-shift-up", mac: "ctrl-shift-up"},
-                 exec: () => {
-                     this.moveSessionLeft();
-                 },
-                 readOnly: false
-            }, {
-                 name: "moveSessionRight",
-                 bindKey: {win: "ctrl-shift-down", mac: "ctrl-shift-down"},
-                 exec: () => {
-                     this.moveSessionRight();
-                 },
-                 readOnly: false
-             }, {
-                 name: "movelinesUp",
-                 bindKey: {win: "ctrl-up", mac: "ctrl-up"},
-                 exec: () => {
-                     this.movelinesUp();
-                 },
-                 readOnly: false
-             }, {
-                 name: "movelinesDown",
-                 bindKey: {win: "ctrl-down", mac: "ctrl-down"},
-                 exec: () => {
-                     this.movelinesDown();
-                 },
-                 readOnly: false
-             },
-             {
-                 name: "duplicateLines",
-                 bindKey: {win: "ctrl-d", mac: "ctrl-d"},
-                 exec: () => {
-                     this.duplicateLines();
-                 },
-                 readOnly: false
-             }, {
-                 name: "zoomIn",
-                 bindKey: {win: "ctrl-=", mac: "ctrl-="},
-                 exec: () => {
-                     this.zoomIn();
-                 },
-                 readOnly: true
-            }, {
-                 name: "zoomOut",
-                 bindKey: {win: "ctrl--", mac: "ctrl--"},
-                 exec: () => {
-                     this.zoomOut();
-                 },
-                 readOnly: true
-            }, {
-                 name: "cutToBuffer",
-                 bindKey: {win: "ctrl-k", mac: "ctrl-k"},
-                 exec: () => {
-                     this.cutToBuffer();
-                 },
-                 readOnly: false
-            }, {
-                 name: "pasteCutBuffer",
-                 bindKey: {win: "ctrl-u", mac: "ctrl-u"},
-                 exec: () => {
-                     this.pasteCutBuffer();
-                 },
-                 readOnly: false
-            }, {
-                 name: "destroySession",
-                 bindKey: {win: "ctrl-w", mac: "ctrl-w"},
-                 exec: () => {
-                     this.editor.session.destroy();
-                 },
-                 readOnly: false
-            }, {
-                 name: "openFiles",
-                 bindKey: {win: "ctrl-o", mac: "ctrl-o"},
-                 exec: () => {
-                     this.openFiles();
-                 },
-                 readOnly: false
-            }, {
-                 name: "saveFile",
-                 bindKey: {win: "ctrl-s", mac: "ctrl-s"},
-                 exec: () => {
-                     this.saveFile();
-                 },
-                 readOnly: false
-            }, {
-                 name: "saveFileAs",
-                 bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
-                 exec: () => {
-                     this.saveFileAs();
-                 },
-                 readOnly: false
-            }, {
-                 name: "showModal",
-                 bindKey: {win: "ctrl-b", mac: "ctrl-b"},
-                 exec: () => {
-                     this.filesModalService.showFilesModal();
-                 },
-                 readOnly: false
-            }
-        ]);
 
+        let keyBindings = [];
+        for (let i = 0; i < this.editorSettings.KEYBINDINGS.length; i++) {
+            let keyBinding = this.editorSettings.KEYBINDINGS[i];
+            keyBindings.push(
+                {
+                     name: keyBinding.name,
+                     bindKey: keyBinding.bindKey,
+                     exec: (keyBinding.name && keyBinding?.service) ?
+                         () => (
+                             this[keyBinding?.service][keyBinding.name]()
+                         )
+                     :
+                         (this[keyBinding.name]) ?
+                             () => (
+                                 this[keyBinding.name]()
+                             )
+                         :
+                             () => (
+                                 console.log(
+                                    `Name: ${keyBinding.name}, is not mapping to a method OR mapping to a Service: ${keyBinding?.service} and Name: ${keyBinding.name}.`
+                                )
+                             )
+                     ,
+                     readOnly: keyBinding.readOnly
+                }
+            );
+        }
+
+        this.editor.commands.addCommands( keyBindings );
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
         this.editor.on("focus", (e) => {

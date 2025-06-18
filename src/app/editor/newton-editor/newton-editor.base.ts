@@ -34,12 +34,24 @@ export class NewtonEditorBase {
         this.editorElm.nativeElement.classList.remove("active-editor")
     }
 
-    public commander() {
+    public openCommandPalette() {
         this.editor.execCommand("openCommandPalette");
+    }
+
+    public showSettingsMenu() {
+        this.editor.showSettingsMenu();
+    }
+
+    public showKeyboardShortcuts() {
+        this.editor.showKeyboardShortcuts();
     }
 
     protected search() {
         console.log(this.editor.session.getMode()["$id"]);
+    }
+
+    protected destroySession() {
+        this.editor.session.destroy();
     }
 
     protected openFiles() {

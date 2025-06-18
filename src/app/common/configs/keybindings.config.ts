@@ -1,146 +1,100 @@
-export const Keybindings: Array<any> = [
-// export const Keybindings: any = [
-    // {
-    //     name: "showSettingsMenu",
-    //     bindKey: {win: "Ctrl-Shift-m", mac: "Ctrl-Shift-m"},
-    //     exec: () => {
-    //         ace.config.loadModule("ace/ext/settings_menu", function(module) {
-    //             module.init(editor);
-    //             editor.showSettingsMenu();
-    //         })
-    //     }
-    // }, {
-    //     name: "showKeyboardShortcuts",
-    //     bindKey: {win: "ctrl-shift-h", mac: "command-shift-h"},
-    //     exec: () => {
-    //         ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-    //             module.init(editor);
-    //             editor.showKeyboardShortcuts();
-    //         })
-    //     }
-    // }, {
-    //     name: "openCommandPalette2",
-    //     bindKey: {linux: "Command-Shift-/|F1", win: "Ctrl-Shift-/|F1"},
-    //     exec: () => {
-    //         editor.execCommand("openCommandPalette");
-    //     }
-    // }, {
-    //     name: "showLSPManager",
-    //     bindKey: {win: "ctrl-m", mac: "command-m"},
-    //     exec: () => {
-    //         $('//lsp-modal').modal("toggle");
-    //     }
-    // }, {
-     {
-         name: "search",
-         bindKey: {win: "ctrl-f", mac: "ctrl-f"},
-         exec: () => {
-             // blockHigherNewtonEvePropigation = true;
-             // searchReplace.toggleShow();
-            console.log("Search");
-         },
-         readOnly: true
-     }
-    // }, {
-    //     name: "openFile",
-    //     bindKey: {win: "ctrl-o", mac: "ctrl-o"},
-    //     exec: () => {
-    //         fpath = aceSessions[currentSession]["fpath"]
-    //         sendMessage("open_file", "", "", fpath, "");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "saveSession",
-    //     bindKey: {win: "ctrl-s", mac: "ctrl-s"},
-    //     exec: () => {
-    //         saveSession(currentSession);
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "newSession",
-    //     bindKey: {win: "ctrl-t", mac: "ctrl-t"},
-    //     exec: () => {
-    //         newSession();
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "closeSession",
-    //     bindKey: {win: "ctrl-w", mac: "ctrl-w"},
-    //     exec: () => {
-    //         closeSession(currentSession);
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "toggleLineHighlight",
-    //     bindKey: {win: "ctrl-h", mac: "ctrl-h"},
-    //     exec: () => {
-    //         toggleLineHighlight();
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "gotoDefinition",
-    //     bindKey: {win: "ctrl-g", mac: "ctrl-g"},
-    //     exec: () => {
-    //         console.log("Goto stub...");
-    //          lspProvider.$messageController.postMessage(Message(), callback);
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "movelinesUp",
-    //     bindKey: {win: "ctrl-up", mac: "ctrl-up"},
-    //     exec: () => {
-    //         editor.execCommand("movelinesup");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "movelinesDown",
-    //     bindKey: {win: "ctrl-down", mac: "ctrl-down"},
-    //     exec: () => {
-    //         editor.execCommand("movelinesdown");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "tgglTopMainMenubar",
-    //     bindKey: {win: "ctrl-0", mac: "ctrl-0"},
-    //     exec: () => {
-    //         sendMessage("tggl_top_main_menubar", "", "", "", "");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "zoomIn",
-    //     bindKey: {win: "ctrl-=", mac: "ctrl-="},
-    //     exec: () => {
-    //         zoomIn();
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "zoomOut",
-    //     bindKey: {win: "ctrl--", mac: "ctrl--"},
-    //     exec: () => {
-    //         zoomOut();
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "scrollUp",
-    //     bindKey: {win: "alt-up", mac: "alt-up"},
-    //     exec: () => {
-    //         editor.execCommand("scrollup");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "scrollDown",
-    //     bindKey: {win: "alt-down", mac: "alt-down"},
-    //     exec: () => {
-    //         editor.execCommand("scrolldown");
-    //     },
-    //     readOnly: true
-    // }, {
-    //     name: "launhLSP",
-    //     bindKey: {win: "ctrl-l", mac: "ctrl-l"},
-    //     exec: () => {
-    //         loadLSPManager();
-    //     },
-    //     readOnly: true
-    // }
-
+export const Keybindings: Array<{}> = [
+    {
+        name: "showSettingsMenu",
+        bindKey: {win: "Ctrl-Shift-m", mac: "Ctrl-Shift-m"},
+        readOnly: false
+    }, {
+        name: "showKeyboardShortcuts",
+        bindKey: {win: "ctrl-shift-k", mac: "command-shift-k"},
+        readOnly: false
+    }, {
+        name: "openCommandPalette",
+        bindKey: {linux: "Command-shift-/|F1", win: "ctrl-shift-/|F1"},
+        readOnly: false
+    }, {
+        name: "showFilesModal",
+        bindKey: {win: "ctrl-b", mac: "ctrl-b"},
+        service: "filesModalService",
+        readOnly: false
+    }, {
+        name: "showLSPModal",
+        bindKey: {win: "ctrl-shift-l", mac: "ctrl-shift-l"},
+        readOnly: false
+    }, {
+        name: "search",
+        bindKey: {win: "ctrl-f", mac: "ctrl-f"},
+        readOnly: true
+    }, {
+        name: "newSession",
+        bindKey: {win: "ctrl-t", mac: "ctrl-t"},
+        readOnly: true
+    }, {
+        name: "destroySession",
+        bindKey: {win: "ctrl-w", mac: "ctrl-w"},
+        readOnly: false
+    }, {
+        name: "openFiles",
+        bindKey: {win: "ctrl-o", mac: "ctrl-o"},
+        readOnly: false
+    }, {
+        name: "saveFile",
+        bindKey: {win: "ctrl-s", mac: "ctrl-s"},
+        readOnly: false
+    }, {
+        name: "saveFileAs",
+        bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
+        readOnly: false
+    }, {
+        name: "selectSessionLeft",
+        bindKey: {win: "ctrl-pageup", mac: "ctrl-pageup"},
+        readOnly: false
+    }, {
+        name: "selectSessionRight",
+        bindKey: {win: "ctrl-pagedown", mac: "ctrl-pagedown"},
+        readOnly: false
+    }, {
+        name: "moveSessionLeft",
+        bindKey: {win: "ctrl-shift-up", mac: "ctrl-shift-up"},
+        readOnly: false
+    }, {
+        name: "moveSessionRight",
+        bindKey: {win: "ctrl-shift-down", mac: "ctrl-shift-down"},
+        readOnly: false
+    }, {
+        name: "cutToBuffer",
+        bindKey: {win: "ctrl-k", mac: "ctrl-k"},
+        readOnly: false
+    }, {
+        name: "pasteCutBuffer",
+        bindKey: {win: "ctrl-u", mac: "ctrl-u"},
+        readOnly: false
+     }, {
+        name: "movelinesUp",
+        bindKey: {win: "ctrl-up", mac: "ctrl-up"},
+        readOnly: false
+     }, {
+        name: "movelinesDown",
+        bindKey: {win: "ctrl-down", mac: "ctrl-down"},
+        readOnly: false
+     }, {
+        name: "duplicateLines",
+        bindKey: {win: "ctrl-d", mac: "ctrl-d"},
+        readOnly: false
+     }, {
+        name: "zoomIn",
+        bindKey: {win: "ctrl-=", mac: "ctrl-="},
+        readOnly: true
+    }, {
+        name: "zoomOut",
+        bindKey: {win: "ctrl--", mac: "ctrl--"},
+        readOnly: true
+    }, {
+        name: "toggleLineHighlight",
+        bindKey: {win: "ctrl-h", mac: "ctrl-h"},
+        readOnly: true
+    }, {
+        name: "gotoDefinition",
+        bindKey: {win: "ctrl-g", mac: "ctrl-g"},
+        readOnly: true
+    }
 ];
