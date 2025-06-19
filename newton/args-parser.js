@@ -79,7 +79,7 @@ const getStartType = () => {
     return startType;
 }
 
-const debugMode = () => {
+const getDebugMode = () => {
     return isDebug;
 }
 
@@ -89,6 +89,6 @@ module.exports = {
         loadArgs: loadArgs,
         getArgs: getArgs,
         getStartType: getStartType,
-        debugMode: debugMode,
+        getDebugMode: getDebugMode,
     }
 };

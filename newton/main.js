@@ -16,7 +16,7 @@ let hasExitSaved = false;
 const createWindow = () => {
     window = newton.createWindow(
         newton.args.getStartType(),
-        newton.args.debugMode(),
+        newton.args.getDebugMode(),
         newton.args.getArgs(),
     );
 }
