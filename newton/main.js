@@ -8,9 +8,61 @@ const { newton } = require('./app');
 
 
 
-let window = null;
+let window       = null;
+let hasExitSaved = false;
 
 
+
+const createWindow = () => {
+    window = newton.createWindow(
+        newton.args.getStartType(),
+        newton.args.debugMode(),
+        newton.args.getArgs(),
+    );
+}
+
+const handleExitSignal = (code) => {
+    if (!hasExitSaved) {
+        newton.settings.saveConfig();
+        hasExitSaved = true;
+    }
+
+    process.exit(code);
+}
+
+
+const loadProcessSignalHandlers = () => {
+    process.on('SIGINT', () => {
+        // https://nodejs.org/docs/v14.16.0/api/process.html#process_signal_events
+        handleExitSignal(128 + 2);
+    });
+
+    process.on('SIGTERM', () => {
+        // https://nodejs.org/docs/v14.16.0/api/process.html#process_signal_events
+        handleExitSignal(128 + 15);
+    });
+
+    process.on('uncaughtException', (error) => {
+        if (error.message != null) {
+            console.log(error.message);
+        }
+
+        if (error.stack != null) {
+            console.log(error.stack);
+        }
+    });
+
+    process.on('unhandledRejection', function(error = {}) {
+        if (error.message != null) {
+            console.log(error.message);
+        }
+
+        if (error.stack != null) {
+            console.log(error.stack);
+        }
+    });
+
+}
 
 const loadHandlers = () => {
     ipcMain.handle('getLspConfigData', (eve) => newton.fs.getLspConfigData());
@@ -21,16 +73,8 @@ const loadHandlers = () => {
     ipcMain.handle('saveFileAs', (eve, content) => newton.fs.saveFileAs(content));
 }
 
-const createWindow = () => {
-    window = newton.createWindow(
-        newton.args.getStartType(),
-        newton.args.debugMode(),
-        newton.args.getArgs(),
-    );
-}
-
-
 app.whenReady().then(async () => {
+    loadProcessSignalHandlers();
     newton.args.loadArgs();
 
     if ( !await newton.ipc.isIPCServerUp() ) {
@@ -68,22 +112,4 @@ app.on('window-all-closed', () => {
     newton.settings.saveConfig();
 });
 
-process.on('uncaughtException', (error) => {
-    if (error.message != null) {
-        console.log(error.message);
-    }
 
-    if (error.stack != null) {
-        console.log(error.stack);
-    }
-});
-
-process.on('unhandledRejection', function(error = {}) {
-    if (error.message != null) {
-        console.log(error.message);
-    }
-
-    if (error.stack != null) {
-        console.log(error.stack);
-    }
-});
