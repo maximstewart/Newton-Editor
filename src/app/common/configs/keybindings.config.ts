@@ -45,11 +45,11 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
         readOnly: false
     }, {
-        name: "selectSessionLeft",
+        name: "selectLeftEditor",
         bindKey: {win: "ctrl-pageup", mac: "ctrl-pageup"},
         readOnly: false
     }, {
-        name: "selectSessionRight",
+        name: "selectRightEditor",
         bindKey: {win: "ctrl-pagedown", mac: "ctrl-pagedown"},
         readOnly: false
     }, {

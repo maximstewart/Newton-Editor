@@ -16,6 +16,8 @@ import { EditorsService } from '../../common/services/editor/editors.service';
 
 import { NewtonEditorBase } from './newton-editor.base';
 
+import { ServiceMessage } from '../../common/types/service-message.type';
+
 
 
 @Component({
@@ -115,7 +117,11 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         });
 
         this.editor.on("focus", () => {
-            this.editorsService.setActiveEditor(this.uuid);
+            let message        = new ServiceMessage();
+            message.action     = "set-active-editor";
+            message.editorUUID = this.uuid;
+
+            this.editorsService.sendMessage(message);
         });
 
         this.editor.on("changeSession", (session) => {
@@ -141,20 +147,36 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         this.updateInfoBar();
     }
 
-    public selectSessionLeft() {
-        this.editorsService.selectSessionLeft(this.uuid);
+    public selectLeftEditor() {
+        let message        = new ServiceMessage();
+        message.action     = "select-left-editor";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
     }
 
-    public selectSessionRight() {
-        this.editorsService.selectSessionRight(this.uuid);
+    public selectRightEditor() {
+        let message        = new ServiceMessage();
+        message.action     = "select-right-editor";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
     }
 
     public moveSessionLeft() {
-        this.editorsService.moveSessionLeft(this.uuid);
+        let message        = new ServiceMessage();
+        message.action     = "move-session-left";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
     }
 
     public moveSessionRight() {
-        this.editorsService.moveSessionRight(this.uuid);
+        let message        = new ServiceMessage();
+        message.action     = "move-session-right";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
     }
 
 }

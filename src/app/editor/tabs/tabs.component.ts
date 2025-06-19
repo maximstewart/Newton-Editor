@@ -40,11 +40,11 @@ export class TabsComponent {
     }
 
     public ngAfterViewInit(): void {
-        this.tabsService.getData$().pipe(
+        this.tabsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((data: ServiceMessage) => {
             if (data.action === "create-tab") {
-                this.createTab(data.message, data.uuid, data.data);
+                this.createTab(data.fileName, data.fileUUID, data.filePath);
             }
         });
     }
@@ -55,7 +55,7 @@ export class TabsComponent {
     }
 
     private createTab(title: string, uuid: string, path: string): void {
-        this.tabs.push({title: title, path: path, uuid: uuid});
+        this.tabs.push({title: title, uuid: uuid, path: path});
         this.changeDetectorRef.detectChanges();
     }
 
@@ -63,11 +63,14 @@ export class TabsComponent {
         let target = event.target;
 
         if ( target.classList.contains("tab") ) {
-            this.editorsService.setTabToEditor(
+            this.sendEditorsServiceAMessage(
+                "set-tab-to-editor",
                 event.srcElement.getAttribute("title")
             );
+
         } else if ( target.classList.contains("title") ) {
-            this.editorsService.setTabToEditor(
+            this.sendEditorsServiceAMessage(
+                "set-tab-to-editor",
                 event.srcElement.parentElement.getAttribute("title")
             );
         } else if ( target.classList.contains("close-button") ) {
@@ -79,7 +82,7 @@ export class TabsComponent {
     }
 
     closeTab(fpath: string): void {
-        this.editorsService.closeTab(fpath);
+        this.sendEditorsServiceAMessage("close-tab", fpath);
 
         for (let i = 0; i < this.tabs.length; i++) {
             if (this.tabs[i].path == fpath) {
@@ -94,9 +97,9 @@ export class TabsComponent {
         let target = event.event.target;
         let fpath  = "";
 
-        if ( target.classList.contains("title") ) {
-            fpath = target.parentElement.getAttribute("title")
-        } else if ( target.classList.contains("close-button") ) {
+        if ( target.classList.contains("title") ||
+            target.classList.contains("close-button")
+        ) {
             fpath = target.parentElement.getAttribute("title")
         } else (
             fpath = target.getAttribute("title")
@@ -118,6 +121,15 @@ export class TabsComponent {
 
         // event.currentIndex not updating for some reason...
         // moveItemInArray(this.tabs, event.previousIndex, event.currentIndex);
+    }
+
+
+    private sendEditorsServiceAMessage(action: string, fpath: string) {
+        let message      = new ServiceMessage();
+        message.action   = action;
+        message.filePath = fpath;
+
+        this.editorsService.sendMessage(message);
     }
 
 }

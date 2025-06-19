@@ -54,87 +54,66 @@ export class EditorsComponent {
 
     loadSubscribers() {
 
-        this.editorsService.selectSessionLeftRequested$().pipe(
+        this.editorsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
-        ).subscribe((uuid: string) => {
-            let editorComponent  = this.editorsService.get(uuid);
-            if (!editorComponent.leftSiblingUUID) return;
-            let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
-            siblingComponent.editor.focus()
-        });
+        ).subscribe((message: ServiceMessage) => {
+            if (message.action == "select-left-editor") {
+                let editorComponent  = this.editorsService.get(message.editorUUID);
+                if (!editorComponent.leftSiblingUUID) return;
+                let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
+                siblingComponent.editor.focus()
+            } else if (message.action == "select-right-editor") {
+                let editorComponent  = this.editorsService.get(message.editorUUID);
+                if (!editorComponent.rightSiblingUUID) return;
+                let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
+                siblingComponent.editor.focus()
+            } else if (message.action == "move-session-left") {
+                let editorComponent  = this.editorsService.get(message.editorUUID);
+                if (!editorComponent.leftSiblingUUID) return;
+                let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
+                let session = editorComponent.editor.getSession();
+                let siblingSession = siblingComponent.editor.getSession();
 
-        this.editorsService.selectSessionRightRequested$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((uuid: string) => {
-            let editorComponent  = this.editorsService.get(uuid);
-            if (!editorComponent.rightSiblingUUID) return;
-            let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
-            siblingComponent.editor.focus()
-        });
+                if (session == siblingSession) return;
+                siblingComponent.editor.setSession(session);
+                editorComponent.newBuffer();
+                siblingComponent.editor.focus()
+            } else if (message.action == "move-session-right") {
+                let editorComponent  = this.editorsService.get(message.editorUUID);
+                if (!editorComponent.rightSiblingUUID) return;
+                let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
+                let session = editorComponent.editor.getSession();
+                let siblingSession = siblingComponent.editor.getSession();
 
-        this.editorsService.moveSessionLeftRequested$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((uuid: string) => {
-            let editorComponent  = this.editorsService.get(uuid);
-            if (!editorComponent.leftSiblingUUID) return;
-            let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
-            let session = editorComponent.editor.getSession();
-            let siblingSession = siblingComponent.editor.getSession();
+                if (session == siblingSession) return;
+                siblingComponent.editor.setSession(session);
+                editorComponent.newBuffer();
+                siblingComponent.editor.focus()
+            } else if (message.action == "set-active-editor") {
+                this.editorsService.get(this.activeEditor).removeActiveStyling();
+                this.activeEditor = message.editorUUID;
+                this.editorsService.get(this.activeEditor).addActiveStyling();
+            } else if (message.action == "set-tab-to-editor") {
+                let file            = this.filesService.get(message.filePath);
+                let editorComponent = this.getActiveEditorComponent();
+                let editor          = editorComponent.editor;
 
-            if (session == siblingSession) return;
-            siblingComponent.editor.setSession(session);
-            editorComponent.newBuffer();
-            siblingComponent.editor.focus()
-        });
+                editorComponent.activeFile = file;
+                editor.setSession(file.session);
+            } else if (message.action == "close-tab") {
+                let file    = this.filesService.get(message.filePath);
+                let editors = this.editorsService.getEditorsAsArray();
 
-        this.editorsService.moveSessionRightRequested$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((uuid: string) => {
-            let editorComponent  = this.editorsService.get(uuid);
-            if (!editorComponent.rightSiblingUUID) return;
-            let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
-            let session = editorComponent.editor.getSession();
-            let siblingSession = siblingComponent.editor.getSession();
-
-            if (session == siblingSession) return;
-            siblingComponent.editor.setSession(session);
-            editorComponent.newBuffer();
-            siblingComponent.editor.focus()
-        });
-
-        this.editorsService.newActiveEditor$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((uuid: string) => {
-            this.editorsService.get(this.activeEditor).removeActiveStyling();
-            this.activeEditor = uuid;
-            this.editorsService.get(this.activeEditor).addActiveStyling();
-        });
-
-        this.editorsService.loadTabToEditor$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((path: string) => {
-            let file            = this.filesService.get(path);
-            let editorComponent = this.getActiveEditorComponent();
-            let editor          = editorComponent.editor;
-
-            editorComponent.activeFile = file;
-            editor.setSession(file.session);
-        });
-
-        this.editorsService.closeTabRequested$().pipe(
-            takeUntil(this.unsubscribe)
-        ).subscribe((path: string) => {
-            let file    = this.filesService.get(path);
-            let editors = this.editorsService.getEditorsAsArray();
-
-            for (let i = 0; i < editors.length; i++) {
-                let editorComponent = editors[i].instance;
-                if (editorComponent.editor.session == file.session) {
-                    editorComponent.newBuffer();
+                for (let i = 0; i < editors.length; i++) {
+                    let editorComponent = editors[i].instance;
+                    if (editorComponent.editor.session == file.session) {
+                        editorComponent.newBuffer();
+                    }
                 }
+
+                this.filesService.delete(file);
             }
 
-            this.filesService.delete(file);
         });
 
     }

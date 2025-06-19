@@ -43,11 +43,11 @@ export class FilesModalComponent {
     }
 
     loadSubscribers() {
-        this.tabsService.getData$().pipe(
+        this.tabsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((data: ServiceMessage) => {
             if (data.action === "create-tab") {
-                this.createFileRow(data.message, data.uuid, data.data);
+                this.createFileRow(data.fileName, data.fileUUID, data.filePath);
             }
         });
 
@@ -71,7 +71,7 @@ export class FilesModalComponent {
     }
 
     private createFileRow(title: string, uuid: string, path: string): void {
-        this.files.push({title: title, path: path, uuid: uuid})
+        this.files.push({title: title, uuid: uuid, path: path})
     }
 
     createModal() {

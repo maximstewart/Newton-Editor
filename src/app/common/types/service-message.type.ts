@@ -1,6 +1,9 @@
 export class ServiceMessage {
-    action: string  = "none";
+    action: string  = "";
     message: string = "";
-    uuid!: string;
-    data: any;
+    editorUUID: string;
+    fileName: string;
+    fileUUID: string;
+    filePath: string;
+    rawData: any;
 } 

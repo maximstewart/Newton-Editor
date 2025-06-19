@@ -77,13 +77,13 @@ export class FilesService {
     }
 
     async addTab(file: NewtonFile) {
-        let message     = new ServiceMessage();
-        message.action  = "create-tab";
-        message.message = file.fname;
-        message.uuid    = file.hash;
-        message.data    = file.path;
+        let message      = new ServiceMessage();
+        message.action   = "create-tab";
+        message.fileName = file.fname;
+        message.fileUUID = file.hash;
+        message.filePath = file.path;
 
-        this.tabsService.setData(message);
+        this.tabsService.sendMessage(message);
     }
 
 
