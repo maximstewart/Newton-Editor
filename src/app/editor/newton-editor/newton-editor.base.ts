@@ -54,6 +54,14 @@ export class NewtonEditorBase {
         this.editor.session.destroy();
     }
 
+    protected quit() {
+        window.main.quit();
+    }
+
+    protected toggleFullScreen() {
+        window.main.toggleFullScreen();
+    }
+
     protected openFiles() {
         let startDir = "";
         if (this.activeFile) {

@@ -1,5 +1,13 @@
 export const Keybindings: Array<{}> = [
     {
+        name: "quit",
+        bindKey: {win: "Ctrl-q", mac: "Ctrl-q"},
+        readOnly: false
+    }, {
+        name: "toggleFullScreen",
+        bindKey: {win: "F11", mac: "F11"},
+        readOnly: false
+    }, {
         name: "showSettingsMenu",
         bindKey: {win: "Ctrl-Shift-m", mac: "Ctrl-Shift-m"},
         readOnly: false

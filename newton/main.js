@@ -65,6 +65,8 @@ const loadProcessSignalHandlers = () => {
 }
 
 const loadHandlers = () => {
+    ipcMain.handle('quit', (eve) => app.quit());
+    ipcMain.handle('toggleFullScreen', (eve) => { window.setFullScreen(!window.isFullScreen()); });
     ipcMain.handle('getLspConfigData', (eve) => newton.fs.getLspConfigData());
     ipcMain.handle('getFileContents', (eve, path) => newton.fs.getFileContents(path));
     ipcMain.handle('openFiles', (eve, startPath) => newton.fs.openFiles(startPath));
@@ -109,4 +111,3 @@ app.on('window-all-closed', () => {
         app.quit()
     };
 });
-

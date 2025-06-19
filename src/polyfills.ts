@@ -20,6 +20,8 @@ declare global {
         },
         main: {
             onMenuActions: (arg0: any) => Promise<string>,
+            quit: any,
+            toggleFullScreen: any,
         },
         fs: {
             getLspConfigData: () => Promise<string>,
