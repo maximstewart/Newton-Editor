@@ -18,10 +18,10 @@ let args = [];
 
 // Note:  https://tinydew4.gitbooks.io/electron/content/api/browser-window.html
 const createWindow = (startType = "build", debug = false, args = []) => {
-    this.args = args;
-    let data  = settingsManager.getConfig();
+    this.args    = args;
+    let data     = settingsManager.getConfig();
 
-    const win = new BrowserWindow({
+    const window = new BrowserWindow({
         title: "Newton",
         x: data["config"]["main_window_x"],
         y: data["config"]["main_window_y"],
@@ -44,39 +44,43 @@ const createWindow = (startType = "build", debug = false, args = []) => {
         }
     });
 
-    win.once('ready-to-show', () => {
-        win.show();
-        win.webContents.send('load-files', args);
+    window.once('close', () => {
+        settingsManager.saveConfig(window);
     });
 
-    menu.load(win);
+    window.once('ready-to-show', () => {
+        window.show();
+        window.webContents.send('load-files', args);
+    });
+
+    menu.load(window);
     systemTray.load(menu.menuStruct);
 
-    // win.setAutoHideMenuBar(true)
+    // window.setAutoHideMenuBar(true)
 
     if (debug == true) {
-        win.webContents.openDevTools();
+        window.webContents.openDevTools();
     }
 
     if (startType === "build") {
-        win.loadFile(
+        window.loadFile(
             path.join(__dirname, `${BASE_PATH}/index.html`)
         );
     }
 
     if (startType === "ng-serve") {
-        win.loadURL('http://localhost:4200');
+        window.loadURL('http://localhost:4200');
     }
 
-//    const child = new BrowserWindow({parent: win, modal: true, show: false})
-//    child.loadFile(
+//    const childWindow = new BrowserWindow({parent: window, modal: true, show: false})
+//    childWindow.loadFile(
 //        path.join(__dirname, `${BASE_PATH}/index.html`)
 //    );
-//    child.once('ready-to-show', () => {
-//        child.show()
+//    childWindow.once('ready-to-show', () => {
+//        childWindow.show()
 //    });
 
-    return win;
+    return window;
 }
 
 

@@ -23,7 +23,7 @@ const createWindow = () => {
 
 const handleExitSignal = (code) => {
     if (!hasExitSaved) {
-        newton.settings.saveConfig();
+        newton.settings.saveConfig(window);
         hasExitSaved = true;
     }
 
@@ -108,8 +108,5 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     };
-
-    newton.settings.saveConfig();
 });
-
 

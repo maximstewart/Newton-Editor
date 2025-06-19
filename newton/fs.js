@@ -47,6 +47,10 @@ const setWindow = (win) => {
         window = win;
 }
 
+const saveSettingsConfigData = (data) => {
+    saveFile(SETTINGS_CONFIG_PATH, data);
+}
+
 const saveFile = (fpath, content)  => {
     fs.writeFile(fpath, content, (err) => {
         if (!err) return
@@ -130,6 +134,7 @@ module.exports = {
         getFileContents: getFileContents,
         getLspConfigData: getLspConfigData,
         getSettingsConfigData: getSettingsConfigData,
+        saveSettingsConfigData: saveSettingsConfigData,
         loadFilesWatcher: loadFilesWatcher,
         unwatchFile: unwatchFile,
     }
