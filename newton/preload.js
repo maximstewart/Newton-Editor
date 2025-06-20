@@ -22,6 +22,8 @@ contextBridge.exposeInMainWorld('fs', {
     closeFile: (path) => ipcRenderer.invoke("closeFile", path),
     getPathForFile: (file) => webUtils.getPathForFile(file),
     onLoadFiles: (callback) => ipcRenderer.on('load-files', (_event, paths) => callback(paths)),
+    onUpdateFilePath: (callback) => ipcRenderer.on('update-file-path', (_event, paths) => callback(paths)),
+    onSavedFile: (callback) => ipcRenderer.on('file-saved', (_event, path) => callback(path)),
     onChangedFile: (callback) => ipcRenderer.on('file-changed', (_event, path) => callback(path)),
     onDeletedFile: (callback) => ipcRenderer.on('file-deleted', (_event, path) => callback(path)),
 });

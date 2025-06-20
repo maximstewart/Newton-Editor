@@ -12,6 +12,7 @@ import "ace-builds/src-noconflict/theme-dracula";
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
 import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
 import { LSPService } from '../../common/services/lsp.service';
+import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
 
 import { NewtonEditorBase } from './newton-editor.base';
@@ -38,6 +39,7 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         private infoBarService: InfoBarService,
         private editorsService: EditorsService,
         private lspService: LSPService,
+        private tabsService: TabsService,
         private filesModalService: FilesModalService
     ) {
         super();
@@ -122,6 +124,13 @@ export class NewtonEditorComponent extends NewtonEditorBase {
             message.editorUUID = this.uuid;
 
             this.editorsService.sendMessage(message);
+        });
+
+        this.editor.on("change", () => {
+            let message      = new ServiceMessage();
+            message.action   = "file-changed";
+            message.filePath = this.activeFile.path;
+            this.tabsService.sendMessage(message);
         });
 
         this.editor.on("changeSession", (session) => {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ReplaySubject, Observable } from 'rxjs';
 
 import { EditSession } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
@@ -14,6 +15,8 @@ import { ServiceMessage } from '../../types/service-message.type';
     providedIn: 'root'
 })
 export class FilesService {
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+
     files: Map<string, NewtonFile>;
 
 
@@ -38,7 +41,13 @@ export class FilesService {
         this.files.set(file.path, file);
     }
 
+    sendMessage(data: ServiceMessage): void {
+        this.messageSubject.next(data);
+    }
 
+    getMessage$(): Observable<ServiceMessage> {
+        return this.messageSubject.asObservable();
+    }
 
     async loadFilesList(files: Array<NewtonFile>): Promise<NewtonFile | undefined | null> {
 	    for (let i = 0; i < files.length; i++) {

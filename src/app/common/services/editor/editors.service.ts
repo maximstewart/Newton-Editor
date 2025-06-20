@@ -1,5 +1,5 @@
 import { ComponentRef, Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject, Observable } from 'rxjs';
+import { ReplaySubject, Observable } from 'rxjs';
 
 import { NewtonEditorComponent } from "../../../editor/newton-editor/newton-editor.component";
 

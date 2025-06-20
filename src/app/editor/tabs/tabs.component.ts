@@ -42,9 +42,21 @@ export class TabsComponent {
     public ngAfterViewInit(): void {
         this.tabsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
-        ).subscribe((data: ServiceMessage) => {
-            if (data.action === "create-tab") {
-                this.createTab(data.fileName, data.fileUUID, data.filePath);
+        ).subscribe((message: ServiceMessage) => {
+            if (message.action === "create-tab") {
+                this.createTab(message.fileName, message.fileUUID, message.filePath);
+            } else if (message.action === "file-changed") {
+                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
+                elm.classList.add("file-changed");
+                elm.classList.remove("file-deleted");
+            } else if (message.action === "file-deleted") {
+                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
+                elm.classList.add("file-deleted");
+                elm.classList.remove("file-changed");
+            } else if (message.action === "file-saved") {
+                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
+                elm.classList.remove("file-deleted");
+                elm.classList.remove("file-changed");
             }
         });
     }

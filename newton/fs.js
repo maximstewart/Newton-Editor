@@ -5,13 +5,14 @@ const os             = require('os');
 const chokidar       = require('chokidar');
 
 
-const HOME_DIR              = os.homedir();
-const BASE_PATH             = '../build/app';
-const CONFIG_PATH           = path.join(HOME_DIR, "/.config/newton/");
-const SETTINGS_CONFIG_PATH  = path.join(CONFIG_PATH, "/settings.json");
-const LSP_CONFIG_PATH       = path.join(BASE_PATH, "/resources/lsp-servers-config.json");
-let window                  = null;
-let watcher                 = null;
+const HOME_DIR                = os.homedir();
+const BASE_PATH               = '../build/app';
+const CONFIG_PATH             = path.join(HOME_DIR, "/.config/newton/");
+const SETTINGS_CONFIG_PATH    = path.join(CONFIG_PATH, "/settings.json");
+const LSP_CONFIG_PATH         = path.join(BASE_PATH, "/resources/lsp-servers-config.json");
+let window                    = null;
+let watcher                   = null;
+let skipWatchChangeUpdateOnce = false;
 
 
 
@@ -63,21 +64,39 @@ const saveSettingsConfigData = (data) => {
 }
 
 const saveFile = (fpath, content)  => {
+    skipWatchChangeUpdateOnce = true;
+
     fs.writeFile(fpath, content, (err) => {
-        if (!err) return
-        console.error("An error ocurred writing to the file " + err.message);
+        if (err) {
+            console.error("An error ocurred writing to the file " + err.message);
+            return;
+        }
+
+        let parentDir = path.dirname(fpath);
+        let watchers  = watcher.getWatched();
+        let targetDir = watchers[parentDir];
+        if (
+            targetDir && !targetDir.includes( path.basename(fpath) )
+        ) {
+            skipWatchChangeUpdateOnce = false;
+            watcher.add(fpath);
+            window.webContents.send('update-file-path', fpath);
+        }
+
+        try {
+            window.webContents.send('file-saved', fpath);
+        } catch(e) {}
     });
 }
 
 const saveFileAs = (content) => {
     dialog.showSaveDialog().then((response) => {
         if (response.canceled) {
-            console.log("You didn't save the file");
+            console.debug("You didn't save the file");
             return;
         }
 
         saveFile(response.filePath, content);
-        watcher.add(response.filePath);
     });
 }
 
@@ -111,7 +130,7 @@ const openFiles = (startPath) => {
         }
     ).then((response) => {
         if (response.canceled) {
-            console.log("Canceled file(s) open request...");
+            console.debug("Canceled file(s) open request...");
             return;
         }
 
@@ -124,6 +143,11 @@ const loadFilesWatcher = () => {
     watcher = chokidar.watch([], {});
 
     watcher.on('change', (fpath) => {
+        if (skipWatchChangeUpdateOnce) {
+            skipWatchChangeUpdateOnce = false;
+            return;
+        }
+
         console.debug("File (changed) : ", fpath);
         window.webContents.send('file-changed', fpath);
     }).on('unlink', (fpath) => {
@@ -133,7 +157,7 @@ const loadFilesWatcher = () => {
 }
 
 const unwatchFile = async (fpath) => {
-    console.log("File (unwatch) : ", fpath);
+    console.debug("File (unwatch) : ", fpath);
     await watcher.unwatch(fpath);
 }
 

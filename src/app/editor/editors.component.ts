@@ -4,6 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
 import { FilesModalComponent } from "./modals/files-modal.component";
 import { EditorsService } from '../common/services/editor/editors.service';
+import { TabsService } from '../common/services/editor/tabs/tabs.service';
 import { FilesService } from '../common/services/editor/files.service';
 
 import { DndDirective } from '../common/directives/dnd.directive';
@@ -34,6 +35,7 @@ export class EditorsComponent {
 
     constructor(
         private editorsService: EditorsService,
+        private tabsService: TabsService,
         private filesService: FilesService
     ) {
     }
@@ -57,17 +59,17 @@ export class EditorsComponent {
         this.editorsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((message: ServiceMessage) => {
-            if (message.action == "select-left-editor") {
+            if (message.action === "select-left-editor") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.leftSiblingUUID) return;
                 let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
                 siblingComponent.editor.focus()
-            } else if (message.action == "select-right-editor") {
+            } else if (message.action === "select-right-editor") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.rightSiblingUUID) return;
                 let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
                 siblingComponent.editor.focus()
-            } else if (message.action == "move-session-left") {
+            } else if (message.action === "move-session-left") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.leftSiblingUUID) return;
                 let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
@@ -78,7 +80,7 @@ export class EditorsComponent {
                 siblingComponent.editor.setSession(session);
                 editorComponent.newBuffer();
                 siblingComponent.editor.focus()
-            } else if (message.action == "move-session-right") {
+            } else if (message.action === "move-session-right") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.rightSiblingUUID) return;
                 let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
@@ -89,18 +91,18 @@ export class EditorsComponent {
                 siblingComponent.editor.setSession(session);
                 editorComponent.newBuffer();
                 siblingComponent.editor.focus()
-            } else if (message.action == "set-active-editor") {
+            } else if (message.action === "set-active-editor") {
                 this.editorsService.get(this.activeEditor).removeActiveStyling();
                 this.activeEditor = message.editorUUID;
                 this.editorsService.get(this.activeEditor).addActiveStyling();
-            } else if (message.action == "set-tab-to-editor") {
+            } else if (message.action === "set-tab-to-editor") {
                 let file            = this.filesService.get(message.filePath);
                 let editorComponent = this.getActiveEditorComponent();
                 let editor          = editorComponent.editor;
 
                 editorComponent.activeFile = file;
                 editor.setSession(file.session);
-            } else if (message.action == "close-tab") {
+            } else if (message.action === "close-tab") {
                 let file    = this.filesService.get(message.filePath);
                 let editors = this.editorsService.getEditorsAsArray();
 
@@ -135,11 +137,33 @@ export class EditorsComponent {
         });
 
         window.fs.onChangedFile(async (path: string) => {
-            console.log(path);
+            let message      = new ServiceMessage();
+            message.action   = "file-changed";
+            message.filePath = path;
+            this.tabsService.sendMessage(message);
         });
 
         window.fs.onDeletedFile(async (path: string) => {
+            let message      = new ServiceMessage();
+            message.action   = "file-deleted";
+            message.filePath = path;
+
+            this.tabsService.sendMessage(message);
+            this.filesService.sendMessage(message);
+        });
+
+        window.fs.onSavedFile(async (path: string) => {
+            let message      = new ServiceMessage();
+            message.action   = "file-saved";
+            message.filePath = path;
+
+            this.tabsService.sendMessage(message);
+        });
+
+        window.fs.onUpdateFilePath(async (path: string) => {
             console.log(path);
+            // this.tabsService.sendMessage(message);
+            // this.filesService.sendMessage(message);
         });
 
         window.main.onMenuActions(async (action: string) => {
