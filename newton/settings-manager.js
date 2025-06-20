@@ -4,7 +4,7 @@ const { newtonFs } = require('./fs');
 let config = {};
 
 
-const loadsettings = () => {
+const loadSettings = () => {
     config = JSON.parse(
         newtonFs.getSettingsConfigData()
     );
@@ -38,7 +38,7 @@ const getIconPath = () => {
 module.exports = {
     settingsManager: {
         getIconPath: getIconPath,
-        loadsettings: loadsettings,
+        loadSettings: loadSettings,
         getConfig: getConfig,
         saveConfig: saveConfig,
     }

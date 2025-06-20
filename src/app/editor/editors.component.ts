@@ -134,6 +134,14 @@ export class EditorsComponent {
             this.setSession(file);
         });
 
+        window.fs.onChangedFile(async (path: string) => {
+            console.log(path);
+        });
+
+        window.fs.onDeletedFile(async (path: string) => {
+            console.log(path);
+        });
+
         window.main.onMenuActions(async (action: string) => {
             let editorComponent = this.getActiveEditorComponent();
             let editor          = editorComponent.editor;

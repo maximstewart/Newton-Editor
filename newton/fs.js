@@ -14,30 +14,41 @@ let window                  = null;
 let watcher                 = null;
 
 
+
 const getIconPath = () => {
     return path.join(CONFIG_PATH, "./icons/newton.png");
 }
 
 const getSettingsConfigData = () => {
-    return getFileContents(SETTINGS_CONFIG_PATH);
+    return getFileContents(
+        SETTINGS_CONFIG_PATH,
+        useRelativePath = false,
+        watchFile = false
+    );
 }
 
 const getLspConfigData = () => {
-    const config = getFileContents(LSP_CONFIG_PATH, useRelativePath = true);
-    return config.replaceAll("{user.home}", HOME_DIR);
+    return getFileContents(
+        LSP_CONFIG_PATH,
+        useRelativePath = true,
+        watchFile = false
+    ).replaceAll("{user.home}", HOME_DIR);
 }
 
-const getFileContents = (_path, useRelativePath = false) => {
+const getFileContents = (_path, useRelativePath = false, watchFile = true) => {
     console.log(`Getting Contents For: ${_path}`);
 
     try {
-        if (!useRelativePath) {
-            return fs.readFileSync(_path, 'utf8');
-        } else {
-            let fpath = path.join(__dirname, _path);
-            watcher.add(fpath);
-            return fs.readFileSync(fpath, 'utf8');
-        }
+        if (useRelativePath)
+            return fs.readFileSync(
+                path.join(__dirname, _path),
+                'utf8'
+            );
+
+        if (watchFile)
+            watcher.add(_path);
+
+        return fs.readFileSync(_path, 'utf8');
     } catch(err) {
         return `{"message": {"type": "error", "text": "Error: Could not read  ${_path}"}}`;
     }
@@ -107,8 +118,10 @@ const loadFilesWatcher = () => {
 
     watcher.on('change', (fpath) => {
         console.debug("File (changed) : ", fpath);
+        window.webContents.send('file-changed', fpath);
     }).on('unlink', (fpath) => {
-        console.debug("File (unlinked) : ", fpath);
+        console.debug("File (deleted) : ", fpath);
+        window.webContents.send('file-deleted', fpath);
     });
 }
 

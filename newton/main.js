@@ -89,7 +89,7 @@ app.whenReady().then(async () => {
         app.quit();
     }
 
-    newton.settings.loadsettings();
+    newton.settings.loadSettings();
     newton.fs.loadFilesWatcher();
 
     loadHandlers();

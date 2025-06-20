@@ -32,6 +32,8 @@ declare global {
             closeFile: (arg0: any) => Promise<string>,
             getPathForFile: any,
             onLoadFiles: (arg0: any) => Promise<string>,
+            onChangedFile: (arg0: any) => Promise<string>,
+            onDeletedFile: (arg0: any) => Promise<string>,
         }
     }
 }
