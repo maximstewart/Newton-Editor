@@ -88,14 +88,21 @@ const openFiles = (startPath) => {
             defaultPath: (startPath) ? startPath : HOME_DIR,
             filters: [
                 { name: "All Files", extensions: ["*"]                               },
-                { name: "c",         extensions: [".h", ".c"]                        },
-                { name: "cpp",       extensions: ["hpp", "cpp"]                      },
-                { name: "html",      extensions: ["js", "css", "scss", "html", "ts"] },
-                { name: "java",      extensions: ["java"]                            },
-                { name: "python",    extensions: ["py", "pyc"]                       },
-                { name: "rust",      extensions: ["r", "rc"]                         },
-                { name: "text",      extensions: ["txt", "log", "md"]                },
-                { name: "go",        extensions: ["go"]                              },
+                { name: "All Sub Filters",
+                    extensions: [
+                        "h", "c", "hpp", "cpp", "js", "css", "scss", "html",
+                        "ts", "java", "py", "pyc", "txt", "log", "md", "r",
+                        "rc", "go"
+                    ]
+                },
+                { name: "C",         extensions: ["h", "c"]                          },
+                { name: "CPP",       extensions: ["hpp", "cpp"]                      },
+                { name: "HTML",      extensions: ["js", "css", "scss", "html", "ts"] },
+                { name: "Java",      extensions: ["java"]                            },
+                { name: "Python",    extensions: ["py", "pyc"]                       },
+                { name: "Text",      extensions: ["txt", "log", "md"]                },
+                { name: "Rust",      extensions: ["r", "rc"]                         },
+                { name: "Go",        extensions: ["go"]                              }
             ],
             properties: [
                 'openFile',
@@ -104,7 +111,7 @@ const openFiles = (startPath) => {
         }
     ).then((response) => {
         if (response.canceled) {
-            console.log("Canceled file open request...");
+            console.log("Canceled file(s) open request...");
             return;
         }
 
