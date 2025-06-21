@@ -34,7 +34,7 @@ export class NewtonEditorBase {
         this.editorElm.nativeElement.classList.remove("active-editor")
     }
 
-    public openCommandPalette() {
+    public openCommandPalette2() {
         this.editor.execCommand("openCommandPalette");
     }
 

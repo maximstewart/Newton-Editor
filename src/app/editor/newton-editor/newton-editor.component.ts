@@ -127,6 +127,8 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         });
 
         this.editor.on("change", () => {
+            if (!this.activeFile) return;
+
             let message      = new ServiceMessage();
             message.action   = "file-changed";
             message.filePath = this.activeFile.path;

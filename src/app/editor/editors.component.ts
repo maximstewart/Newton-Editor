@@ -54,6 +54,11 @@ export class EditorsComponent {
         rightEditor.instance.leftSiblingUUID = leftEditor.instance.uuid;
     }
 
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
+
     loadSubscribers() {
 
         this.editorsService.getMessage$().pipe(
@@ -72,23 +77,31 @@ export class EditorsComponent {
             } else if (message.action === "move-session-left") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.leftSiblingUUID) return;
+
                 let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
                 let session = editorComponent.editor.getSession();
                 let siblingSession = siblingComponent.editor.getSession();
 
                 if (session == siblingSession) return;
+
                 siblingComponent.editor.setSession(session);
+                siblingComponent.activeFile = editorComponent.activeFile;
+
                 editorComponent.newBuffer();
                 siblingComponent.editor.focus()
             } else if (message.action === "move-session-right") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
                 if (!editorComponent.rightSiblingUUID) return;
+
                 let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
                 let session = editorComponent.editor.getSession();
                 let siblingSession = siblingComponent.editor.getSession();
 
                 if (session == siblingSession) return;
+
                 siblingComponent.editor.setSession(session);
+                siblingComponent.activeFile = editorComponent.activeFile;
+
                 editorComponent.newBuffer();
                 siblingComponent.editor.focus()
             } else if (message.action === "set-active-editor") {
@@ -207,11 +220,6 @@ export class EditorsComponent {
         });
     }
 
-    ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
-    }
-
     // Note: Only really works with 2 editors and very brittle logic.
     protected setEditorSize(event: any) {
         let lEditorComponent = null;
@@ -248,6 +256,10 @@ export class EditorsComponent {
             }
         }
 
+        this.resizeAndFocus(lEditorComponent, lSize, rEditorComponent, rSize);
+    }
+
+    private resizeAndFocus(lEditorComponent: any, lSize: number, rEditorComponent: any, rSize: number) {
         let lElm = lEditorComponent.editorElm.nativeElement.parentElement;
         let rElm = rEditorComponent.editorElm.nativeElement.parentElement;
 

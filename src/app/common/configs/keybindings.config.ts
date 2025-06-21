@@ -16,7 +16,7 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "ctrl-shift-k", mac: "command-shift-k"},
         readOnly: false
     }, {
-        name: "openCommandPalette",
+        name: "openCommandPalette2",
         bindKey: {linux: "Command-shift-/|F1", win: "ctrl-shift-/|F1"},
         readOnly: false
     }, {
