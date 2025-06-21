@@ -12,7 +12,7 @@ const SETTINGS_CONFIG_PATH    = path.join(CONFIG_PATH, "/settings.json");
 const LSP_CONFIG_PATH         = path.join(BASE_PATH, "/resources/lsp-servers-config.json");
 let window                    = null;
 let watcher                   = null;
-let skipWatchChangeUpdateOnce = false;
+let skipOnceFileWatchChange = false;
 
 
 
@@ -64,7 +64,7 @@ const saveSettingsConfigData = (data) => {
 }
 
 const saveFile = (fpath, content)  => {
-    skipWatchChangeUpdateOnce = true;
+    skipOnceFileWatchChange = true;
 
     fs.writeFile(fpath, content, (err) => {
         if (err) {
@@ -76,9 +76,9 @@ const saveFile = (fpath, content)  => {
         let watchers  = watcher.getWatched();
         let targetDir = watchers[parentDir];
         if (
-            targetDir && !targetDir.includes( path.basename(fpath) )
+            !targetDir || !targetDir.includes( path.basename(fpath) )
         ) {
-            skipWatchChangeUpdateOnce = false;
+            skipOnceFileWatchChange = false;
             watcher.add(fpath);
             window.webContents.send('update-file-path', fpath);
         }
@@ -143,13 +143,14 @@ const loadFilesWatcher = () => {
     watcher = chokidar.watch([], {});
 
     watcher.on('change', (fpath) => {
-        if (skipWatchChangeUpdateOnce) {
-            skipWatchChangeUpdateOnce = false;
+        if (skipOnceFileWatchChange) {
+            skipOnceFileWatchChange = false;
             return;
         }
 
         console.debug("File (changed) : ", fpath);
-        window.webContents.send('file-changed', fpath);
+        const data = getFileContents(fpath, false, false);
+        window.webContents.send('file-changed', fpath, data);
     }).on('unlink', (fpath) => {
         console.debug("File (deleted) : ", fpath);
         window.webContents.send('file-deleted', fpath);

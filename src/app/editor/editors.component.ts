@@ -149,10 +149,15 @@ export class EditorsComponent {
             this.setSession(file);
         });
 
-        window.fs.onChangedFile(async (path: string) => {
+        window.fs.onChangedFile(async (path: string, data: string) => {
+            let file = this.filesService.get(path);
+            file.session.setValue(data);
+
+            // Note: fake 'save' event to not show as changed iven external save happened...
             let message      = new ServiceMessage();
-            message.action   = "file-changed";
+            message.action   = "file-saved";
             message.filePath = path;
+
             this.tabsService.sendMessage(message);
         });
 
