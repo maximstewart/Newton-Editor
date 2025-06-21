@@ -87,7 +87,7 @@ export class EditorsComponent {
                 siblingComponent.editor.setSession(session);
                 siblingComponent.activeFile = editorComponent.activeFile;
 
-                editorComponent.newBuffer();
+                editorComponent.newSession();
                 siblingComponent.editor.focus()
             } else if (message.action === "move-session-right") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
@@ -102,7 +102,7 @@ export class EditorsComponent {
                 siblingComponent.editor.setSession(session);
                 siblingComponent.activeFile = editorComponent.activeFile;
 
-                editorComponent.newBuffer();
+                editorComponent.newSession();
                 siblingComponent.editor.focus()
             } else if (message.action === "set-active-editor") {
                 this.editorsService.get(this.activeEditor).removeActiveStyling();
@@ -122,7 +122,7 @@ export class EditorsComponent {
                 for (let i = 0; i < editors.length; i++) {
                     let editorComponent = editors[i].instance;
                     if (editorComponent.editor.session == file.session) {
-                        editorComponent.newBuffer();
+                        editorComponent.newSession();
                     }
                 }
 

@@ -131,11 +131,10 @@ export class NewtonEditorComponent extends NewtonEditorBase {
     }
 
 
-    public newBuffer() {
-        let buffer = ace.createEditSession([""]);
-        this.editor.setSession(buffer);
+    public newSession() {
         this.activeFile = null;
-        this.updateInfoBar();
+        let session     = ace.createEditSession([""]);
+        this.editor.setSession(session);
     }
 
     protected openFiles() {
@@ -163,11 +162,9 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         window.fs.saveFileAs().then((path: string) => {
             if (!path) return;
 
-            let file: NewtonFile = new File([""], path, {
-                type: "text/plain",
-            });
+            let file: NewtonFile = new File([""], path, {});
+            const text           = this.editor.session.getValue();
 
-            const text = this.editor.session.getValue();
             window.fs.saveFile(path, text);
             this.filesService.addFile(
                 path,
