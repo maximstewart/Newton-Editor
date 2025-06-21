@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
@@ -17,7 +17,9 @@ import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.s
     }
 })
 export class InfoBarComponent {
-    private unsubscribe = new Subject<void>();
+    private unsubscribe: Subject<void>     = new Subject();
+
+    private infoBarService: InfoBarService = inject(InfoBarService);
 
     fpath: string     = "";
     path: string      = "";
@@ -26,9 +28,7 @@ export class InfoBarComponent {
     ftype: string     = "";
 
 
-    constructor(
-        private infoBarService: InfoBarService
-    ) {}
+    constructor() {}
 
 
     public ngAfterViewInit(): void {

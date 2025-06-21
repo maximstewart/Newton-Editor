@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil } from 'rxjs';
@@ -25,18 +25,18 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class TabsComponent {
-    private unsubscribe = new Subject<void>();
+    private unsubscribe: Subject<void>           = new Subject();
+
+    private editorsService: EditorsService       = inject(EditorsService);
+    private tabsService: TabsService             = inject(TabsService);
+    private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
     activeTab!: string;
-    tabs: any[] = [];
+    tabs: any[]      = [];
     newIndex: number = -1;
 
 
-    constructor(
-        private editorsService: EditorsService,
-        private tabsService: TabsService,
-        private changeDetectorRef: ChangeDetectorRef
-    ) {
+    constructor() {
     }
 
     public ngAfterViewInit(): void {

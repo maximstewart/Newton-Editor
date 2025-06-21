@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
 import { EditSession } from 'ace-builds';
@@ -17,12 +17,12 @@ import { ServiceMessage } from '../../types/service-message.type';
 export class FilesService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
+    private tabsService: TabsService = inject(TabsService);
+
     files: Map<string, NewtonFile>;
 
 
-    constructor(
-        private tabsService: TabsService,
-    ) {
+    constructor() {
         this.files = new Map<string, NewtonFile>();
     }
 
@@ -64,15 +64,17 @@ export class FilesService {
 	    return files[ files.length - 1 ];
     }
 
-    async addFile(path: string, file: NewtonFile): Promise<void> {
+    async addFile(path: string, file: NewtonFile, loadFileContents: boolean = true, data: string = ""): Promise<void> {
 	    try {
 	        let pathParts = path.split("/");
 	        file.fname    = pathParts[ pathParts.length - 1 ];
 	        file.path     = path;
 	        file.hash     = btoa(file.path);
-	        let data      = await window.fs.getFileContents(file.path);
-            file.session  = new EditSession(data);
 
+	        if (loadFileContents)
+	            data = await window.fs.getFileContents(file.path);
+
+            file.session = new EditSession(data);
             file.session.setMode(
                 getModeForPath( file.path ).mode
             );

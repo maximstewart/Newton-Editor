@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, TemplateRef, ComponentRef, ViewContainerRef } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef, inject } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
@@ -27,17 +27,17 @@ import { ServiceMessage } from '../common/types/service-message.type';
     }
 })
 export class EditorsComponent {
-    private unsubscribe = new Subject<void>();
+    private unsubscribe: Subject<void>     = new Subject();
+
+    private editorsService: EditorsService = inject(EditorsService);
+    private tabsService: TabsService       = inject(TabsService);
+    private filesService: FilesService     = inject(FilesService);
 
     @ViewChild('containerRef', {read: ViewContainerRef}) containerRef!: ViewContainerRef;
     activeEditor!: string;
 
 
-    constructor(
-        private editorsService: EditorsService,
-        private tabsService: TabsService,
-        private filesService: FilesService
-    ) {
+    constructor() {
     }
 
 

@@ -1,30 +1,79 @@
-import { Directive, ElementRef, Input, ViewChild } from '@angular/core';
+import { Directive, ElementRef, Input, ViewChild, inject } from '@angular/core';
 import * as uuid from 'uuid';
+
+import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
+import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
+import { LSPService } from '../../common/services/lsp.service';
+import { TabsService } from '../../common/services/editor/tabs/tabs.service';
+import { EditorsService } from '../../common/services/editor/editors.service';
+import { FilesService } from '../../common/services/editor/files.service';
 
 import { EditorSettings } from "../../common/configs/editor.config";
 import { NewtonFile } from '../../common/types/file.type';
+
+import { ServiceMessage } from '../../common/types/service-message.type';
 
 
 
 @Directive()
 export class NewtonEditorBase {
+    public uuid: string                            = uuid.v4();;
+    public isDefault: boolean                      = false;
+    public leftSiblingUUID!: string;
+    public rightSiblingUUID!: string;
+
+    protected infoBarService: InfoBarService       = inject(InfoBarService);
+    protected filesModalService: FilesModalService = inject(FilesModalService);
+    protected lspService: LSPService               = inject(LSPService);
+    protected tabsService: TabsService             = inject(TabsService);
+    protected editorsService: EditorsService       = inject(EditorsService);
+    protected filesService: FilesService           = inject(FilesService);
+
     @ViewChild('editor') editorElm!: ElementRef;
     @Input() editorSettings!: typeof EditorSettings;
-    editor!: any;
-    uuid!: string;
-    leftSiblingUUID!: string;
-    rightSiblingUUID!: string;
-    cutBuffer: string = "";
-    timerId: number   = -1;
-    activeFile!: NewtonFile;
-    isDefault: boolean = false;
+
+    public editor!: any;
+    public activeFile!: NewtonFile;
+
+    public cutBuffer: string = "";
+    public timerId: number   = -1;
 
 
-    constructor(
-    ) {
-        this.uuid = uuid.v4();
+    constructor() {
     }
 
+
+    public selectLeftEditor() {
+        let message        = new ServiceMessage();
+        message.action     = "select-left-editor";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
+    }
+
+    public selectRightEditor() {
+        let message        = new ServiceMessage();
+        message.action     = "select-right-editor";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
+    }
+
+    public moveSessionLeft() {
+        let message        = new ServiceMessage();
+        message.action     = "move-session-left";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
+    }
+
+    public moveSessionRight() {
+        let message        = new ServiceMessage();
+        message.action     = "move-session-right";
+        message.editorUUID = this.uuid;
+
+        this.editorsService.sendMessage(message);
+    }
 
     public addActiveStyling() {
         this.editorElm.nativeElement.classList.add("active-editor")
@@ -46,61 +95,43 @@ export class NewtonEditorBase {
         this.editor.showKeyboardShortcuts();
     }
 
-    protected search() {
+    public search() {
         console.log(this.editor.session.getMode()["$id"]);
     }
 
-    protected destroySession() {
+    public destroySession() {
         this.editor.session.destroy();
     }
 
-    protected quit() {
-        window.main.quit();
-    }
-
-    protected toggleFullScreen() {
+    public toggleFullScreen() {
         window.main.toggleFullScreen();
     }
 
-    protected openFiles() {
-        let startDir = "";
-        if (this.activeFile) {
-            let pathParts = this.activeFile.path.split("/");
-            pathParts.pop();
-            startDir = pathParts.join( '/' );
-        }
-
-        window.fs.openFiles(startDir);
-    }
-
-    protected saveFile() {
-        if (!this.activeFile) {
-            this.saveFileAs();
-            return;
-        }
-
-        const text = this.activeFile.session.getValue();
-        window.fs.saveFile(this.activeFile.path, text);
-    }
-
-    protected saveFileAs() {
-        const text = this.editor.session.getValue();
-        window.fs.saveFileAs(text);
-    }
-
-    protected zoomIn() {
+    public zoomIn() {
         this.editor.setFontSize(
             parseInt(this.editor.getFontSize()) + 1
         )
     }
 
-    protected zoomOut() {
+    public zoomOut() {
         this.editor.setFontSize(
             parseInt(this.editor.getFontSize()) - 1
         )
     }
 
-    protected cutText() {
+    public movelinesUp() {
+        this.editor.execCommand("movelinesup");
+    }
+
+    public movelinesDown() {
+        this.editor.execCommand("movelinesdown");
+    }
+
+    public duplicateLines() {
+        this.editor.execCommand("copylinesdown");
+    }
+
+    public cutText() {
         let cutText = this.editor.getSelectedText();
         this.editor.remove();
         navigator.clipboard.writeText(cutText).catch(() => {
@@ -108,54 +139,30 @@ export class NewtonEditorBase {
         });
     }
 
-    protected copyText() {
+    public copyText() {
         let copyText = this.editor.getSelectedText();
         navigator.clipboard.writeText(copyText).catch(() => {
             console.error("Unable to copy text...");
         });
     }
 
-    protected pasteText() {
+    public pasteText() {
         navigator.clipboard.readText().then((pasteText) => {
             this.editor.insert(pasteText, true);
         });
     }
 
-    protected movelinesUp() {
-        this.editor.execCommand("movelinesup");
+    protected updateInfoBar() {
+        this.infoBarService.setInfoBarFPath(this.activeFile?.path)
+        this.infoBarService.setInfoBarCursorPos(
+            this.editor.getCursorPosition()
+        );
+        this.infoBarService.setInfoBarFType(
+            this.editor.session.getMode()["$id"]
+        );
     }
 
-    protected movelinesDown() {
-        this.editor.execCommand("movelinesdown");
+    private quit() {
+        window.main.quit();
     }
-
-    protected duplicateLines() {
-        this.editor.execCommand("copylinesdown");
-    }
-
-    protected cutToBuffer() {
-        if (this.timerId) { clearTimeout(this.timerId); }
-
-        const cursorPosition = this.editor.getCursorPosition();
-        let lineText         = this.editor.session.getLine(cursorPosition.row);
-        this.cutBuffer       += `${lineText}\n`;
-
-        this.editor.session.removeFullLines(cursorPosition.row, cursorPosition.row)
-        this.setBufferClearTimeout();
-    }
-
-    protected pasteCutBuffer() {
-        if (this.timerId) { clearTimeout(this.timerId); }
-
-        this.editor.insert(this.cutBuffer, true);
-        this.setBufferClearTimeout();
-    }
-
-    private setBufferClearTimeout(timeout: number = 5000) {
-        this.timerId = setTimeout(() => {
-            this.cutBuffer = "";
-            this.timerId   = -1;
-        }, timeout);
-    }
-
 }

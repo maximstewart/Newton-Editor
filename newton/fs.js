@@ -89,14 +89,14 @@ const saveFile = (fpath, content)  => {
     });
 }
 
-const saveFileAs = (content) => {
-    dialog.showSaveDialog().then((response) => {
+const saveFileAs = () => {
+    return dialog.showSaveDialog().then((response) => {
         if (response.canceled) {
             console.debug("You didn't save the file");
             return;
         }
 
-        saveFile(response.filePath, content);
+        return response.filePath;
     });
 }
 

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { Subject, takeUntil } from 'rxjs';
@@ -25,16 +25,16 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class FilesModalComponent {
-    private unsubscribe = new Subject<void>();
+    private unsubscribe: Subject<void>           = new Subject();
+
+    private filesModalService: FilesModalService = inject(FilesModalService);
+    private tabsService: TabsService             = inject(TabsService);
 
     filesModal!: bootstrap.Modal;
     files: any[] = [];
 
 
-    constructor(
-        private filesModalService: FilesModalService,
-        private tabsService: TabsService
-    ) {
+    constructor() {
     }
 
 

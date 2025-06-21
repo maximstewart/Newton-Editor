@@ -9,14 +9,9 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-one_dark";
 import "ace-builds/src-noconflict/theme-dracula";
 
-import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
-import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
-import { LSPService } from '../../common/services/lsp.service';
-import { TabsService } from '../../common/services/editor/tabs/tabs.service';
-import { EditorsService } from '../../common/services/editor/editors.service';
-
 import { NewtonEditorBase } from './newton-editor.base';
 
+import { NewtonFile } from '../../common/types/file.type';
 import { ServiceMessage } from '../../common/types/service-message.type';
 
 
@@ -35,13 +30,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 export class NewtonEditorComponent extends NewtonEditorBase {
 
 
-    constructor(
-        private infoBarService: InfoBarService,
-        private editorsService: EditorsService,
-        private lspService: LSPService,
-        private tabsService: TabsService,
-        private filesModalService: FilesModalService
-    ) {
+    constructor() {
         super();
     }
 
@@ -141,15 +130,6 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         });
     }
 
-    public updateInfoBar() {
-        this.infoBarService.setInfoBarFPath(this.activeFile?.path)
-        this.infoBarService.setInfoBarCursorPos(
-            this.editor.getCursorPosition()
-        );
-        this.infoBarService.setInfoBarFType(
-            this.editor.session.getMode()["$id"]
-        );
-    }
 
     public newBuffer() {
         let buffer = ace.createEditSession([""]);
@@ -158,36 +138,74 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         this.updateInfoBar();
     }
 
-    public selectLeftEditor() {
-        let message        = new ServiceMessage();
-        message.action     = "select-left-editor";
-        message.editorUUID = this.uuid;
+    protected openFiles() {
+        let startDir = "";
+        if (this.activeFile) {
+            let pathParts = this.activeFile.path.split("/");
+            pathParts.pop();
+            startDir = pathParts.join( '/' );
+        }
 
-        this.editorsService.sendMessage(message);
+        window.fs.openFiles(startDir);
     }
 
-    public selectRightEditor() {
-        let message        = new ServiceMessage();
-        message.action     = "select-right-editor";
-        message.editorUUID = this.uuid;
+    protected saveFile() {
+        if (!this.activeFile) {
+            this.saveFileAs();
+            return;
+        }
 
-        this.editorsService.sendMessage(message);
+        const text = this.activeFile.session.getValue();
+        window.fs.saveFile(this.activeFile.path, text);
     }
 
-    public moveSessionLeft() {
-        let message        = new ServiceMessage();
-        message.action     = "move-session-left";
-        message.editorUUID = this.uuid;
+    protected saveFileAs() {
+        window.fs.saveFileAs().then((path: string) => {
+            if (!path) return;
 
-        this.editorsService.sendMessage(message);
+            let file: NewtonFile = new File([""], path, {
+                type: "text/plain",
+            });
+
+            const text = this.editor.session.getValue();
+            window.fs.saveFile(path, text);
+            this.filesService.addFile(
+                path,
+                file,
+                false,
+                text
+            ).then(() => {
+                this.activeFile = this.filesService.get(path);
+                this.editor.setSession(this.activeFile.session);
+                this.filesService.addTab(this.activeFile);
+            });
+
+        });
     }
 
-    public moveSessionRight() {
-        let message        = new ServiceMessage();
-        message.action     = "move-session-right";
-        message.editorUUID = this.uuid;
+    protected cutToBuffer() {
+        if (this.timerId) { clearTimeout(this.timerId); }
 
-        this.editorsService.sendMessage(message);
+        const cursorPosition = this.editor.getCursorPosition();
+        let lineText         = this.editor.session.getLine(cursorPosition.row);
+        this.cutBuffer       += `${lineText}\n`;
+
+        this.editor.session.removeFullLines(cursorPosition.row, cursorPosition.row)
+        this.setBufferClearTimeout();
+    }
+
+    protected pasteCutBuffer() {
+        if (this.timerId) { clearTimeout(this.timerId); }
+
+        this.editor.insert(this.cutBuffer, true);
+        this.setBufferClearTimeout();
+    }
+
+    private setBufferClearTimeout(timeout: number = 5000) {
+        this.timerId = setTimeout(() => {
+            this.cutBuffer = "";
+            this.timerId   = -1;
+        }, timeout);
     }
 
 }
