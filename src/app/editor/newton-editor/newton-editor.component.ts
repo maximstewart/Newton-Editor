@@ -133,7 +133,6 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         });
 
         this.editor.on("changeSession", (session) => {
-            this.lspService.registerEditor(this.editor);
             this.updateInfoBar();
         });
     }

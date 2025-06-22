@@ -3,7 +3,6 @@ import * as uuid from 'uuid';
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
 import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
-import { LSPService } from '../../common/services/lsp.service';
 import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
 import { FilesService } from '../../common/services/editor/files.service';
@@ -24,7 +23,6 @@ export class NewtonEditorBase {
 
     protected infoBarService: InfoBarService       = inject(InfoBarService);
     protected filesModalService: FilesModalService = inject(FilesModalService);
-    protected lspService: LSPService               = inject(LSPService);
     protected tabsService: TabsService             = inject(TabsService);
     protected editorsService: EditorsService       = inject(EditorsService);
     protected filesService: FilesService           = inject(FilesService);
