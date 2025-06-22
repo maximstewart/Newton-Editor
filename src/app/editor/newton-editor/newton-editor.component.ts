@@ -5,6 +5,7 @@ import * as ace from "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-settings_menu";
 import "ace-builds/src-noconflict/ext-keybinding_menu";
 import "ace-builds/src-noconflict/ext-command_bar";
+import "ace-builds/src-noconflict/ext-prompt";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-one_dark";
 import "ace-builds/src-noconflict/theme-dracula";

@@ -97,6 +97,55 @@ export class NewtonEditorBase {
         console.log(this.editor.session.getMode()["$id"]);
     }
 
+    public showFilesList() {
+        let paths     = this.filesService.getAllPaths();
+        let stubPaths = [];
+
+        for (let i = 0; i < paths.length; i++) {
+            let fpath = paths[i];
+            if (fpath.length > 67) {
+                fpath = "..." + fpath.slice(fpath.length - 67, fpath.length);
+            }
+            stubPaths.push(fpath);
+        }
+
+        this.editor.prompt("",
+        {
+            name: "Files:",
+            placeholder: "Search...",
+            getCompletions: (search) => {
+                let query  = search.getValue();
+                let result = [];
+
+                if (!query) return stubPaths;
+
+                for (let i = 0; i < stubPaths.length; i++) {
+                    if (stubPaths[i].includes(query)) {
+                        result.push(stubPaths[i]);
+                    }
+                }
+
+                return result;
+            },
+            onAccept: (data) => {
+                let fpath = data.value;
+                let path  = "";
+
+                for (let i = 0; i < stubPaths.length; i++) {
+                    if (stubPaths[i] === fpath) {
+                        path = paths[i];
+                    }
+                }
+
+                if (!path) return;
+
+                this.activeFile = this.filesService.get(path);
+                this.editor.setSession(this.activeFile.session);
+            }
+        });
+
+    }
+
     public destroySession() {
         this.editor.session.destroy();
     }

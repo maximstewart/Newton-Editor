@@ -1,7 +1,7 @@
 export const Keybindings: Array<{}> = [
     {
         name: "quit",
-        bindKey: {win: "Ctrl-q", mac: "Ctrl-q"},
+        bindKey: {win: "ctrl-q", mac: "ctrl-q"},
         readOnly: false
     }, {
         name: "toggleFullScreen",
@@ -9,7 +9,7 @@ export const Keybindings: Array<{}> = [
         readOnly: false
     }, {
         name: "showSettingsMenu",
-        bindKey: {win: "Ctrl-Shift-m", mac: "Ctrl-Shift-m"},
+        bindKey: {win: "ctrl-shift-m", mac: "ctrl-shift-m"},
         readOnly: false
     }, {
         name: "showKeyboardShortcuts",
@@ -17,12 +17,16 @@ export const Keybindings: Array<{}> = [
         readOnly: false
     }, {
         name: "openCommandPalette2",
-        bindKey: {linux: "Command-shift-/|F1", win: "ctrl-shift-/|F1"},
+        bindKey: {linux: "command-shift-/|F1", win: "ctrl-shift-/|F1"},
         readOnly: false
     }, {
         name: "showFilesModal",
-        bindKey: {win: "ctrl-b", mac: "ctrl-b"},
+        bindKey: {win: "ctrl-shift-b", mac: "ctrl-shift-b"},
         service: "filesModalService",
+        readOnly: false
+    }, {
+        name: "showFilesList",
+        bindKey: {win: "ctrl-b", mac: "ctrl-b"},
         readOnly: false
     }, {
         name: "showLSPModal",

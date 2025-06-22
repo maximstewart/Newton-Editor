@@ -31,6 +31,14 @@ export class FilesService {
         return this.files.get(path);
     }
 
+    public getAllPaths(): string[] {
+        return [...this.files.keys()];
+    }
+
+    public getAllFiles(): NewtonFile[] {
+        return [...this.files.values()];
+    }
+
     public delete(file: NewtonFile) {
         file.session.destroy();
         window.fs.closeFile(file.path);
