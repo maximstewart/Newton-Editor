@@ -13,9 +13,11 @@ export class LSPService {
     lspConfigData!: {};
     languageProviders: {} = {};
 
+
     constructor() {
         this.loadLSPService();
     }
+
 
     private loadLSPService() {
         this.getLspConfigData().then((lspConfigData: string) => {

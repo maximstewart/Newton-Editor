@@ -18,43 +18,43 @@ export class InfoBarService {
     constructor() {}
 
 
-    setData(data: ServiceMessage): void {
+    public setData(data: ServiceMessage): void {
         this.dataSubject.next(data);
     }
 
-    getData$(): Observable<ServiceMessage> {
+    public getData$(): Observable<ServiceMessage> {
         return this.dataSubject.asObservable();
     }
 
-    setInfoBarFPath(data: string): void {
+    public setInfoBarFPath(data: string): void {
         this.fpathSubject.next(data);
     }
 
-    updateInfoBarFPath$(): Observable<string> {
+    public updateInfoBarFPath$(): Observable<string> {
         return this.fpathSubject.asObservable();
     }
 
-    setInfoBarCursorPos(data: any): void {
+    public setInfoBarCursorPos(data: any): void {
         this.cursorPosSubject.next(data);
     }
 
-    updateInfoBarCursorPos$(): Observable<any> {
+    public updateInfoBarCursorPos$(): Observable<any> {
         return this.cursorPosSubject.asObservable();
     }
 
-    setInfoBarEncodeing(data: string): void {
+    public setInfoBarEncodeing(data: string): void {
         this.encodeingSubject.next(data);
     }
 
-    updateInfoBarEncodeing$(): Observable<string> {
+    public updateInfoBarEncodeing$(): Observable<string> {
         return this.encodeingSubject.asObservable();
     }
 
-   setInfoBarFType(data: string): void {
+   public setInfoBarFType(data: string): void {
         this.ftypeSubject.next(data);
     }
 
-    updateInfoBarFType$(): Observable<string> {
+    public updateInfoBarFType$(): Observable<string> {
         return this.ftypeSubject.asObservable();
     }
 

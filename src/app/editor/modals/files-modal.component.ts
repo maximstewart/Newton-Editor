@@ -38,11 +38,11 @@ export class FilesModalComponent {
     }
 
 
-    public ngAfterViewInit(): void {
+    private ngAfterViewInit(): void {
         this.loadSubscribers();
     }
 
-    loadSubscribers() {
+    private loadSubscribers() {
         this.tabsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((data: ServiceMessage) => {
@@ -70,15 +70,15 @@ export class FilesModalComponent {
         });
     }
 
-    private createFileRow(title: string, uuid: string, path: string): void {
-        this.files.push({title: title, uuid: uuid, path: path})
-    }
-
-    createModal() {
+    private createModal() {
         this.filesModal = new bootstrap.Modal("#filesModal", {});
     }
 
-    showModal() {
+    public createFileRow(title: string, uuid: string, path: string): void {
+        this.files.push({title: title, uuid: uuid, path: path})
+    }
+
+    public showModal() {
         this.filesModal?.toggle();
     }
 

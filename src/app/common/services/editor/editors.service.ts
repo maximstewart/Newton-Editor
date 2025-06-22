@@ -24,24 +24,24 @@ export class EditorsService {
     }
 
 
-    getEditorsAsArray(): ComponentRef<NewtonEditorComponent>[] {
+    public getEditorsAsArray(): ComponentRef<NewtonEditorComponent>[] {
         return [...this.editors.values()];
     }
 
-    get(uuid: string): NewtonEditorComponent {
+    public get(uuid: string): NewtonEditorComponent {
         return this.editors.get(uuid).instance;
     }
 
-    set(uuid: string, component: ComponentRef<NewtonEditorComponent>) {
+    public set(uuid: string, component: ComponentRef<NewtonEditorComponent>) {
         this.editors.set(uuid, component);
     }
 
 
-    sendMessage(data: ServiceMessage): void {
+    public sendMessage(data: ServiceMessage): void {
         this.messageSubject.next(data);
     }
 
-    getMessage$(): Observable<ServiceMessage> {
+    public getMessage$(): Observable<ServiceMessage> {
         return this.messageSubject.asObservable();
     }
 

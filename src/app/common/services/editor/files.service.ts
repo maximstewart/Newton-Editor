@@ -27,29 +27,31 @@ export class FilesService {
     }
 
 
-    get(path: string): NewtonFile {
+    public get(path: string): NewtonFile {
         return this.files.get(path);
     }
 
-    delete(file: NewtonFile) {
+    public delete(file: NewtonFile) {
         file.session.destroy();
         window.fs.closeFile(file.path);
         this.files.delete(file.path);
     }
 
-    set(file: NewtonFile) {
+    public set(file: NewtonFile) {
         this.files.set(file.path, file);
     }
 
-    sendMessage(data: ServiceMessage): void {
+    public sendMessage(data: ServiceMessage): void {
         this.messageSubject.next(data);
     }
 
-    getMessage$(): Observable<ServiceMessage> {
+    public getMessage$(): Observable<ServiceMessage> {
         return this.messageSubject.asObservable();
     }
 
-    async loadFilesList(files: Array<NewtonFile>): Promise<NewtonFile | undefined | null> {
+    public async loadFilesList(
+        files: Array<NewtonFile>
+    ): Promise<NewtonFile | undefined | null> {
 	    for (let i = 0; i < files.length; i++) {
 		    const file = files[i];
 		    const path = window.fs.getPathForFile(file);
@@ -64,7 +66,12 @@ export class FilesService {
 	    return files[ files.length - 1 ];
     }
 
-    async addFile(path: string, file: NewtonFile, loadFileContents: boolean = true, data: string = ""): Promise<void> {
+    public async addFile(
+        path: string,
+        file: NewtonFile,
+        loadFileContents: boolean = true,
+        data: string = ""
+    ): Promise<void> {
 	    try {
 	        let pathParts = path.split("/");
 	        file.fname    = pathParts[ pathParts.length - 1 ];
@@ -87,7 +94,7 @@ export class FilesService {
 	    }
     }
 
-    async addTab(file: NewtonFile) {
+    public async addTab(file: NewtonFile) {
         let message      = new ServiceMessage();
         message.action   = "create-tab";
         message.fileName = file.fname;

@@ -31,12 +31,12 @@ export class InfoBarComponent {
     constructor() {}
 
 
-    public ngAfterViewInit(): void {
+    private ngAfterViewInit(): void {
         this.loadSubscribers();
     }
 
 
-    loadSubscribers() {
+    private loadSubscribers() {
 
         this.infoBarService.updateInfoBarFPath$().pipe(
             takeUntil(this.unsubscribe)

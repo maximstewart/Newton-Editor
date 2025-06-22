@@ -35,7 +35,7 @@ export class NewtonEditorComponent extends NewtonEditorBase {
     }
 
 
-    public ngAfterViewInit(): void {
+    private ngAfterViewInit(): void {
         if (this.isDefault) {
             this.addActiveStyling();
         }
@@ -43,12 +43,17 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         this.loadAce();
     }
 
-    public loadAce(): void {
+    private loadAce(): void {
         ace.config.set('basePath', this.editorSettings.BASE_PATH);
 
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
 
+        this.loadAceKeyBindings();
+        this.loadAceEventBindings();
+    }
+
+    private loadAceKeyBindings(): void {
         let keyBindings = [];
         for (let i = 0; i < this.editorSettings.KEYBINDINGS.length; i++) {
             let keyBinding = this.editorSettings.KEYBINDINGS[i];
@@ -78,6 +83,9 @@ export class NewtonEditorComponent extends NewtonEditorBase {
         }
 
         this.editor.commands.addCommands( keyBindings );
+    }
+
+    private loadAceEventBindings(): void {
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
         this.editor.on("focus", (e) => {

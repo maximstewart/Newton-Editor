@@ -13,11 +13,11 @@ export class TabsService {
     constructor() {}
 
 
-    sendMessage(data: ServiceMessage): void {
+    public sendMessage(data: ServiceMessage): void {
         this.messageSubject.next(data);
     }
 
-    getMessage$(): Observable<ServiceMessage> {
+    public getMessage$(): Observable<ServiceMessage> {
         return this.messageSubject.asObservable();
     }
 }

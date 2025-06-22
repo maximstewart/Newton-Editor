@@ -41,7 +41,7 @@ export class EditorsComponent {
     }
 
 
-    public ngAfterViewInit(): void {
+    private ngAfterViewInit(): void {
         this.loadSubscribers();
         this.loadMainSubscribers();
 
@@ -54,12 +54,12 @@ export class EditorsComponent {
         rightEditor.instance.leftSiblingUUID = leftEditor.instance.uuid;
     }
 
-    ngOnDestroy() {
+    private ngOnDestroy() {
         this.unsubscribe.next();
         this.unsubscribe.complete();
     }
 
-    loadSubscribers() {
+    private loadSubscribers() {
 
         this.editorsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
@@ -133,7 +133,7 @@ export class EditorsComponent {
 
     }
 
-    loadMainSubscribers() {
+    private loadMainSubscribers() {
         window.fs.onLoadFiles(async (paths: []) => {
             for (let i = 0; i < paths.length; i++) {
                 let file = new File([], "") as NewtonFile;

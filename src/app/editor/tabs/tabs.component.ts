@@ -39,7 +39,16 @@ export class TabsComponent {
     constructor() {
     }
 
-    public ngAfterViewInit(): void {
+    private ngAfterViewInit(): void {
+        this.loadSubscribers();
+    }
+
+    private ngOnDestroy(): void {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
+    }
+
+    private loadSubscribers() {
         this.tabsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((message: ServiceMessage) => {
@@ -61,17 +70,7 @@ export class TabsComponent {
         });
     }
 
-    ngOnDestroy(): void {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
-    }
-
-    private createTab(title: string, uuid: string, path: string): void {
-        this.tabs.push({title: title, uuid: uuid, path: path});
-        this.changeDetectorRef.detectChanges();
-    }
-
-    handleAction(event: any): void {
+    protected handleAction(event: any): void {
         let target = event.target;
 
         if ( target.classList.contains("tab") ) {
@@ -93,7 +92,12 @@ export class TabsComponent {
 
     }
 
-    closeTab(fpath: string): void {
+    public createTab(title: string, uuid: string, path: string): void {
+        this.tabs.push({title: title, uuid: uuid, path: path});
+        this.changeDetectorRef.detectChanges();
+    }
+
+    public closeTab(fpath: string): void {
         this.sendEditorsServiceAMessage("close-tab", fpath);
 
         for (let i = 0; i < this.tabs.length; i++) {
@@ -104,8 +108,7 @@ export class TabsComponent {
 
     }
 
-
-    moved(event: any): void {
+    private moved(event: any): void {
         let target = event.event.target;
         let fpath  = "";
 
@@ -125,7 +128,7 @@ export class TabsComponent {
 
     }
 
-    dropped(event: CdkDragDrop<any>): void {
+    protected dropped(event: CdkDragDrop<any>): void {
         if (this.newIndex == -1) return;
 
         moveItemInArray(this.tabs, event.previousIndex, this.newIndex);

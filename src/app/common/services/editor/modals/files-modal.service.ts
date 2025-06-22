@@ -15,19 +15,19 @@ export class FilesModalService {
     }
 
 
-    showFilesModal(): void {
+    public showFilesModal(): void {
         this.showFilesModalSubject.next(null);
     }
 
-    showFilesModalRequested$(): Observable<null> {
+    public showFilesModalRequested$(): Observable<null> {
         return this.showFilesModalSubject.asObservable();
     }
 
-    addFileToModal(data: string): void {
+    public addFileToModal(data: string): void {
         this.addFileSubject.next(data);
     }
 
-    addFileToModalRequested$(): Observable<string> {
+    public addFileToModalRequested$(): Observable<string> {
         return this.addFileSubject.asObservable();
     }
 
