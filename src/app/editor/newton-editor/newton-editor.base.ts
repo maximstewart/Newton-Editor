@@ -85,11 +85,7 @@ export class NewtonEditorBase {
         this.editor.execCommand("openCommandPalette");
     }
 
-    public showSettingsMenu() {
-        this.editor.showSettingsMenu();
-    }
-
-    public showKeyboardShortcuts() {
+    public showKeyShortcuts() {
         this.editor.showKeyboardShortcuts();
     }
 

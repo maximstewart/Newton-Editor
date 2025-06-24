@@ -8,11 +8,7 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "F11", mac: "F11"},
         readOnly: false
     }, {
-        name: "showSettingsMenu",
-        bindKey: {win: "ctrl-shift-m", mac: "ctrl-shift-m"},
-        readOnly: false
-    }, {
-        name: "showKeyboardShortcuts",
+        name: "showKeyShortcuts",
         bindKey: {win: "ctrl-shift-k", mac: "command-shift-k"},
         readOnly: false
     }, {

@@ -7,7 +7,7 @@ export const EditorSettings: any = {
     CONFIG: {
         behavioursEnabled: true,
         fontSize: "12px",
-        theme: "ace/theme/one_dark",
+        theme: "ace/theme/gruvbox",
         mode: "ace/mode/text",
         printMarginColumn: 80,
         enableBasicAutocompletion: true,

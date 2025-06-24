@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
-import { EditSession } from 'ace-builds';
+import { EditSession, UndoManager } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
 
 import { TabsService } from './tabs/tabs.service';
@@ -93,7 +93,8 @@ export class FilesService {
             file.session.setMode(
                 getModeForPath( file.path ).mode
             );
-            
+            file.session.setUndoManager( new UndoManager() );
+
             this.files.set(file.path, file);
 	    } catch (error) {
 		    console.log(
