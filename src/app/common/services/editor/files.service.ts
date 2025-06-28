@@ -90,10 +90,8 @@ export class FilesService {
 	            data = await window.fs.getFileContents(file.path);
 
             file.session = new EditSession(data);
-            file.session.setMode(
-                getModeForPath( file.path ).mode
-            );
             file.session.setUndoManager( new UndoManager() );
+            file.session.setMode( getModeForPath( file.path ).mode );
 
             this.files.set(file.path, file);
 	    } catch (error) {

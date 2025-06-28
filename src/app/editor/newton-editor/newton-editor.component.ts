@@ -46,13 +46,16 @@ export class NewtonEditorComponent extends NewtonEditorBase {
     }
 
     private loadAce(): void {
+        this.configAceAndBindToElement()
+        this.loadAceKeyBindings();
+        this.loadAceEventBindings();
+    }
+
+    private configAceAndBindToElement(): void {
         ace.config.set('basePath', this.editorSettings.BASE_PATH);
 
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
-
-        this.loadAceKeyBindings();
-        this.loadAceEventBindings();
     }
 
     private loadAceKeyBindings(): void {

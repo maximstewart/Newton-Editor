@@ -74,4 +74,15 @@ export class LSPService {
         let worker = new Worker(new URL('./webworker.js', import.meta.url));
         return LanguageProvider.create(worker);
     }
+
+    protected setSessionFilePath(session: any, mode: string = "", filePath: string = "") => {
+        if ( !session || !mode || !filePath || !this.languageProviders[mode] ) return;
+        this.languageProviders[mode].setSessionFilePath(session, filePath);
+    }
+
+    protected closeDocument(session: any, mode: string) => {
+        if ( !session || !mode || !this.languageProviders[mode] ) return;
+        this.languageProviders[mode].closeDocument(session);
+    }
+
 }

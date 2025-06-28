@@ -12,7 +12,7 @@ const SETTINGS_CONFIG_PATH    = path.join(CONFIG_PATH, "/settings.json");
 const LSP_CONFIG_PATH         = path.join(BASE_PATH, "/resources/lsp-servers-config.json");
 let window                    = null;
 let watcher                   = null;
-let skipOnceFileWatchChange = false;
+let skipOnceFileWatchChange   = false;
 
 
 
