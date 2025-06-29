@@ -6,6 +6,8 @@ import { NewtonEditorComponent } from "../../../editor/newton-editor/newton-edit
 import { ServiceMessage } from '../../types/service-message.type';
 import { EditorSettings } from "../../configs/editor.config";
 
+import { NewtonFile } from '../../types/file.type';
+
 
 
 @Injectable({
@@ -16,6 +18,8 @@ export class EditorsService {
 
     editors: Map<string, ComponentRef<NewtonEditorComponent>>;
     editorSettings: typeof EditorSettings;
+
+    activeEditor!: string;
 
 
     constructor() {
@@ -34,6 +38,36 @@ export class EditorsService {
 
     public set(uuid: string, component: ComponentRef<NewtonEditorComponent>) {
         this.editors.set(uuid, component);
+    }
+
+    public async setSession(file: NewtonFile | undefined | null) {
+        if ( !file ) return;
+        let editorComponent        = this.getActiveEditorComponent();
+        let editor                 = editorComponent.editor;
+
+        editorComponent.activeFile = file;
+        editor.setSession(file.session);
+    }
+
+    public getSession() {
+        let editorComponent = this.get(this.activeEditor);
+        let editor          = editorComponent.editor;
+
+        return editor.getSession();
+    }
+
+    public setActiveEditor(activeEditor: string) {
+        this.activeEditor = activeEditor;
+    }
+
+    public getActiveEditorComponent(): any {
+        return this.get(this.activeEditor);
+    }
+
+    protected getActiveEditor(): any {
+        let editorComponent = this.get(this.activeEditor);
+        let editor          = editorComponent.editor;
+        return editor;
     }
 
 

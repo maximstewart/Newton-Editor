@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { InfoBarComponent } from './editor/info-bar/info-bar.component';
 import { TabsComponent } from './editor/tabs/tabs.component';
 import { EditorsComponent } from './editor/editors.component';
+import { FilesModalComponent } from "./editor/modals/files-modal.component";
 
 
 
@@ -11,7 +12,8 @@ import { EditorsComponent } from './editor/editors.component';
     imports: [
         InfoBarComponent,
         TabsComponent,
-        EditorsComponent
+        EditorsComponent,
+        FilesModalComponent
     ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',

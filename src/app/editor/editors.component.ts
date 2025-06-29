@@ -2,7 +2,8 @@ import { Component, ViewChild, ViewContainerRef, inject } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
-import { FilesModalComponent } from "./modals/files-modal.component";
+import { EditorResizeComponent } from "./editor-resize/editor-resize.component";
+
 import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
 import { FilesService } from '../common/services/editor/files.service';
@@ -18,7 +19,7 @@ import { ServiceMessage } from '../common/types/service-message.type';
     standalone: true,
     imports: [
         DndDirective,
-        FilesModalComponent
+        EditorResizeComponent
     ],
     templateUrl: './editors.component.html',
     styleUrl: './editors.component.css',
@@ -34,7 +35,6 @@ export class EditorsComponent {
     private filesService: FilesService     = inject(FilesService);
 
     @ViewChild('containerRef', {read: ViewContainerRef}) containerRef!: ViewContainerRef;
-    activeEditor!: string;
 
 
     constructor() {
@@ -48,7 +48,7 @@ export class EditorsComponent {
         let leftEditor                       = this.createEditor();
         let rightEditor                      = this.createEditor();
 
-        this.activeEditor                    = leftEditor.instance.uuid;
+        this.editorsService.setActiveEditor(leftEditor.instance.uuid);
         leftEditor.instance.isDefault        = true;
         leftEditor.instance.rightSiblingUUID = rightEditor.instance.uuid;
         rightEditor.instance.leftSiblingUUID = leftEditor.instance.uuid;
@@ -105,12 +105,12 @@ export class EditorsComponent {
                 editorComponent.newSession();
                 siblingComponent.editor.focus()
             } else if (message.action === "set-active-editor") {
-                this.editorsService.get(this.activeEditor).removeActiveStyling();
-                this.activeEditor = message.editorUUID;
-                this.editorsService.get(this.activeEditor).addActiveStyling();
+                this.editorsService.getActiveEditorComponent().removeActiveStyling();
+                this.editorsService.setActiveEditor(message.editorUUID);
+                this.editorsService.getActiveEditorComponent().addActiveStyling();
             } else if (message.action === "set-tab-to-editor") {
                 let file            = this.filesService.get(message.filePath);
-                let editorComponent = this.getActiveEditorComponent();
+                let editorComponent = this.editorsService.getActiveEditorComponent();
                 let editor          = editorComponent.editor;
 
                 editorComponent.activeFile = file;
@@ -146,7 +146,7 @@ export class EditorsComponent {
 
             let path = paths[ paths.length - 1 ];
             let file = this.filesService.get(path);
-            this.setSession(file);
+            this.editorsService.setSession(file);
         });
 
         window.fs.onChangedFile(async (path: string, data: string) => {
@@ -185,7 +185,7 @@ export class EditorsComponent {
         });
 
         window.main.onMenuActions(async (action: string) => {
-            let editorComponent = this.getActiveEditorComponent();
+            let editorComponent = this.editorsService.getActiveEditorComponent();
             let editor          = editorComponent.editor;
 
             switch ( action ) {
@@ -225,63 +225,6 @@ export class EditorsComponent {
         });
     }
 
-    // Note: Only really works with 2 editors and very brittle logic.
-    protected setEditorSize(event: any) {
-        let lEditorComponent = null;
-        let rEditorComponent = null;
-        let lSize = 6;
-        let rSize = 6;
-
-        if (
-            event.target.parentElement.classList.contains("editor-left-size")
-        ) {
-            lSize   = parseInt(
-                event.target.classList[1].split("-")[1]
-            );
-            rSize   = 12 - lSize;
-
-            lEditorComponent = this.editorsService.get(this.activeEditor);
-            if (lEditorComponent.leftSiblingUUID) {
-                rEditorComponent = lEditorComponent;
-                lEditorComponent = this.editorsService.get(lEditorComponent.leftSiblingUUID);
-            } else {
-                rEditorComponent = this.editorsService.get(lEditorComponent.rightSiblingUUID);
-            }
-        } else {
-            rSize   = parseInt(
-                event.target.classList[1].split("-")[1]
-            );
-            lSize   = 12 - rSize;
-            rEditorComponent = this.editorsService.get(this.activeEditor);
-            if (rEditorComponent.rightSiblingUUID) {
-                lEditorComponent = rEditorComponent;
-                rEditorComponent = this.editorsService.get(rEditorComponent.rightSiblingUUID);
-            } else {
-                lEditorComponent = this.editorsService.get(rEditorComponent.leftSiblingUUID);
-            }
-        }
-
-        this.resizeAndFocus(lEditorComponent, lSize, rEditorComponent, rSize);
-    }
-
-    private resizeAndFocus(lEditorComponent: any, lSize: number, rEditorComponent: any, rSize: number) {
-        let lElm = lEditorComponent.editorElm.nativeElement.parentElement;
-        let rElm = rEditorComponent.editorElm.nativeElement.parentElement;
-
-        lElm.setAttribute(
-            'class',
-            (lSize == 0) ? "hidden" : `col col-${lSize}`
-        );
-
-        rElm.setAttribute(
-            'class',
-            (rSize == 0) ? "hidden" : `col col-${rSize}`
-        );
-
-        if (lSize == 0) rEditorComponent.editor.focus();
-        if (rSize == 0) lEditorComponent.editor.focus();
-    }
-
     private createEditor() {
         const component = this.containerRef.createComponent(NewtonEditorComponent);
         component.instance.editorSettings = this.editorsService.editorSettings;
@@ -292,34 +235,8 @@ export class EditorsComponent {
 
     protected onFileDropped(files: any) {
         this.filesService.loadFilesList(files).then((file: NewtonFile | undefined | null) => {
-            this.setSession(file);
+            this.editorsService.setSession(file);
         });
-    }
-
-    private async setSession(file: NewtonFile | undefined | null) {
-        if ( !file ) return;
-        let editorComponent        = this.getActiveEditorComponent();
-        let editor                 = editorComponent.editor;
-
-        editorComponent.activeFile = file;
-        editor.setSession(file.session);
-    }
-
-    private getSession() {
-        let editorComponent = this.editorsService.get(this.activeEditor);
-        let editor          = editorComponent.editor;
-
-        return editor.getSession();
-    }
-
-    private getActiveEditorComponent(): any {
-        return this.editorsService.get(this.activeEditor);
-    }
-
-    private getActiveEditor(): any {
-        let editorComponent = this.editorsService.get(this.activeEditor);
-        let editor          = editorComponent.editor;
-        return editor;
     }
 
 }
