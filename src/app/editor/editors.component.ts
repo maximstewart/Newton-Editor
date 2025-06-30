@@ -1,14 +1,14 @@
-import { Component, ViewChild, ViewContainerRef, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-
-import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
-import { EditorResizeComponent } from "./editor-resize/editor-resize.component";
 
 import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
 import { FilesService } from '../common/services/editor/files.service';
 
+import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
+
 import { DndDirective } from '../common/directives/dnd.directive';
+import { PaneHandleDirective } from '../common/directives/pane-handle.directive';
 import { NewtonFile } from '../common/types/file.type';
 import { ServiceMessage } from '../common/types/service-message.type';
 
@@ -19,7 +19,8 @@ import { ServiceMessage } from '../common/types/service-message.type';
     standalone: true,
     imports: [
         DndDirective,
-        EditorResizeComponent
+        PaneHandleDirective,
+        NewtonEditorComponent
     ],
     templateUrl: './editors.component.html',
     styleUrl: './editors.component.css',
@@ -34,8 +35,6 @@ export class EditorsComponent {
     private tabsService: TabsService       = inject(TabsService);
     private filesService: FilesService     = inject(FilesService);
 
-    @ViewChild('containerRef', {read: ViewContainerRef}) containerRef!: ViewContainerRef;
-
 
     constructor() {
     }
@@ -44,14 +43,6 @@ export class EditorsComponent {
     private ngAfterViewInit(): void {
         this.loadSubscribers();
         this.loadMainSubscribers();
-
-        let leftEditor                       = this.createEditor();
-        let rightEditor                      = this.createEditor();
-
-        this.editorsService.setActiveEditor(leftEditor.instance.uuid);
-        leftEditor.instance.isDefault        = true;
-        leftEditor.instance.rightSiblingUUID = rightEditor.instance.uuid;
-        rightEditor.instance.leftSiblingUUID = leftEditor.instance.uuid;
     }
 
     private ngOnDestroy() {
@@ -120,7 +111,7 @@ export class EditorsComponent {
                 let editors = this.editorsService.getEditorsAsArray();
 
                 for (let i = 0; i < editors.length; i++) {
-                    let editorComponent = editors[i].instance;
+                    let editorComponent = editors[i];
                     if (editorComponent.editor.session == file.session) {
                         editorComponent.newSession();
                     }
@@ -223,14 +214,6 @@ export class EditorsComponent {
                     editor.execCommand(action);
             }
         });
-    }
-
-    private createEditor() {
-        const component = this.containerRef.createComponent(NewtonEditorComponent);
-        component.instance.editorSettings = this.editorsService.editorSettings;
-        this.editorsService.set(component.instance.uuid, component)
-
-        return component;
     }
 
     protected onFileDropped(files: any) {

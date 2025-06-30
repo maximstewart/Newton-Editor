@@ -1,10 +1,9 @@
 <div class="col">
 
     <div class="row dropzone" #dropzone dropzone (fileDropped)="onFileDropped($event)">
-        <ng-container #containerRef>
-        </ng-container>
+        <newton-editor [isDefault]="true"></newton-editor>
+        <hr class="col vr-pane-handle" pane-handle />
+        <newton-editor></newton-editor>
     </div>
-
-    <editor-resize></editor-resize>
 
 <div>

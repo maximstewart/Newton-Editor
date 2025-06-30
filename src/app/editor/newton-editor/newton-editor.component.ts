@@ -26,7 +26,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     templateUrl: './newton-editor.component.html',
     styleUrl: './newton-editor.component.css',
     host: {
-        'class': 'col col-6'
+        'class': 'col'
     }
 })
 export class NewtonEditorComponent extends NewtonEditorBase {
@@ -34,11 +34,14 @@ export class NewtonEditorComponent extends NewtonEditorBase {
 
     constructor() {
         super();
+
+        this.editorsService.set(this.uuid, this);
     }
 
 
     private ngAfterViewInit(): void {
         if (this.isDefault) {
+            this.editorsService.setActiveEditor(this.uuid);
             this.addActiveStyling();
         }
 
@@ -52,6 +55,8 @@ export class NewtonEditorComponent extends NewtonEditorBase {
     }
 
     private configAceAndBindToElement(): void {
+        this.editorSettings = this.editorsService.editorSettings;
+
         ace.config.set('basePath', this.editorSettings.BASE_PATH);
 
         this.editor = ace.edit( this.editorElm.nativeElement );

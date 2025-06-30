@@ -16,8 +16,8 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 
 @Directive()
 export class NewtonEditorBase {
-    public uuid: string                            = uuid.v4();;
-    public isDefault: boolean                      = false;
+    public uuid: string                            = uuid.v4();
+    @Input() public isDefault: boolean             = false;
     public leftSiblingUUID!: string;
     public rightSiblingUUID!: string;
 

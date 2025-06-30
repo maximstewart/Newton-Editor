@@ -1,4 +1,4 @@
-import { ComponentRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
 import { NewtonEditorComponent } from "../../../editor/newton-editor/newton-editor.component";
@@ -16,7 +16,7 @@ import { NewtonFile } from '../../types/file.type';
 export class EditorsService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
-    editors: Map<string, ComponentRef<NewtonEditorComponent>>;
+    editors: Map<string, NewtonEditorComponent>;
     editorSettings: typeof EditorSettings;
 
     activeEditor!: string;
@@ -24,24 +24,42 @@ export class EditorsService {
 
     constructor() {
         this.editorSettings = EditorSettings;
-        this.editors = new Map<string, ComponentRef<NewtonEditorComponent>>();
+        this.editors = new Map<string, NewtonEditorComponent>();
     }
 
 
-    public getEditorsAsArray(): ComponentRef<NewtonEditorComponent>[] {
+    public getEditorsAsArray(): NewtonEditorComponent[] {
         return [...this.editors.values()];
     }
 
     public get(uuid: string): NewtonEditorComponent {
-        return this.editors.get(uuid).instance;
+        return this.editors.get(uuid);
     }
 
-    public set(uuid: string, component: ComponentRef<NewtonEditorComponent>) {
+    public set(uuid: string, component: NewtonEditorComponent) {
         this.editors.set(uuid, component);
+
+        if (Object.keys(this.editors).length < 1) return;
+
+        let leftEditor  = null;
+        let rightEditor = null;
+        let _editors    = this.getEditorsAsArray();
+
+        for (let i = 0; i < _editors.length; i++) {
+            if (_editors[i].uuid !== uuid) continue;
+
+            leftEditor  = _editors[i - 1];
+            rightEditor = _editors[i];
+
+        }
+
+        leftEditor.rightSiblingUUID = rightEditor.uuid;
+        rightEditor.leftSiblingUUID = leftEditor.uuid;
     }
 
     public async setSession(file: NewtonFile | undefined | null) {
         if ( !file ) return;
+
         let editorComponent        = this.getActiveEditorComponent();
         let editor                 = editorComponent.editor;
 

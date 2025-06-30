@@ -36,6 +36,24 @@ body {
     margin-right: 0.2em;
 }
 
+.hr-pane-handle,
+.vr-pane-handle {
+      border: 2px dashed lightblue;
+}
+
+/*
+.hr-pane-handle {
+}
+
+.vr-pane-handle {
+    transform: rotate(90deg);
+}
+*/
+
+.vr-pane-handle {
+    max-width: 0.05em;
+}
+
 
 
 
