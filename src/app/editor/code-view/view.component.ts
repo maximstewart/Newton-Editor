@@ -11,7 +11,7 @@ import "ace-builds/src-noconflict/ext-language_tools";
 //import "ace-builds/src-noconflict/theme-penguins_in_space";
 import "ace-builds/src-noconflict/theme-gruvbox";
 
-import { NewtonEditorBase } from './newton-editor.base';
+import { CodeViewBase } from './view.base';
 
 import { NewtonFile } from '../../common/types/file.type';
 import { ServiceMessage } from '../../common/types/service-message.type';
@@ -19,17 +19,17 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 
 
 @Component({
-    selector: 'newton-editor',
+    selector: 'code-view',
     standalone: true,
     imports: [
     ],
-    templateUrl: './newton-editor.component.html',
-    styleUrl: './newton-editor.component.css',
+    templateUrl: './view.component.html',
+    styleUrl: './view.component.css',
     host: {
         'class': 'col'
     }
 })
-export class NewtonEditorComponent extends NewtonEditorBase {
+export class CodeViewComponent extends CodeViewBase {
 
 
     constructor() {

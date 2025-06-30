@@ -5,10 +5,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import * as bootstrap from "bootstrap";
 
-import { FilesModalService } from "../../common/services/editor/modals/files-modal.service";
-import { TabsService } from '../../common/services/editor/tabs/tabs.service';
+import { FilesModalService } from "../../services/editor/modals/files-modal.service";
+import { TabsService } from '../../services/editor/tabs/tabs.service';
 
-import { ServiceMessage } from '../../common/types/service-message.type';
+import { ServiceMessage } from '../../types/service-message.type';
 
 
 

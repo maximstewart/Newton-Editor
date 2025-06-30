@@ -5,7 +5,7 @@ import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
 import { FilesService } from '../common/services/editor/files.service';
 
-import { NewtonEditorComponent } from "./newton-editor/newton-editor.component";
+import { CodeViewComponent } from "./code-view/view.component";
 
 import { DndDirective } from '../common/directives/dnd.directive';
 import { PaneHandleDirective } from '../common/directives/pane-handle.directive';
@@ -20,7 +20,7 @@ import { ServiceMessage } from '../common/types/service-message.type';
     imports: [
         DndDirective,
         PaneHandleDirective,
-        NewtonEditorComponent
+        CodeViewComponent
     ],
     templateUrl: './editors.component.html',
     styleUrl: './editors.component.css',

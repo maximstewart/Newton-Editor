@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
-import { NewtonEditorComponent } from "../../../editor/newton-editor/newton-editor.component";
+import { CodeViewComponent } from "../../../editor/code-view/view.component";
 
 import { ServiceMessage } from '../../types/service-message.type';
 import { EditorSettings } from "../../configs/editor.config";
@@ -16,7 +16,7 @@ import { NewtonFile } from '../../types/file.type';
 export class EditorsService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
-    editors: Map<string, NewtonEditorComponent>;
+    editors: Map<string, CodeViewComponent>;
     editorSettings: typeof EditorSettings;
 
     activeEditor!: string;
@@ -24,19 +24,19 @@ export class EditorsService {
 
     constructor() {
         this.editorSettings = EditorSettings;
-        this.editors = new Map<string, NewtonEditorComponent>();
+        this.editors = new Map<string, CodeViewComponent>();
     }
 
 
-    public getEditorsAsArray(): NewtonEditorComponent[] {
+    public getEditorsAsArray(): CodeViewComponent[] {
         return [...this.editors.values()];
     }
 
-    public get(uuid: string): NewtonEditorComponent {
+    public get(uuid: string): CodeViewComponent {
         return this.editors.get(uuid);
     }
 
-    public set(uuid: string, component: NewtonEditorComponent) {
+    public set(uuid: string, component: CodeViewComponent) {
         this.editors.set(uuid, component);
 
         if (Object.keys(this.editors).length < 1) return;
