@@ -75,8 +75,7 @@ export class EditorsComponent {
 
                 if (session == siblingSession) return;
 
-                siblingComponent.editor.setSession(session);
-                siblingComponent.activeFile = editorComponent.activeFile;
+                siblingComponent.assignSession(editorComponent.activeFile);
 
                 editorComponent.newSession();
                 siblingComponent.editor.focus()
@@ -90,8 +89,7 @@ export class EditorsComponent {
 
                 if (session == siblingSession) return;
 
-                siblingComponent.editor.setSession(session);
-                siblingComponent.activeFile = editorComponent.activeFile;
+                siblingComponent.assignSession(editorComponent.activeFile);
 
                 editorComponent.newSession();
                 siblingComponent.editor.focus()
@@ -104,10 +102,8 @@ export class EditorsComponent {
                 let editorComponent = this.editorsService.getActiveEditorComponent();
                 let editor          = editorComponent.editor;
 
-                editorComponent.activeFile = file;
-                editor.setSession(file.session);
-                this.editorsService.miniMapView.editor.setSession(file.session);
-                this.editorsService.miniMapView.activeFile = file;
+                editorComponent.assignSession(file);
+                this.editorsService.miniMapView.cloneSession(file);
             } else if (message.action === "close-tab") {
                 let file    = this.filesService.get(message.filePath);
                 let editors = this.editorsService.getEditorsAsArray();

@@ -6,10 +6,12 @@ export const EditorSettings: any = {
     KEYBINDINGS: Keybindings,
     CONFIG: {
         behavioursEnabled: true,
+        wrapBehavioursEnabled: true,
         fontSize: "12px",
         theme: "ace/theme/gruvbox",
         mode: "ace/mode/text",
         printMarginColumn: 80,
+        enableCodeLens: true,
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         enableSnippets: true,
@@ -19,11 +21,10 @@ export const EditorSettings: any = {
         tabSize: 4,
         navigateWithinSoftTabs: true,
         tooltipFollowsMouse: true,
-        wrapBehavioursEnabled: false,
         scrollPastEnd: 0.5,
         mergeUndoDeltas: false,
         showGutter: true,
-        customScrollbar: true,
+        // customScrollbar: true,
         scrollSpeed: 5
     }
 };

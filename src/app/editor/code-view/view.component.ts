@@ -6,6 +6,8 @@ import "ace-builds/src-noconflict/ext-settings_menu";
 import "ace-builds/src-noconflict/ext-keybinding_menu";
 import "ace-builds/src-noconflict/ext-command_bar";
 import "ace-builds/src-noconflict/ext-prompt";
+import "ace-builds/src-noconflict/ext-code_lens";
+import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/ext-language_tools";
 //import "ace-builds/src-noconflict/theme-one_dark";
 //import "ace-builds/src-noconflict/theme-penguins_in_space";
@@ -26,7 +28,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     templateUrl: './view.component.html',
     styleUrl: './view.component.css',
     host: {
-        'class': 'col zero-margin-padding'
+        'class': 'col zero-margin-padding scroller'
     }
 })
 export class CodeViewComponent extends CodeViewBase {
@@ -154,6 +156,23 @@ export class CodeViewComponent extends CodeViewBase {
     public newSession() {
         this.activeFile = null;
         let session     = ace.createEditSession([""]);
+        this.editor.setSession(session);
+    }
+
+    public assignSession(file: NewtonFile) {
+        if (!file) return;
+
+        this.activeFile = file;
+        this.editor.setSession(file.session);
+    }
+
+    public cloneSession(file: NewtonFile) {
+        if (!file) return;
+
+        this.activeFile = file;
+        let session     = ace.createEditSession(file.session.getValue());
+
+        session.setMode( file.session.getMode()["$id"] );
         this.editor.setSession(session);
     }
 

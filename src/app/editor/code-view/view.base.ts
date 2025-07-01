@@ -90,8 +90,12 @@ export class CodeViewBase {
         this.editor.showKeyboardShortcuts();
     }
 
-    public search() {
-        console.log(this.editor.session.getMode()["$id"]);
+    public searchPopup() {
+        this.editor.execCommand("find");
+    }
+
+    public replacePopup() {
+        this.editor.execCommand("replace");
     }
 
     public showFilesList() {
@@ -161,8 +165,30 @@ export class CodeViewBase {
         this.editor.setHighlightGutterLine(false);
         this.editor.setShowFoldWidgets(false);
         this.editor.setShowPrintMargin(false);
+
+        this.editorElm.nativeElement.parentElement.classList.remove("scroller");
         this.editorElm.nativeElement.parentElement.classList.add("col-1");
         this.editorElm.nativeElement.parentElement.classList.add("zero-margin-padding");
+
+        this.editor.on("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            let editorComponent = this.editorsService.getActiveEditorComponent();
+            let pos             = this.editor.getCursorPosition();
+
+            editorComponent.editor.moveCursorToPosition(pos);
+            editorComponent.editor.clearSelection();
+            editorComponent.editor.renderer.scrollCursorIntoView();
+        });
+
+        this.editor.on("mousewheel", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            let editorComponent = this.editorsService.getActiveEditorComponent();
+            editorComponent.editor.renderer.scrollBy(null, event.domEvent.deltaY);
+        });
     }
 
     public zoomIn() {

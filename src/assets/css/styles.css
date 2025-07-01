@@ -10,7 +10,8 @@ html {
 }
 
 body {
-    background-color: rgba(64, 64, 64, 0.0)
+    background-color: rgba(64, 64, 64, 0.0);
+    overflow: hidden;
 }
 
 

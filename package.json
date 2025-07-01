@@ -44,8 +44,9 @@
         "@angular/core": "19.2.0",
         "@angular/forms": "19.2.0",
         "@angular/platform-browser": "19.2.0",
-        "ace-builds": "1.41.0",
-        "ace-linters": "1.5.3",
+        "ace-builds": "1.43.0",
+        "ace-diff": "3.0.3",
+        "ace-linters": "1.7.0",
         "bootstrap": "5.3.6",
         "bootstrap-icons": "1.12.1",
         "chokidar": "4.0.3",
@@ -73,7 +74,7 @@
         "karma-coverage": "2.2.0",
         "karma-jasmine": "5.1.0",
         "karma-jasmine-html-reporter": "2.1.0",
-        "typescript": "5.7.2",
-        "tslib": "2.3.0"
+        "tslib": "2.3.0",
+        "typescript": "5.7.2"
     }
 }

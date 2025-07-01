@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { InfoBarComponent } from './editor/info-bar/info-bar.component';
 import { TabsComponent } from './editor/tabs/tabs.component';
 import { EditorsComponent } from './editor/editors.component';
-import { FilesModalComponent } from "./common/components/modals/files-modal.component";
+import { FilesModalComponent } from "./common/components/modals/files/files-modal.component";
 
 
 

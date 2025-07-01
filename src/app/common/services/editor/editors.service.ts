@@ -45,11 +45,11 @@ export class EditorsService {
 
         this.editors.set(uuid, component);
 
-        if (Object.keys(this.editors).length < 1) return;
+        if (Array.from(this.editors.keys()).length <= 1) return;
 
+        let _editors    = this.getEditorsAsArray();
         let leftEditor  = null;
         let rightEditor = null;
-        let _editors    = this.getEditorsAsArray();
 
         for (let i = 0; i < _editors.length; i++) {
             if (_editors[i].uuid !== uuid) continue;
@@ -66,14 +66,9 @@ export class EditorsService {
     public async setSession(file: NewtonFile | undefined | null) {
         if ( !file ) return;
 
-        let editorComponent         = this.getActiveEditorComponent();
-        let editor                  = editorComponent.editor;
-
-        editorComponent.activeFile  = file;
-        this.miniMapView.activeFile = file;
-
-        editor.setSession(file.session);
-        this.miniMapView.editor.setSession(file.session);
+        let editorComponent = this.getActiveEditorComponent();
+        editorComponent.assignSession(file);
+        this.miniMapView.cloneSession(file);
     }
 
     public getSession() {
@@ -89,17 +84,11 @@ export class EditorsService {
 
         if (!this.miniMapView) return;
 
-        this.miniMapView.activeFile = editorComponent.activeFile;
-        this.miniMapView.editor.setSession(editorComponent.editor.getSession());
+        this.miniMapView.cloneSession(editorComponent.activeFile);
     }
 
     public getActiveEditorComponent(): any {
         return this.get(this.activeEditor);
-    }
-
-    public clearminiMapView() {
-        this.miniMapView.newSession();
-        this.miniMapView.activeFile = null;
     }
 
     protected getActiveEditor(): any {
