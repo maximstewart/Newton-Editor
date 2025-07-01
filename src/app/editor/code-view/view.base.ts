@@ -18,6 +18,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 export class CodeViewBase {
     public uuid: string                            = uuid.v4();
     @Input() public isDefault: boolean             = false;
+    @Input() public isMiniMap: boolean             = false;
     public leftSiblingUUID!: string;
     public rightSiblingUUID!: string;
 
@@ -150,16 +151,30 @@ export class CodeViewBase {
         window.main.toggleFullScreen();
     }
 
+    public setAsMiniMapView() {
+        this.editor.renderer.showLineNumbers = false;
+        this.editor.renderer.setShowGutter(false);
+
+        this.editor.setReadOnly(true);
+        this.editor.setFontSize(2);
+        this.editor.setHighlightActiveLine(false);
+        this.editor.setHighlightGutterLine(false);
+        this.editor.setShowFoldWidgets(false);
+        this.editor.setShowPrintMargin(false);
+        this.editorElm.nativeElement.parentElement.classList.add("col-1");
+        this.editorElm.nativeElement.parentElement.classList.add("zero-margin-padding");
+    }
+
     public zoomIn() {
         this.editor.setFontSize(
             parseInt(this.editor.getFontSize()) + 1
-        )
+        );
     }
 
     public zoomOut() {
         this.editor.setFontSize(
             parseInt(this.editor.getFontSize()) - 1
-        )
+        );
     }
 
     public movelinesUp() {

@@ -106,6 +106,8 @@ export class EditorsComponent {
 
                 editorComponent.activeFile = file;
                 editor.setSession(file.session);
+                this.editorsService.miniMapView.editor.setSession(file.session);
+                this.editorsService.miniMapView.activeFile = file;
             } else if (message.action === "close-tab") {
                 let file    = this.filesService.get(message.filePath);
                 let editors = this.editorsService.getEditorsAsArray();
@@ -114,6 +116,10 @@ export class EditorsComponent {
                     let editorComponent = editors[i];
                     if (editorComponent.editor.session == file.session) {
                         editorComponent.newSession();
+                        this.editorsService.miniMapView.editor.setSession(
+                            editorComponent.editor.getSession()
+                        );
+                        this.editorsService.miniMapView.activeFile = null;
                     }
                 }
 

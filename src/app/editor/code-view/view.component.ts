@@ -26,7 +26,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     templateUrl: './view.component.html',
     styleUrl: './view.component.css',
     host: {
-        'class': 'col'
+        'class': 'col zero-margin-padding'
     }
 })
 export class CodeViewComponent extends CodeViewBase {
@@ -34,22 +34,26 @@ export class CodeViewComponent extends CodeViewBase {
 
     constructor() {
         super();
-
-        this.editorsService.set(this.uuid, this);
     }
 
 
     private ngAfterViewInit(): void {
-        if (this.isDefault) {
-            this.editorsService.setActiveEditor(this.uuid);
-            this.addActiveStyling();
-        }
-
         this.loadAce();
     }
 
     private loadAce(): void {
         this.configAceAndBindToElement()
+
+        if (this.isDefault) {
+            this.editorsService.setActiveEditor(this.uuid);
+            this.addActiveStyling();
+        }
+
+        if (this.isMiniMap) {
+            this.setAsMiniMapView();
+            return;
+        }
+
         this.loadAceKeyBindings();
         this.loadAceEventBindings();
     }
@@ -61,6 +65,7 @@ export class CodeViewComponent extends CodeViewBase {
 
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
+        this.editorsService.set(this.uuid, this);
     }
 
     private loadAceKeyBindings(): void {

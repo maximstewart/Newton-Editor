@@ -20,6 +20,7 @@ export class EditorsService {
     editorSettings: typeof EditorSettings;
 
     activeEditor!: string;
+    miniMapView!: CodeViewComponent;
 
 
     constructor() {
@@ -37,6 +38,11 @@ export class EditorsService {
     }
 
     public set(uuid: string, component: CodeViewComponent) {
+        if (component.isMiniMap) {
+            this.miniMapView = component;
+            return;
+        }
+
         this.editors.set(uuid, component);
 
         if (Object.keys(this.editors).length < 1) return;
@@ -60,11 +66,14 @@ export class EditorsService {
     public async setSession(file: NewtonFile | undefined | null) {
         if ( !file ) return;
 
-        let editorComponent        = this.getActiveEditorComponent();
-        let editor                 = editorComponent.editor;
+        let editorComponent         = this.getActiveEditorComponent();
+        let editor                  = editorComponent.editor;
 
-        editorComponent.activeFile = file;
+        editorComponent.activeFile  = file;
+        this.miniMapView.activeFile = file;
+
         editor.setSession(file.session);
+        this.miniMapView.editor.setSession(file.session);
     }
 
     public getSession() {
@@ -75,11 +84,22 @@ export class EditorsService {
     }
 
     public setActiveEditor(activeEditor: string) {
-        this.activeEditor = activeEditor;
+        this.activeEditor       = activeEditor;
+        let editorComponent     = this.getActiveEditorComponent();
+
+        if (!this.miniMapView) return;
+
+        this.miniMapView.activeFile = editorComponent.activeFile;
+        this.miniMapView.editor.setSession(editorComponent.editor.getSession());
     }
 
     public getActiveEditorComponent(): any {
         return this.get(this.activeEditor);
+    }
+
+    public clearminiMapView() {
+        this.miniMapView.newSession();
+        this.miniMapView.activeFile = null;
     }
 
     protected getActiveEditor(): any {
