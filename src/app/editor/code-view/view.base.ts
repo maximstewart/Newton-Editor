@@ -34,8 +34,10 @@ export class CodeViewBase {
     public editor!: any;
     public activeFile!: NewtonFile;
 
-    public cutBuffer: string = "";
-    public timerId: number   = -1;
+    public cutBuffer: string    = "";
+    public timerId: number      = -1;
+    public debounceId: number   = -1;
+    public debounceWait: number = 2000;
 
 
     constructor() {
@@ -179,7 +181,7 @@ export class CodeViewBase {
 
             editorComponent.editor.moveCursorToPosition(pos);
             editorComponent.editor.clearSelection();
-            editorComponent.editor.renderer.scrollCursorIntoView();
+            editorComponent.editor.renderer.scrollCursorIntoView(null, 0.5);
         });
 
         this.editor.on("mousewheel", (event) => {

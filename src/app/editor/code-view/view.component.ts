@@ -140,11 +140,14 @@ export class CodeViewComponent extends CodeViewBase {
 
         this.editor.on("change", () => {
             if (!this.activeFile) return;
+            if (this.debounceId) { clearTimeout(this.debounceId); }
 
             let message      = new ServiceMessage();
             message.action   = "file-changed";
             message.filePath = this.activeFile.path;
             this.tabsService.sendMessage(message);
+
+            this.setDebounceTimeout();
         });
 
         this.editor.on("changeSession", (session) => {
@@ -242,6 +245,16 @@ export class CodeViewComponent extends CodeViewBase {
             this.cutBuffer = "";
             this.timerId   = -1;
         }, timeout);
+    }
+
+    private setDebounceTimeout(timeout: number = null) {
+        this.debounceId = setTimeout(() => {
+            this.editorsService.miniMapView.editor.session.setValue(
+                this.editor.session.getValue()
+            );
+
+            this.debounceId = -1;
+        }, (timeout) ? timeout : this.debounceWait);
     }
 
 }
