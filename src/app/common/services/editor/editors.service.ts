@@ -71,6 +71,13 @@ export class EditorsService {
         this.miniMapView.cloneSession(file);
     }
 
+    public newFile() {
+        let editorComponent = this.getActiveEditorComponent();
+
+        editorComponent.newFile();
+        this.miniMapView.newFile();
+    }
+
     public getSession() {
         let editorComponent = this.get(this.activeEditor);
         let editor          = editorComponent.editor;

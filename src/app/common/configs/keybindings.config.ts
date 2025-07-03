@@ -39,7 +39,8 @@ export const Keybindings: Array<{}> = [
     }, {
         name: "newFile",
         bindKey: {win: "ctrl-t", mac: "ctrl-t"},
-        readOnly: true
+        service: "editorsService",
+        readOnly: false
     }, {
         name: "openFiles",
         bindKey: {win: "ctrl-o", mac: "ctrl-o"},

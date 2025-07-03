@@ -132,7 +132,7 @@ export class CodeViewBase {
                 return result;
             },
             onAccept: (data) => {
-                let fpath = data.value;
+                let fpath = (data.value) ? data.value : data.item;
                 let path  = "";
 
                 for (let i = 0; i < stubPaths.length; i++) {
@@ -143,8 +143,9 @@ export class CodeViewBase {
 
                 if (!path) return;
 
-                this.activeFile = this.filesService.get(path);
-                this.editor.setSession(this.activeFile.session);
+                this.editorsService.setSession(
+                    this.filesService.get(path)
+                );
             }
         });
 
