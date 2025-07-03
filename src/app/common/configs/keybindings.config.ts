@@ -37,13 +37,9 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "ctrl-r", mac: "ctrl-r"},
         readOnly: false
     }, {
-        name: "newSession",
+        name: "newFile",
         bindKey: {win: "ctrl-t", mac: "ctrl-t"},
         readOnly: true
-    }, {
-        name: "destroySession",
-        bindKey: {win: "ctrl-w", mac: "ctrl-w"},
-        readOnly: false
     }, {
         name: "openFiles",
         bindKey: {win: "ctrl-o", mac: "ctrl-o"},
@@ -55,6 +51,10 @@ export const Keybindings: Array<{}> = [
     }, {
         name: "saveFileAs",
         bindKey: {win: "ctrl-shift-s", mac: "ctrl-shift-s"},
+        readOnly: false
+    }, {
+        name: "closeFile",
+        bindKey: {win: "ctrl-w", mac: "ctrl-w"},
         readOnly: false
     }, {
         name: "selectLeftEditor",

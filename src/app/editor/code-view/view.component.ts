@@ -36,6 +36,8 @@ export class CodeViewComponent extends CodeViewBase {
 
     constructor() {
         super();
+
+        this.aceApi = ace;
     }
 
 
@@ -139,15 +141,16 @@ export class CodeViewComponent extends CodeViewBase {
         });
 
         this.editor.on("change", () => {
-            if (!this.activeFile) return;
             if (this.debounceId) { clearTimeout(this.debounceId); }
+            this.setDebounceTimeout();
+
+            if (!this.activeFile) return;
 
             let message      = new ServiceMessage();
             message.action   = "file-changed";
             message.filePath = this.activeFile.path;
             this.tabsService.sendMessage(message);
 
-            this.setDebounceTimeout();
         });
 
         this.editor.on("changeSession", (session) => {
@@ -155,12 +158,6 @@ export class CodeViewComponent extends CodeViewBase {
         });
     }
 
-
-    public newSession() {
-        this.activeFile = null;
-        let session     = ace.createEditSession([""]);
-        this.editor.setSession(session);
-    }
 
     public assignSession(file: NewtonFile) {
         if (!file) return;
@@ -173,78 +170,10 @@ export class CodeViewComponent extends CodeViewBase {
         if (!file) return;
 
         this.activeFile = file;
-        let session     = ace.createEditSession(file.session.getValue());
+        let session     = this.aceApi.createEditSession(file.session.getValue());
 
         session.setMode( file.session.getMode()["$id"] );
         this.editor.setSession(session);
-    }
-
-    protected openFiles() {
-        let startDir = "";
-        if (this.activeFile) {
-            let pathParts = this.activeFile.path.split("/");
-            pathParts.pop();
-            startDir = pathParts.join( '/' );
-        }
-
-        window.fs.openFiles(startDir);
-    }
-
-    protected saveFile() {
-        if (!this.activeFile) {
-            this.saveFileAs();
-            return;
-        }
-
-        const text = this.activeFile.session.getValue();
-        window.fs.saveFile(this.activeFile.path, text);
-    }
-
-    protected saveFileAs() {
-        window.fs.saveFileAs().then((path: string) => {
-            if (!path) return;
-
-            let file: NewtonFile = new File([""], path, {});
-            const text           = this.editor.session.getValue();
-
-            window.fs.saveFile(path, text);
-            this.filesService.addFile(
-                path,
-                file,
-                false,
-                text
-            ).then(() => {
-                this.activeFile = this.filesService.get(path);
-                this.editor.setSession(this.activeFile.session);
-                this.filesService.addTab(this.activeFile);
-            });
-
-        });
-    }
-
-    protected cutToBuffer() {
-        if (this.timerId) { clearTimeout(this.timerId); }
-
-        const cursorPosition = this.editor.getCursorPosition();
-        let lineText         = this.editor.session.getLine(cursorPosition.row);
-        this.cutBuffer       += `${lineText}\n`;
-
-        this.editor.session.removeFullLines(cursorPosition.row, cursorPosition.row)
-        this.setBufferClearTimeout();
-    }
-
-    protected pasteCutBuffer() {
-        if (this.timerId) { clearTimeout(this.timerId); }
-
-        this.editor.insert(this.cutBuffer, true);
-        this.setBufferClearTimeout();
-    }
-
-    private setBufferClearTimeout(timeout: number = 5000) {
-        this.timerId = setTimeout(() => {
-            this.cutBuffer = "";
-            this.timerId   = -1;
-        }, timeout);
     }
 
     private setDebounceTimeout(timeout: number = null) {

@@ -32,12 +32,13 @@ export class CodeViewBase {
     @Input() editorSettings!: typeof EditorSettings;
 
     public editor!: any;
+    public aceApi!: any;
     public activeFile!: NewtonFile;
 
     public cutBuffer: string    = "";
     public timerId: number      = -1;
     public debounceId: number   = -1;
-    public debounceWait: number = 2000;
+    public debounceWait: number = 800;
 
 
     constructor() {
@@ -149,7 +150,7 @@ export class CodeViewBase {
 
     }
 
-    public destroySession() {
+    public closeFile() {
         this.tabsService.closeTab(this.activeFile.path);
     }
 
@@ -246,6 +247,80 @@ export class CodeViewBase {
         this.infoBarService.setInfoBarFType(
             this.editor.session.getMode()["$id"]
         );
+    }
+
+    public newFile() {
+        this.activeFile = null;
+        let session     = this.aceApi.createEditSession([""]);
+        this.editor.setSession(session);
+    }
+
+    protected openFiles() {
+        let startDir = "";
+        if (this.activeFile) {
+            let pathParts = this.activeFile.path.split("/");
+            pathParts.pop();
+            startDir = pathParts.join( '/' );
+        }
+
+        window.fs.openFiles(startDir);
+    }
+
+    protected saveFile() {
+        if (!this.activeFile) {
+            this.saveFileAs();
+            return;
+        }
+
+        const text = this.activeFile.session.getValue();
+        window.fs.saveFile(this.activeFile.path, text);
+    }
+
+    protected saveFileAs() {
+        window.fs.saveFileAs().then((path: string) => {
+            if (!path) return;
+
+            let file: NewtonFile = new File([""], path, {});
+            const text           = this.editor.session.getValue();
+
+            window.fs.saveFile(path, text);
+            this.filesService.addFile(
+                path,
+                file,
+                false,
+                text
+            ).then(() => {
+                this.activeFile = this.filesService.get(path);
+                this.editor.setSession(this.activeFile.session);
+                this.filesService.addTab(this.activeFile);
+            });
+
+        });
+    }
+
+    protected cutToBuffer() {
+        if (this.timerId) { clearTimeout(this.timerId); }
+
+        const cursorPosition = this.editor.getCursorPosition();
+        let lineText         = this.editor.session.getLine(cursorPosition.row);
+        this.cutBuffer       += `${lineText}\n`;
+
+        this.editor.session.removeFullLines(cursorPosition.row, cursorPosition.row)
+        this.setBufferClearTimeout();
+    }
+
+    protected pasteCutBuffer() {
+        if (this.timerId) { clearTimeout(this.timerId); }
+
+        this.editor.insert(this.cutBuffer, true);
+        this.setBufferClearTimeout();
+    }
+
+    private setBufferClearTimeout(timeout: number = 5000) {
+        this.timerId = setTimeout(() => {
+            this.cutBuffer = "";
+            this.timerId   = -1;
+        }, timeout);
     }
 
     private quit() {

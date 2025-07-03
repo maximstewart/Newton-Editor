@@ -85,7 +85,7 @@ export class EditorsComponent {
                         this.filesService.get(targetPath)
                     );
                 } else {
-                    editorComponent.newSession();
+                    editorComponent.newFile();
                 }
 
                 siblingComponent.editor.focus()
@@ -109,7 +109,7 @@ export class EditorsComponent {
                         this.filesService.get(targetPath)
                     );
                 } else {
-                    editorComponent.newSession();
+                    editorComponent.newFile();
                 }
 
                 siblingComponent.editor.focus()
@@ -125,17 +125,17 @@ export class EditorsComponent {
                 editorComponent.assignSession(file);
                 this.editorsService.miniMapView.cloneSession(file);
             } else if (message.action === "close-tab") {
-                let file    = this.filesService.get(message.filePath);
-                let editors = this.editorsService.getEditorsAsArray();
+                let activeComponent = this.editorsService.getActiveEditorComponent();
+                let editors         = this.editorsService.getEditorsAsArray();
+                let file            = this.filesService.get(message.filePath);
 
                 for (let i = 0; i < editors.length; i++) {
                     let editorComponent = editors[i];
                     if (editorComponent.editor.session == file.session) {
-                        editorComponent.newSession();
-                        this.editorsService.miniMapView.editor.setSession(
-                            editorComponent.editor.getSession()
-                        );
-                        this.editorsService.miniMapView.activeFile = null;
+                        if (activeComponent == editorComponent) {
+                            this.editorsService.miniMapView.newFile();
+                        }
+                        editorComponent.newFile();
                     }
                 }
 
@@ -240,6 +240,10 @@ export class EditorsComponent {
 
     protected onFileDropped(files: any) {
         this.filesService.loadFilesList(files).then((file: NewtonFile | undefined | null) => {
+            // Note: if we drop an already loaded file the path doesn't get set and
+            // therefor the last file in drop list might get returned without path.
+            if (!file.path) return;
+
             this.editorsService.setSession(file);
         });
     }

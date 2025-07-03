@@ -63,7 +63,7 @@ export class EditorsService {
         rightEditor.leftSiblingUUID = leftEditor.uuid;
     }
 
-    public async setSession(file: NewtonFile | undefined | null) {
+    public setSession(file: NewtonFile | undefined | null) {
         if ( !file ) return;
 
         let editorComponent = this.getActiveEditorComponent();
@@ -78,13 +78,21 @@ export class EditorsService {
         return editor.getSession();
     }
 
-    public setActiveEditor(activeEditor: string) {
+    public async setActiveEditor(activeEditor: string) {
         this.activeEditor       = activeEditor;
         let editorComponent     = this.getActiveEditorComponent();
 
         if (!this.miniMapView) return;
 
-        this.miniMapView.cloneSession(editorComponent.activeFile);
+        if (editorComponent.activeFile) {
+            this.miniMapView.cloneSession(editorComponent.activeFile);
+            return;
+        }
+
+        // Note: likely a new file/buffer
+        this.miniMapView.editor.session.setValue(
+            editorComponent.editor.session.getValue()
+        );
     }
 
     public getActiveEditorComponent(): any {
