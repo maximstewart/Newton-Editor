@@ -150,7 +150,7 @@ export class CodeViewBase {
     }
 
     public destroySession() {
-        this.editor.session.destroy();
+        this.tabsService.closeTab(this.activeFile.path);
     }
 
     public toggleFullScreen() {

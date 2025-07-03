@@ -77,7 +77,17 @@ export class EditorsComponent {
 
                 siblingComponent.assignSession(editorComponent.activeFile);
 
-                editorComponent.newSession();
+                let targetPath = this.tabsService.getRightSiblingTab(
+                    editorComponent.activeFile.path
+                )
+                if (targetPath) {
+                    editorComponent.assignSession(
+                        this.filesService.get(targetPath)
+                    );
+                } else {
+                    editorComponent.newSession();
+                }
+
                 siblingComponent.editor.focus()
             } else if (message.action === "move-session-right") {
                 let editorComponent  = this.editorsService.get(message.editorUUID);
@@ -91,7 +101,17 @@ export class EditorsComponent {
 
                 siblingComponent.assignSession(editorComponent.activeFile);
 
-                editorComponent.newSession();
+                let targetPath = this.tabsService.getRightSiblingTab(
+                    editorComponent.activeFile.path
+                )
+                if (targetPath) {
+                    editorComponent.assignSession(
+                        this.filesService.get(targetPath)
+                    );
+                } else {
+                    editorComponent.newSession();
+                }
+
                 siblingComponent.editor.focus()
             } else if (message.action === "set-active-editor") {
                 this.editorsService.getActiveEditorComponent().removeActiveStyling();
