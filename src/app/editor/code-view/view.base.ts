@@ -5,7 +5,8 @@ import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.s
 import { FilesModalService } from '../../common/services/editor/modals/files-modal.service';
 import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
-import { FilesService } from '../../common/services/editor/files.service';
+import { FilesService } from '../../common/services/files.service';
+import { SearchReplaceService } from '../../common/services/editor/search-replace/search-replace.service';
 
 import { EditorSettings } from "../../common/configs/editor.config";
 import { NewtonFile } from '../../common/types/file.type';
@@ -16,17 +17,18 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 
 @Directive()
 export class CodeViewBase {
-    public uuid: string                            = uuid.v4();
-    @Input() public isDefault: boolean             = false;
-    @Input() public isMiniMap: boolean             = false;
+    public uuid: string                = uuid.v4();
+    @Input() public isDefault: boolean = false;
+    @Input() public isMiniMap: boolean = false;
     public leftSiblingUUID!: string;
     public rightSiblingUUID!: string;
 
-    protected infoBarService: InfoBarService       = inject(InfoBarService);
-    protected filesModalService: FilesModalService = inject(FilesModalService);
-    protected tabsService: TabsService             = inject(TabsService);
-    protected editorsService: EditorsService       = inject(EditorsService);
-    protected filesService: FilesService           = inject(FilesService);
+    protected infoBarService: InfoBarService             = inject(InfoBarService);
+    protected filesModalService: FilesModalService       = inject(FilesModalService);
+    protected tabsService: TabsService                   = inject(TabsService);
+    protected editorsService: EditorsService             = inject(EditorsService);
+    protected filesService: FilesService                 = inject(FilesService);
+    protected searchReplaceService: SearchReplaceService = inject(SearchReplaceService);
 
     @ViewChild('editor') editorElm!: ElementRef;
     @Input() editorSettings!: typeof EditorSettings;
@@ -94,11 +96,19 @@ export class CodeViewBase {
     }
 
     public searchPopup() {
-        this.editor.execCommand("find");
+        let message        = new ServiceMessage();
+        message.action     = "toggle-search-replace";
+        this.searchReplaceService.sendMessage(message);
+
+        // this.editor.execCommand("find");
     }
 
     public replacePopup() {
-        this.editor.execCommand("replace");
+        let message        = new ServiceMessage();
+        message.action     = "toggle-search-replace";
+        this.searchReplaceService.sendMessage(message);
+
+        // this.editor.execCommand("replace");
     }
 
     public showFilesList() {

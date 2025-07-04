@@ -4,10 +4,10 @@ import { ReplaySubject, Observable } from 'rxjs';
 import { EditSession, UndoManager } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
 
-import { TabsService } from './tabs/tabs.service';
+import { TabsService } from './editor/tabs/tabs.service';
 
-import { NewtonFile } from '../../types/file.type';
-import { ServiceMessage } from '../../types/service-message.type';
+import { NewtonFile } from '../types/file.type';
+import { ServiceMessage } from '../types/service-message.type';
 
 
 

@@ -7,10 +7,10 @@ import "ace-builds/src-noconflict/ext-keybinding_menu";
 import "ace-builds/src-noconflict/ext-command_bar";
 import "ace-builds/src-noconflict/ext-prompt";
 import "ace-builds/src-noconflict/ext-code_lens";
-import "ace-builds/src-noconflict/ext-searchbox";
+// import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/ext-language_tools";
-//import "ace-builds/src-noconflict/theme-one_dark";
-//import "ace-builds/src-noconflict/theme-penguins_in_space";
+// import "ace-builds/src-noconflict/theme-one_dark";
+// import "ace-builds/src-noconflict/theme-penguins_in_space";
 import "ace-builds/src-noconflict/theme-gruvbox";
 
 import { CodeViewBase } from './view.base';
@@ -51,6 +51,7 @@ export class CodeViewComponent extends CodeViewBase {
         if (this.isDefault) {
             this.editorsService.setActiveEditor(this.uuid);
             this.addActiveStyling();
+            this.editor.focus();
         }
 
         if (this.isMiniMap) {
@@ -111,8 +112,10 @@ export class CodeViewComponent extends CodeViewBase {
             let message        = new ServiceMessage();
             message.action     = "set-active-editor";
             message.editorUUID = this.uuid;
+            message.rawData    = this.editor;
 
             this.editorsService.sendMessage(message);
+            this.searchReplaceService.sendMessage(message);
 
             this.updateInfoBar();
         });

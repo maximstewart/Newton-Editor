@@ -1,0 +1,84 @@
+<div class="col">
+    <div class="row">
+        <div class="col col-3">
+            <label id="find-status-lbl">Find in Current File</label>
+        </div>
+
+        <div class="col col-4">
+            <label id="find-options-lbl">Finding with Options: {{findOptions || "Case Insensitive"}}</label>
+        </div>
+
+        <div class="col col-5 line-height-32px">
+            <button title="Close Panel"
+                class="float-end btn btn-sm btn-dark"
+                (click)="hideSearchReplace()">X
+            </button>
+            <button id="whole-word-btn" title="Whole Word"
+                class="float-end btn btn-sm btn-dark"
+                (click)="toggleWholeWordSearch($event)">
+                <img src="resources/imgs/whole-word.png" />
+            </button>
+            <button id="only-in-selection-btn" title="Only In Selection"
+                class="float-end btn btn-sm btn-dark"
+                (click)="toggleSelectionOnlyScan($event)">
+                <img src="resources/imgs/only-in-selection.png" />
+            </button>
+            <button id="match-case-btn" title="Match Case"
+                class="float-end btn btn-sm btn-dark"
+                (click)="toggleCaseSensitive($event)">Aa
+            </button>
+            <button id="use-regex-btn" title="Use Regex"
+                class="float-end btn btn-sm btn-dark"
+                (click)="toggleRegex($event)">.*
+            </button>
+        </div>
+    </div>
+
+    <div class="margin-tb-1em"></div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div  class="col">
+                    <div class="input-group-sm mb-3">
+                        <input #findEntryElm
+                            id="find-entry"
+                            class="form-control"
+                            type="search"
+                            (keyup)="searchForString()"
+                            placeholder="Find in current file..."
+                            aria-label="Find in current file..."
+                        />
+                    </div>
+                </div>
+                <div class="col col-auto">
+                    <button id="find-btn"  class="width-8em btn btn-sm btn-dark" (click)="findNextEntry()">Find</button>
+                    <button id="find-all-btn" class="width-8em btn btn-sm btn-dark" (click)="findAllEntries()">Find All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="input-group-sm mb-3">
+                        <input #replaceEntryElm
+                            id="replace-entry"
+                            class="form-control"
+                            type="search"
+                            (keyup)="replaceEntry($event)"
+                            title="Replace in current file..."
+                            placeholder="Replace in current file..."
+                        />
+                    </div>
+                </div>
+                <div class="col col-auto">
+                    <button id="replace-btn" class="width-8em btn btn-sm btn-dark" (click)="replaceEntry($event)">Replace</button>
+                    <button id="replace-all-btn" class="width-8em btn btn-sm btn-dark" (click)="replaceAll()">Replace All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

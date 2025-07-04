@@ -26,6 +26,16 @@ body {
     text-align: center;
 }
 
+.search-replace {
+    bottom: 2em;
+    z-index: 999;
+    display: inline-block;
+    position: fixed;
+    width: 100%;
+    background-color: rgba(64, 64, 64, 0.24);
+}
+
+
 .tabs {
     display: flex;
     overflow: auto;

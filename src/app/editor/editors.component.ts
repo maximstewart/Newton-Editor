@@ -3,7 +3,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
-import { FilesService } from '../common/services/editor/files.service';
+import { FilesService } from '../common/services/files.service';
 
 import { CodeViewComponent } from "./code-view/view.component";
 
