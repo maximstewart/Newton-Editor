@@ -1,17 +1,17 @@
 import { Component } from "@angular/core";
 
 // Import Ace and its modes/themes so that `ace` global is defined
-import * as ace from "ace-builds/src-noconflict/ace";
-import "ace-builds/src-noconflict/ext-settings_menu";
-import "ace-builds/src-noconflict/ext-keybinding_menu";
-import "ace-builds/src-noconflict/ext-command_bar";
-import "ace-builds/src-noconflict/ext-prompt";
-import "ace-builds/src-noconflict/ext-code_lens";
-// import "ace-builds/src-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/ext-language_tools";
-// import "ace-builds/src-noconflict/theme-one_dark";
-// import "ace-builds/src-noconflict/theme-penguins_in_space";
-import "ace-builds/src-noconflict/theme-gruvbox";
+import * as ace from "ace-builds/src-min-noconflict/ace";
+import "ace-builds/src-min-noconflict/ext-settings_menu";
+import "ace-builds/src-min-noconflict/ext-keybinding_menu";
+import "ace-builds/src-min-noconflict/ext-command_bar";
+import "ace-builds/src-min-noconflict/ext-prompt";
+import "ace-builds/src-min-noconflict/ext-code_lens";
+// import "ace-builds/src-min-noconflict/ext-searchbox";
+import "ace-builds/src-min-noconflict/ext-language_tools";
+// import "ace-builds/src-min-noconflict/theme-one_dark";
+// import "ace-builds/src-min-noconflict/theme-penguins_in_space";
+import "ace-builds/src-min-noconflict/theme-gruvbox";
 
 import { CodeViewBase } from './view.base';
 

@@ -24,7 +24,10 @@
         "icon": "./icos/",
         "files": [
             "newton/",
-            "build/"
+            "build/",
+            "!node_modules/ace-builds/",
+            "!node_modules/web-streams-polyfill/",
+            "!node_modules/@angular/"
         ],
         "mac": {
             "category": "public.app-category.developer-tools"
