@@ -209,7 +209,7 @@ export class SearchReplaceComponent {
         let fromStr = this.findEntryElm.nativeElement.value;
         let toStr   = this.replaceEntryElm.nativeElement.value;
 
-        if (!fromStr || !toStr) return;
+        if (!fromStr) return;
 
         let totalCount = this.editor.replace(toStr, fromStr, {
             backwards: this.isBackwards,
@@ -228,7 +228,7 @@ export class SearchReplaceComponent {
         let fromStr = this.findEntryElm.nativeElement.value;
         let toStr   = this.replaceEntryElm.nativeElement.value;
 
-        if (!fromStr || !toStr) return;
+        if (!fromStr) return;
 
         let totalCount = this.editor.replaceAll(toStr, fromStr, {
             backwards: this.isBackwards,
