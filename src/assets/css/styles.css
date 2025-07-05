@@ -50,18 +50,12 @@
       border: 2px dashed lightblue;
 }
 
-/*
-.hr-pane-handle {
+.vr-pane-handle {
+    max-width: max-content;
+    height: 100%;
+    margin: 0px;
 }
 
-.vr-pane-handle {
-    transform: rotate(90deg);
-}
-*/
-
-.vr-pane-handle {
-    max-width: 0.05em;
-}
 
 
 
