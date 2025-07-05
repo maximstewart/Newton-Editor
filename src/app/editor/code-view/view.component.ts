@@ -117,6 +117,11 @@ export class CodeViewComponent extends CodeViewBase {
             this.editorsService.sendMessage(message);
             this.searchReplaceService.sendMessage(message);
 
+            message            = new ServiceMessage();
+            message.action     = "set-active-editor";
+            message.rawData    = this;
+            this.markdownPreviewService.sendMessage(message);
+
             this.updateInfoBar();
         });
 

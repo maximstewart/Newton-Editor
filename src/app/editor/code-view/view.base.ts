@@ -7,6 +7,7 @@ import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 import { EditorsService } from '../../common/services/editor/editors.service';
 import { FilesService } from '../../common/services/files.service';
 import { SearchReplaceService } from '../../common/services/editor/search-replace/search-replace.service';
+import { MarkdownPreviewService } from '../../common/services/editor/markdown-preview/markdown-preview.service';
 
 import { EditorSettings } from "../../common/configs/editor.config";
 import { NewtonFile } from '../../common/types/file.type';
@@ -23,12 +24,13 @@ export class CodeViewBase {
     public leftSiblingUUID!: string;
     public rightSiblingUUID!: string;
 
-    protected infoBarService: InfoBarService             = inject(InfoBarService);
-    protected filesModalService: FilesModalService       = inject(FilesModalService);
-    protected tabsService: TabsService                   = inject(TabsService);
-    protected editorsService: EditorsService             = inject(EditorsService);
-    protected filesService: FilesService                 = inject(FilesService);
-    protected searchReplaceService: SearchReplaceService = inject(SearchReplaceService);
+    protected infoBarService: InfoBarService                 = inject(InfoBarService);
+    protected filesModalService: FilesModalService           = inject(FilesModalService);
+    protected tabsService: TabsService                       = inject(TabsService);
+    protected editorsService: EditorsService                 = inject(EditorsService);
+    protected filesService: FilesService                     = inject(FilesService);
+    protected searchReplaceService: SearchReplaceService     = inject(SearchReplaceService);
+    protected markdownPreviewService: MarkdownPreviewService = inject(MarkdownPreviewService);
 
     @ViewChild('editor') editorElm!: ElementRef;
     @Input() editorSettings!: typeof EditorSettings;
@@ -93,6 +95,12 @@ export class CodeViewBase {
 
     public showKeyShortcuts() {
         this.editor.showKeyboardShortcuts();
+    }
+
+    public markdownPreviewPopup() {
+        let message        = new ServiceMessage();
+        message.action     = "toggle-markdown-preview";
+        this.markdownPreviewService.sendMessage(message);
     }
 
     public searchPopup() {

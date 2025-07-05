@@ -29,9 +29,13 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "ctrl-shift-l", mac: "ctrl-shift-l"},
         readOnly: false
     }, {
+        name: "markdownPreviewPopup",
+        bindKey: {win: "ctrl-shift-m", mac: "ctrl-shift-m"},
+        readOnly: false
+    }, {
         name: "searchPopup",
         bindKey: {win: "ctrl-f", mac: "ctrl-f"},
-        readOnly: true
+        readOnly: false
     }, {
         name: "replacePopup",
         bindKey: {win: "ctrl-r", mac: "ctrl-r"},

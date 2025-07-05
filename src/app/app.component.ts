@@ -4,6 +4,7 @@ import { InfoBarComponent } from './editor/info-bar/info-bar.component';
 import { TabsComponent } from './editor/tabs/tabs.component';
 import { EditorsComponent } from './editor/editors.component';
 import { SearchReplaceComponent } from "./editor/search-replace/search-replace.component";
+import { MarkdownPreviewComponent } from "./editor/markdown-preview/markdown-preview.component";
 import { FilesModalComponent } from "./common/components/modals/files/files-modal.component";
 
 
@@ -15,6 +16,7 @@ import { FilesModalComponent } from "./common/components/modals/files/files-moda
         TabsComponent,
         EditorsComponent,
         SearchReplaceComponent,
+        MarkdownPreviewComponent,
         FilesModalComponent
     ],
     templateUrl: './app.component.html',

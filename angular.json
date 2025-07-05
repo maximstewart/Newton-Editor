@@ -47,6 +47,7 @@
                             "src/assets/css/ace-overrides.css"
                         ],
                         "scripts":[
+                            "src/libs/showdown.min.js"
                         ],
                         "optimization": true
                     },
@@ -110,7 +111,6 @@
                             "src/styles.css"
                         ],
                         "scripts":[
-                            
                         ]
                     }
                 }

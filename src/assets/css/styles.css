@@ -20,21 +20,33 @@ body {
 
 /* CLASSES */
 
+.markdown-preview {
+    top: 2em;
+    bottom: 2em;
+    right: 2em;
+    z-index: 900;
+    position: fixed;
+    display: inline-block;
+    width: 50vw;
+    overflow: auto;
+    background-color: rgba(64, 64, 64, 0.84);
+}
+
+.search-replace {
+    bottom: 2em;
+    left: 2em;
+    right: 2em;
+    z-index: 800;
+    display: inline-block;
+    position: fixed;
+    background-color: rgba(64, 64, 64, 0.64);
+}
+
 .info-bar {
     font-size: 0.8em;
     color: rgba(255, 255, 255, 0.84);
     text-align: center;
 }
-
-.search-replace {
-    bottom: 2em;
-    z-index: 999;
-    display: inline-block;
-    position: fixed;
-    width: 100%;
-    background-color: rgba(64, 64, 64, 0.24);
-}
-
 
 .tabs {
     display: flex;

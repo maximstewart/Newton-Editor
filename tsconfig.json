@@ -16,8 +16,11 @@
         "declaration": false,
         "skipLibCheck": true,
         "strict": false,
-        "forceConsistentCasingInFileNames": true
-    }
+        "forceConsistentCasingInFileNames": true,
+    },
+    "includes": [
+        "src/typings.d.ts"
+    ]
 }
 
 
@@ -53,7 +56,10 @@
         "strictInjectionParameters": true,
         "strictInputAccessModifiers": true,
         "strictTemplates": true
-    }
+    },
+    "includes": [
+        "src/typings.d.ts"
+    ]
 }
 
 */

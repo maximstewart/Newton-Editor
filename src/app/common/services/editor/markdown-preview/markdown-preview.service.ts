@@ -8,7 +8,7 @@ import { ServiceMessage } from '../../../types/service-message.type';
 @Injectable({
     providedIn: 'root'
 })
-export class SearchReplaceService {
+export class MarkdownPreviewService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
 

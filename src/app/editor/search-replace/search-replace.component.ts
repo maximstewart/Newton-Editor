@@ -91,7 +91,7 @@ export class SearchReplaceComponent {
     }
 
     private setActiveEditor(message: ServiceMessage) {
-        if (!this.isHidden && this.editor == message.rawData) return;
+        if (this.editor == message.rawData) return;
 
         this.editor = message.rawData;
 
