@@ -8,6 +8,7 @@ import { EditorsService } from '../../common/services/editor/editors.service';
 import { FilesService } from '../../common/services/files.service';
 import { SearchReplaceService } from '../../common/services/editor/search-replace/search-replace.service';
 import { MarkdownPreviewService } from '../../common/services/editor/markdown-preview/markdown-preview.service';
+import { LspManagerService } from '../../common/services/editor/lsp-manager/lsp-manager.service';
 
 import { EditorSettings } from "../../common/configs/editor.config";
 import { NewtonFile } from '../../common/types/file.type';
@@ -31,6 +32,7 @@ export class CodeViewBase {
     protected filesService: FilesService                     = inject(FilesService);
     protected searchReplaceService: SearchReplaceService     = inject(SearchReplaceService);
     protected markdownPreviewService: MarkdownPreviewService = inject(MarkdownPreviewService);
+    protected lspManagerService: LspManagerService           = inject(LspManagerService);
 
     @ViewChild('editor') editorElm!: ElementRef;
     @Input() editorSettings!: typeof EditorSettings;
@@ -95,6 +97,12 @@ export class CodeViewBase {
 
     public showKeyShortcuts() {
         this.editor.showKeyboardShortcuts();
+    }
+
+    public lspManagerPopup() {
+        let message        = new ServiceMessage();
+        message.action     = "toggle-lsp-manager";
+        this.lspManagerService.sendMessage(message);
     }
 
     public markdownPreviewPopup() {

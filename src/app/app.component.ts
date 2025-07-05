@@ -5,7 +5,7 @@ import { TabsComponent } from './editor/tabs/tabs.component';
 import { EditorsComponent } from './editor/editors.component';
 import { SearchReplaceComponent } from "./editor/search-replace/search-replace.component";
 import { MarkdownPreviewComponent } from "./editor/markdown-preview/markdown-preview.component";
-import { FilesModalComponent } from "./common/components/modals/files/files-modal.component";
+import { LspManagerComponent } from "./editor/lsp-manager/lsp-manager.component";
 
 
 
@@ -17,7 +17,7 @@ import { FilesModalComponent } from "./common/components/modals/files/files-moda
         EditorsComponent,
         SearchReplaceComponent,
         MarkdownPreviewComponent,
-        FilesModalComponent
+        LspManagerComponent,
     ],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',

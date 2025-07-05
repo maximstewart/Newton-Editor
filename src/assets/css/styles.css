@@ -6,27 +6,39 @@
 
 /* CLASSES */
 
-.markdown-preview {
-    top: 2em;
-    bottom: 2em;
-    right: 2em;
-    z-index: 900;
-    position: fixed;
+.search-replace,
+.markdown-preview,
+.lsp-manager {
     display: inline-block;
-    width: 50vw;
-    overflow: auto;
+    position: fixed;
     background-color: rgba(64, 64, 64, 0.84);
+    overflow: auto;
 }
 
 .search-replace {
     bottom: 2em;
     left: 2em;
     right: 2em;
-    z-index: 800;
-    display: inline-block;
-    position: fixed;
-    background-color: rgba(64, 64, 64, 0.64);
+    z-index: 900;
 }
+
+.markdown-preview {
+    top: 2em;
+    bottom: 2em;
+    right: 2em;
+    z-index: 700;
+    width: 50vw;
+    overflow: auto;
+}
+
+.lsp-manager {
+    top: 2em;
+    bottom: 2em;
+    left: 2em;
+    right: 2em;
+    z-index: 800;
+}
+
 
 .info-bar {
     font-size: 0.8em;

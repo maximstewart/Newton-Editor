@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, ReplaySubject, Observable } from 'rxjs';
+import { ReplaySubject, Observable } from 'rxjs';
 
 import { AceLanguageClient, LanguageClientConfig } from 'ace-linters/build/ace-language-client';
 import { LanguageProvider } from "ace-linters";
+
+import { ServiceMessage } from '../../../types/service-message.type';
 
 
 
 @Injectable({
     providedIn: 'root'
 })
-export class LSPService {
+export class LspManagerService {
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+
     lspConfigData!: {};
     languageProviders: {} = {};
 
@@ -75,14 +79,22 @@ export class LSPService {
         return LanguageProvider.create(worker);
     }
 
-    protected setSessionFilePath(session: any, mode: string = "", filePath: string = "") => {
+    protected setSessionFilePath(session: any, mode: string = "", filePath: string = "") {
         if ( !session || !mode || !filePath || !this.languageProviders[mode] ) return;
         this.languageProviders[mode].setSessionFilePath(session, filePath);
     }
 
-    protected closeDocument(session: any, mode: string) => {
+    protected closeDocument(session: any, mode: string) {
         if ( !session || !mode || !this.languageProviders[mode] ) return;
         this.languageProviders[mode].closeDocument(session);
+    }
+
+    public sendMessage(data: ServiceMessage): void {
+        this.messageSubject.next(data);
+    }
+
+    public getMessage$(): Observable<ServiceMessage> {
+        return this.messageSubject.asObservable();
     }
 
 }

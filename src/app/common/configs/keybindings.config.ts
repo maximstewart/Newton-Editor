@@ -16,17 +16,13 @@ export const Keybindings: Array<{}> = [
         bindKey: {linux: "command-shift-/|F1", win: "ctrl-shift-/|F1"},
         readOnly: false
     }, {
-        name: "showFilesModal",
-        bindKey: {win: "ctrl-shift-b", mac: "ctrl-shift-b"},
-        service: "filesModalService",
-        readOnly: false
-    }, {
         name: "showFilesList",
         bindKey: {win: "ctrl-b", mac: "ctrl-b"},
         readOnly: false
     }, {
-        name: "showLSPModal",
+        name: "lspManagerPopup",
         bindKey: {win: "ctrl-shift-l", mac: "ctrl-shift-l"},
+        service: "",
         readOnly: false
     }, {
         name: "markdownPreviewPopup",

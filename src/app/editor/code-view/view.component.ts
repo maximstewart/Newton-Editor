@@ -59,6 +59,12 @@ export class CodeViewComponent extends CodeViewBase {
             return;
         }
 
+        let message     = new ServiceMessage();
+        message.action  = "register-editor";
+        message.rawData = this;
+
+        this.lspManagerService.sendMessage(message);
+
         this.loadAceKeyBindings();
         this.loadAceEventBindings();
     }
@@ -116,6 +122,7 @@ export class CodeViewComponent extends CodeViewBase {
 
             this.editorsService.sendMessage(message);
             this.searchReplaceService.sendMessage(message);
+            this.editorsService.sendMessage(message);
 
             message            = new ServiceMessage();
             message.action     = "set-active-editor";
