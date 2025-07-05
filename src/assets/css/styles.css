@@ -1,19 +1,5 @@
 /* TAGS */
 
-html {
-/*
-    background-color: rgba(64, 64, 64, 0.64);
-    background-color: rgb(40, 44, 52);
-*/
-    background-color: rgba(40, 44, 52, 0.64);
-    color: rgba(255, 255, 255, 0.64);
-}
-
-body {
-    background-color: rgba(64, 64, 64, 0.0);
-    overflow: hidden;
-}
-
 
 /* IDs */
 
@@ -90,10 +76,6 @@ body {
 }
 
 .scroller {
-/*
-    -webkit-scrollbar-color: #00000084 #ffffff64;
-	scrollbar-color: #00000084 #ffffff64;
-*/
     -webkit-scrollbar-color: #00000084 #ffffff06;
 	-webkit-scrollbar-width: thin;
 	scrollbar-color: #00000084 #ffffff06;

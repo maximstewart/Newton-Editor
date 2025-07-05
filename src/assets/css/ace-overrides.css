@@ -3,7 +3,7 @@
 
 /* IDs */
 #ace_settingsmenu, #kbshortcutmenu {
-    background-color: rgba(0, 0, 0, 0.0);
+    background-color: rgba(64, 64, 64, 0.84);
     color: rgba(255, 255, 255, 1.0);
     box-shadow: -1px 4px 5px rgba(124, 124, 124, 0.64);
     padding: 1em 0.5em 2em 1em;
@@ -36,6 +36,14 @@
     line-height: 1.4;
     background-color: rgba(0, 0, 0, 0.0);
     color: rgba(255, 255, 255, 1.0);
+}
+
+.ace_optionsMenuEntry button {
+    color: #000;
+}
+
+.ace_optionsMenuEntry button[ace_selected_button=true] {
+    background: #00e877;
 }
 
 .ace_print-margin {
