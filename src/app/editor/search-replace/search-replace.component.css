@@ -1,3 +1,8 @@
+.buttons > button {
+    min-width: 3.5em;
+    min-height: 2.5em;
+}
+
 .width-8em {
     width: 8em;
 }
