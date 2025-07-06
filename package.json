@@ -4,6 +4,8 @@
     "version": "0.0.1",
     "author": "ITDominator",
     "license": "GPL-2.0-only",
+    "homepage": "https://www.itdominator.com",
+    "email": "1itdominator@gmail.com",
     "main": "newton/main.js",
     "private": true,
     "scripts": {
@@ -11,6 +13,7 @@
         "electron-start": "electron . --trace-warnings --start-as=build",
         "electron-pack": "ng build --base-href ./ && electron-builder --dir",
         "electron-dist": "ng build --base-href ./ && electron-builder",
+        "electron-dist-linux": "ng build --base-href ./ && electron-builder --linux deb zip AppImage",
         "electron-dist-all": "ng build --base-href ./ && electron-builder -mwl",
         "electron-concurrently": "concurrently 'ng serve' 'electron . --trace-warnings --start-as=ng-serve'",
         "ng-serve": "ng serve",
@@ -36,8 +39,9 @@
             "target": "portable"
         },
         "linux": {
-            "target": "AppImage",
-            "category": "Development"
+            "target": "zip",
+            "category": "Development",
+            "maintainer": "ITDominator"
         }
     },
     "postinstall": "electron-builder install-app-deps",
