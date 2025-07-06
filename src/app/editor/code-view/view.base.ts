@@ -19,9 +19,9 @@ import { ServiceMessage } from '../../common/types/service-message.type';
 
 @Directive()
 export class CodeViewBase {
-    public uuid: string                = uuid.v4();
-    @Input() public isDefault: boolean = false;
-    @Input() public isMiniMap: boolean = false;
+    public uuid: string                   = uuid.v4();
+    @Input() public isDefault: boolean    = false;
+    @Input() public mode: string          = "";
     public leftSiblingUUID!: string;
     public rightSiblingUUID!: string;
 
@@ -183,6 +183,11 @@ export class CodeViewBase {
 
     public toggleFullScreen() {
         window.main.toggleFullScreen();
+    }
+
+    public setAsReadOnly() {
+        this.editor.setReadOnly(true);
+        this.editor.setShowPrintMargin(false);
     }
 
     public setAsMiniMapView() {

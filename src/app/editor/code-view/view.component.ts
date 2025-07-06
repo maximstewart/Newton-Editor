@@ -16,6 +16,7 @@ import "ace-builds/src-min-noconflict/theme-gruvbox";
 import { CodeViewBase } from './view.base';
 
 import { NewtonFile } from '../../common/types/file.type';
+import { EditorType } from '../../common/types/editor.type';
 import { ServiceMessage } from '../../common/types/service-message.type';
 
 
@@ -47,26 +48,7 @@ export class CodeViewComponent extends CodeViewBase {
 
     private loadAce(): void {
         this.configAceAndBindToElement()
-
-        if (this.isDefault) {
-            this.editorsService.setActiveEditor(this.uuid);
-            this.addActiveStyling();
-            this.editor.focus();
-        }
-
-        if (this.isMiniMap) {
-            this.setAsMiniMapView();
-            return;
-        }
-
-        let message     = new ServiceMessage();
-        message.action  = "register-editor";
-        message.rawData = this;
-
-        this.lspManagerService.sendMessage(message);
-
-        this.loadAceKeyBindings();
-        this.loadAceEventBindings();
+        this.setupRequestedMode();
     }
 
     private configAceAndBindToElement(): void {
@@ -76,10 +58,34 @@ export class CodeViewComponent extends CodeViewBase {
 
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
-        this.editorsService.set(this.uuid, this);
+
+        if (this.isDefault) {
+            this.editorsService.set(this.uuid, this);
+            this.editorsService.setActiveEditor(this.uuid);
+            this.addActiveStyling();
+            this.editor.focus();
+        }
     }
 
-    private loadAceKeyBindings(): void {
+    private setupRequestedMode() {
+        switch(this.mode) {
+            case EditorType.Standalone:
+                // Note: Ace editor without any additional Newton setup...
+                break;
+            case EditorType.MiniMap:
+                this.setAsMiniMapView();
+                break;
+            case EditorType.ReadOnly:
+                this.setAsReadOnly();
+                break;
+            default:
+                this.loadNewtonKeyBindings();
+                this.loadNewtonEventBindings();
+                break;
+        }
+    }
+
+    private loadNewtonKeyBindings(): void {
         let keyBindings = [];
         for (let i = 0; i < this.editorSettings.KEYBINDINGS.length; i++) {
             let keyBinding = this.editorSettings.KEYBINDINGS[i];
@@ -111,7 +117,7 @@ export class CodeViewComponent extends CodeViewBase {
         this.editor.commands.addCommands( keyBindings );
     }
 
-    private loadAceEventBindings(): void {
+    private loadNewtonEventBindings(): void {
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
         this.editor.on("focus", (e) => {

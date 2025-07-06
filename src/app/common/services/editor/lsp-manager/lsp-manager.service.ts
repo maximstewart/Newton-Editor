@@ -19,12 +19,11 @@ export class LspManagerService {
 
 
     constructor() {
-        this.loadLSPService();
     }
 
 
-    private loadLSPService() {
-        this.getLspConfigData().then((lspConfigData: string) => {
+    public loadLspConfigData(): Promise<string | void> {
+        return this.getLspConfigData().then((lspConfigData: string) => {
             this.lspConfigData = JSON.parse(lspConfigData);
 
             if (this.lspConfigData["message"]) {
@@ -35,6 +34,8 @@ export class LspManagerService {
 
                 this.lspConfigData = {};
             }
+
+            return lspConfigData;
         });
     }
 

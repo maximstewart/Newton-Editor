@@ -7,6 +7,7 @@ import { ServiceMessage } from '../../types/service-message.type';
 import { EditorSettings } from "../../configs/editor.config";
 
 import { NewtonFile } from '../../types/file.type';
+import { EditorType } from '../../types/editor.type';
 
 
 
@@ -38,7 +39,7 @@ export class EditorsService {
     }
 
     public set(uuid: string, component: CodeViewComponent) {
-        if (component.isMiniMap) {
+        if (component.mode == EditorType.MiniMap) {
             this.miniMapView = component;
             return;
         }

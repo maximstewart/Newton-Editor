@@ -19,7 +19,7 @@
     <div class="row">
 
         <div class="col">
-            <textarea #lspConfigText class="form-control form-control-sm lsp-config-text" placeholder="LSP Config..."> </textarea>
+            <code-view #editorComponent [mode]="'standalone'" class="lsp-config-text"></code-view>
         </div>
 
     </div>

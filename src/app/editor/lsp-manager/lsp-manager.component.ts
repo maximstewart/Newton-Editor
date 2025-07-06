@@ -3,6 +3,8 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { LspManagerService } from '../../common/services/editor/lsp-manager/lsp-manager.service';
 
+import { CodeViewComponent } from '../code-view/view.component';
+
 import { ServiceMessage } from '../../common/types/service-message.type';
 
 
@@ -11,6 +13,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     selector: 'lsp-manager',
     standalone: true,
     imports: [
+        CodeViewComponent
     ],
     templateUrl: './lsp-manager.component.html',
     styleUrl: './lsp-manager.component.css',
@@ -25,8 +28,8 @@ export class LspManagerComponent {
     private lspManagerService: LspManagerService   = inject(LspManagerService);
 
     @HostBinding("class.hidden") isHidden: boolean = true;
-    @ViewChild('lspConfigText') lspConfigText!: ElementRef;
-    private editors: any                           = {}; 
+    @ViewChild('editorComponent') editorComponent!: CodeViewComponent;
+    lspTextEditor!: any;
     private editor: any; 
 
 
@@ -35,7 +38,12 @@ export class LspManagerComponent {
 
 
     private ngAfterViewInit(): void {
-        this.lspConfigText.nativeElement.value = this.lspManagerService.lspConfigData;
+        this.lspTextEditor = this.editorComponent.editor;
+
+        this.lspManagerService.loadLspConfigData().then((lspConfigData) => {
+            this.lspTextEditor.session.setMode("ace/mode/json");
+            this.lspTextEditor.session.setValue(lspConfigData);
+        });
 
         this.loadSubscribers();
     }
@@ -53,8 +61,6 @@ export class LspManagerComponent {
                 this.toggleLspManager(message);
             } else if (message.action === "set-active-editor") {
                 this.setActiveEditor(message);
-            } else if (message.action === "register-editor") {
-                this.registerEditor(message);
             }
         });
     }
@@ -76,12 +82,7 @@ export class LspManagerComponent {
     }
 
     private setActiveEditor(message: ServiceMessage) {
-        this.editor = this.editors[message.editorUUID];
-    }
-
-    private registerEditor(message: ServiceMessage) {
-        let _editor = message.rawData;
-        this.editors[_editor.uuid] = _editor.editor;
+        this.editor = message.rawData;
     }
 
 }
