@@ -17,6 +17,9 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 // import "ace-builds/src-min-noconflict/theme-penguins_in_space";
 import "ace-builds/src-min-noconflict/theme-gruvbox";
 
+// https://www.npmjs.com/package/web-tree-sitter
+// import { Language, Parser } from 'web-tree-sitter';
+
 import { CodeViewBase } from './view.base';
 
 import { NewtonFile } from '../../common/types/file.type';
@@ -41,6 +44,20 @@ export class CodeViewComponent extends CodeViewBase {
 
     constructor() {
         super();
+
+        // const { Parser } = window.TreeSitter;
+        // const { Parser } = TreeSitter;
+        // console.log(treeSitter);
+
+        // treeSitter.Parser.init().then(() => {
+        //     console.log("Parser ready...");
+        // });
+
+        // const parser = new Parser();
+        // const JavaScript = await Language.load('/path/to/tree-sitter-javascript.wasm');
+        // Language.load('resources/wasm/tree-sitter-javascript.wasm').then((language) => {
+        //     console.log(language);
+        // });
 
         this.aceApi = ace;
     }
