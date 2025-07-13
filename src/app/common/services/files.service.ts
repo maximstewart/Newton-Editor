@@ -89,13 +89,14 @@ export class FilesService {
 	        if (loadFileContents)
 	            data = await window.fs.getFileContents(file.path);
 
-            file.session = new EditSession(data);
+            file.session       = new EditSession(data);
+            file.session["id"] = path;
             file.session.setUndoManager( new UndoManager() );
             file.session.setMode( getModeForPath( file.path ).mode );
 
             this.files.set(file.path, file);
 	    } catch (error) {
-		    console.log(
+		    console.error(
 		        `----  Error  ----\nPath: ${path}\nMessage: ${error}`
 		    );
 	    }

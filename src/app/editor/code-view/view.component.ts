@@ -2,6 +2,10 @@ import { Component } from "@angular/core";
 
 // Import Ace and its modes/themes so that `ace` global is defined
 import * as ace from "ace-builds/src-min-noconflict/ace";
+
+// Note:  https://github.com/mkslanc/ace-linters/blob/c286d85c558530aa1b0597d02108bc782abd4736/packages/demo/file-api-websockets/client.ts#L27
+// import { AceLayout, Box, TabManager, Button, dom, AceTreeWrapper, FileSystemWeb, Pane, AceEditor, Tab } from "ace-layout";
+
 import "ace-builds/src-min-noconflict/ext-settings_menu";
 import "ace-builds/src-min-noconflict/ext-keybinding_menu";
 import "ace-builds/src-min-noconflict/ext-command_bar";
@@ -59,8 +63,8 @@ export class CodeViewComponent extends CodeViewBase {
         this.editor = ace.edit( this.editorElm.nativeElement );
         this.editor.setOptions( this.editorSettings.CONFIG );
 
+        this.editorsService.set(this.uuid, this);
         if (this.isDefault) {
-            this.editorsService.set(this.uuid, this);
             this.editorsService.setActiveEditor(this.uuid);
             this.addActiveStyling();
             this.editor.focus();
@@ -128,11 +132,11 @@ export class CodeViewComponent extends CodeViewBase {
 
             this.editorsService.sendMessage(message);
             this.searchReplaceService.sendMessage(message);
-            this.editorsService.sendMessage(message);
 
             message            = new ServiceMessage();
             message.action     = "set-active-editor";
             message.rawData    = this;
+            this.lspManagerService.sendMessage(message);
             this.markdownPreviewService.sendMessage(message);
 
             this.updateInfoBar();
@@ -175,6 +179,12 @@ export class CodeViewComponent extends CodeViewBase {
         });
 
         this.editor.on("changeSession", (session) => {
+            let message        = new ServiceMessage();
+            message.action     = "editor-update";
+            message.rawData    = this;
+
+            this.lspManagerService.sendMessage(message);
+
             this.updateInfoBar();
         });
     }

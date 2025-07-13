@@ -14,8 +14,9 @@ import { ServiceMessage } from '../../../types/service-message.type';
 export class LspManagerService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
-    lspConfigData!: {};
-    languageProviders: {} = {};
+    workspaceFolder: string  = "";
+    lspConfigDataStr: string = "";
+    languageProviders: {}    = {};
 
 
     constructor() {
@@ -24,69 +25,103 @@ export class LspManagerService {
 
     public loadLspConfigData(): Promise<string | void> {
         return this.getLspConfigData().then((lspConfigData: string) => {
-            this.lspConfigData = JSON.parse(lspConfigData);
-
-            if (this.lspConfigData["message"]) {
-                console.log(
-                    "Warning: LSP this.lspConfigData is a 'message'",
-                    this.lspConfigData
-                );
-
-                this.lspConfigData = {};
-            }
-
+            this.lspConfigDataStr = lspConfigData;
             return lspConfigData;
         });
     }
 
-    public registerEditor(editor: any): void {
-        let modeParts = editor.getSession()["$modeId"].split("/");
-        let mode      = modeParts[ modeParts.length - 1 ];
+    public registerEditorToLSPClient(editor: any) {
+        let mode = this.getMode(editor.session);
 
-        if ( !this.languageProviders[mode] ) {
-            this.languageProviders[mode] = this.getLanguageProviderWithClientServer(mode);
+        if ( this.languageProviders[mode] ) {
+            this.languageProviders[mode].registerEditor(editor);
+            return;
         }
 
-        this.languageProviders[mode].registerEditor(editor);
+        this.languageProviders[mode]?.registerEditor(editor);
     }
 
     private getLspConfigData(): Promise<string> {
         return window.fs.getLspConfigData();
     }
 
-    private getLanguageProviderWithClientServer(mode: string) {
-        let _initializationOptions = {};
+    private parseAndReturnLSPConfigData(): {} {
+        let configData = JSON.parse(
+            this.lspConfigDataStr.replaceAll("{workspace.folder}", this.workspaceFolder)
+        );
 
-        if ( Object.keys(this.lspConfigData).length !== 0 && this.lspConfigData[mode] ) {
-            _initializationOptions = this.lspConfigData[mode]["initialization-options"];
+        if (configData["message"]) {
+            console.warn(
+                "Warning: LSP this.lspConfigDataStr is a 'message'",
+                this.lspConfigDataStr
+            );
+
+            configData = {};
         }
 
-        let servers: LanguageClientConfig[] = [
-            {
-                module: () => import("ace-linters/build/language-client"),
-                modes: mode,
-                type: "socket",
-                socket: new WebSocket(`ws://127.0.0.1:9999/${mode}`),
-                // socket: new WebSocket("ws://127.0.0.1:9999/?name=pylsp"),
-                initializationOptions: _initializationOptions
-            }
-        ];
-
-        return AceLanguageClient.for(servers);
+        return configData;
     }
 
-    private getLanguageProviderWithWebWorker() {
+    private getInitializationOptions(mode: string, configData: {}): {} {
+        let _initializationOptions = {};
+
+        if ( Object.keys(configData).length !== 0 && configData[mode] ) {
+            _initializationOptions = configData[mode]["initialization-options"];
+        }
+
+        return _initializationOptions;
+    }
+
+    public createLanguageProviderWithClientServer(mode: string): LanguageProvider {
+        if ( this.languageProviders[mode] ) return;
+        let servers: LanguageClientConfig[] = [];
+
+        try {
+            let configData             = this.parseAndReturnLSPConfigData();
+            let _initializationOptions = this.getInitializationOptions(mode, configData);
+            servers = [
+                {
+                    module: () => import("ace-linters/build/language-client"),
+                    modes: mode,
+                    type: "socket",
+                    socket: new WebSocket( configData[mode]["socket"] ),
+                    initializationOptions: _initializationOptions
+                }
+            ];
+        } catch(error) {
+            console.error(
+                "Error: Language Server could not be loaded OR doesn't exist in Newton-LSP config setup...",
+            );
+
+            return;
+        }
+
+        this.languageProviders[mode] = AceLanguageClient.for(servers);
+        // this.languageProviders[mode].requireFilePath = true;
+        this.languageProviders[mode].changeWorkspaceFolder(this.workspaceFolder);
+        return this.languageProviders[mode];
+    }
+
+    private getLanguageProviderWithWebWorker(): LanguageProvider {
         let worker = new Worker(new URL('./webworker.js', import.meta.url));
         return LanguageProvider.create(worker);
     }
 
-    protected setSessionFilePath(session: any, mode: string = "", filePath: string = "") {
-        if ( !session || !mode || !filePath || !this.languageProviders[mode] ) return;
+    public setSessionFilePath(session: any, filePath: string = "") {
+        if ( !session || !filePath ) return;
+        let mode = this.getMode(session);
+        if ( !this.languageProviders[mode] ) return;
         this.languageProviders[mode].setSessionFilePath(session, filePath);
     }
 
-    protected closeDocument(session: any, mode: string) {
-        if ( !session || !mode || !this.languageProviders[mode] ) return;
+    public getMode(session: any): string {
+        return session.getMode()["$id"].replace("ace/mode/", "");
+    }
+
+    public closeDocument(session: any) {
+        if ( !session ) return;
+        let mode = this.getMode(session);
+        if ( !this.languageProviders[mode] ) return;
         this.languageProviders[mode].closeDocument(session);
     }
 

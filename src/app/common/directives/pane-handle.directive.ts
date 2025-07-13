@@ -31,7 +31,7 @@ export class PaneHandleDirective {
             !target.classList.contains("hr-pane-handle") &&
             !target.classList.contains("vr-pane-handle")
         ) {
-            console.log("Must have 'hr-pane-handle' or 'vr-pane-handle' in classList!");
+            console.error("Must have 'hr-pane-handle' or 'vr-pane-handle' in classList!");
             return;
         }
 

@@ -2,24 +2,63 @@
 
     <div class="row mt-2 mb-3">
 
-        <div class="col">
+        <div class="col clear-right-padding">
             <div class="input-group-sm">
-                <input class="form-control" placeholder="Project Path..." />
+                <label class="form-control" [innerText]="lspManagerService.workspaceFolder || 'Project Path...'">
+                </label>
             </div>
+        </div>
+
+        <div class="col col-auto clear-left-padding">
+            <button class="btn btn-sm btn-dark" (click)="clearWorkspaceFolder()">x</button>
         </div>
 
         <div class="col col-auto">
             <div class="input-group-sm">
-                <button class="btn btn-sm btn-dark">Choose Directory</button>
+                <button class="btn btn-sm btn-dark" (click)="setWorkspaceFolder()">Workspace Folder</button>
+                <button class="btn btn-sm btn-danger ms-5" (click)="hideLspManager()">X</button>
             </div>
         </div>
 
     </div>
 
+    <div class="row mt-2 md-2">
+        <div class="col">
+            LSP Configs:
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <code-view #lspEditorComponent [mode]="'standalone'" class="lsp-config-text"></code-view>
+        </div>
+    </div>
+
+    <div class="row mt-2 md-2">
+            <div class="col col-sm" [hidden]="!lspManagerService.workspaceFolder">
+                <button class="btn btn-sm btn-dark" (click)="createLanguageClient()">Create Language Client</button>
+            </div>
+
+        <div class="col">
+            Target Editor:  <label [innerText]="editor?.id || '...'"></label>
+        </div>
+
+        <div class="col-sm" [hidden]="!lspManagerService.workspaceFolder">
+            <button class="btn btn-sm btn-dark"
+                (click)="registerEditorToLanguageClient()">
+                Register Editor To LSP
+            </button>
+        </div>
+
+        <div class="col">
+            Active Editor Session:
+        </div>
+    </div>
+
     <div class="row">
 
         <div class="col">
-            <code-view #editorComponent [mode]="'standalone'" class="lsp-config-text"></code-view>
+            <code-view #sessionEditorComponent [mode]="'read-only'" class="lsp-config-text"></code-view>
         </div>
 
     </div>

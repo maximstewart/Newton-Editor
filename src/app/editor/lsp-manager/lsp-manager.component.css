@@ -2,3 +2,10 @@
     display: grid;
     min-height: 25em;
 }
+
+.clear-left-padding {
+    padding-left: 0px;
+}
+.clear-right-padding {
+    padding-right: 0px;
+}

@@ -100,6 +100,26 @@ const saveFileAs = () => {
     });
 }
 
+const chooseFolder = () => {
+    return dialog.showOpenDialog(
+        {
+            title: "Choose Folder:",
+            defaultPath: HOME_DIR,
+            properties: [
+                'openDirectory'
+            ]
+        }
+    ).then((response) => {
+        if (response.canceled) {
+            console.debug("Canceled folder selection...");
+            return "";
+        }
+        console.log(response)
+
+        return response.filePaths[0];
+    });
+}
+
 const openFiles = (startPath) => {
     dialog.showOpenDialog(
         {
@@ -171,6 +191,7 @@ const closeFile = (fpath) => {
 module.exports = {
     newtonFs: {
         setWindow: setWindow,
+        chooseFolder: chooseFolder,
         openFiles: openFiles,
         saveFile: saveFile,
         saveFileAs: saveFileAs,

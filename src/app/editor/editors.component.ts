@@ -139,6 +139,7 @@ export class EditorsComponent {
                     }
                 }
 
+                activeComponent.lspManagerService.closeDocument(file.session);
                 this.filesService.delete(file);
             }
 
@@ -192,7 +193,7 @@ export class EditorsComponent {
         });
 
         window.fs.onUpdateFilePath(async (path: string) => {
-            console.log(path);
+            console.log("TODO (onUpdateFilePath) :", path);
             // this.tabsService.sendMessage(message);
             // this.filesService.sendMessage(message);
         });

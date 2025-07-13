@@ -61,7 +61,7 @@ export class MarkdownPreviewComponent {
 
         setTimeout(() => {
             this.updatePreview();
-        }, 200);
+        }, 10);
     }
 
     private setActiveEditor(message: ServiceMessage) {

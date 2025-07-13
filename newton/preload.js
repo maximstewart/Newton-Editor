@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('fs', {
     openFiles: (startPath) => ipcRenderer.invoke("openFiles", startPath),
     saveFile: (path, content) => ipcRenderer.invoke("saveFile", path, content),
     saveFileAs: () => ipcRenderer.invoke("saveFileAs"),
+    chooseFolder: () => ipcRenderer.invoke("chooseFolder"),
     closeFile: (path) => ipcRenderer.invoke("closeFile", path),
     getPathForFile: (file) => webUtils.getPathForFile(file),
     onLoadFiles: (callback) => ipcRenderer.on('load-files', (_event, paths) => callback(paths)),
