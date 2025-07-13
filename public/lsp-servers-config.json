@@ -8,8 +8,8 @@
         "command": "lsp-ws-proxy --listen 4114 -- jdtls",
         "alt-command": "lsp-ws-proxy -- jdtls",
         "alt-command2": "java-language-server",
-        "socket": "ws://127.0.0.1:4114/java",
-        "socket-two": "ws://127.0.0.1:4114/?name=jdtls",
+        "socket": "ws://127.0.0.1:9999/java",
+        "socket-two": "ws://127.0.0.1:9999/?name=jdtls",
         "alt-socket": "ws://127.0.0.1:9999/?name=java-language-server",
         "initialization-options": {
             "bundles": [
