@@ -61,3 +61,15 @@
 .ace_sb-h {
     width: 0.8em !important;
 }
+
+
+.ace_cursor {
+    color: rgba(249, 148, 6, 0.64);
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
