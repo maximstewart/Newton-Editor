@@ -33,6 +33,9 @@ const load = (win) => {
         }, {
             label: 'Help',
             click: () => win.webContents.send('menu-actions', "show-about")
+        }, {
+            label: 'Quit',
+            click: () => win.webContents.send('menu-actions', "quit")
         }
     ];
      

@@ -233,6 +233,9 @@ export class EditorsComponent {
                     editor.showSettingsMenu();
                 case "show-about":
                     break;
+                case "quit":
+                    window.main.quit();
+                    break;
                 default:
                     editor.execCommand(action);
             }

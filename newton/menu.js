@@ -22,6 +22,9 @@ const load = (win) => {
                 }, {
                     label: 'Terminal',
                     click: () => {}
+                }, {
+                    label: "Quit",
+                    click: () => win.webContents.send('menu-actions', "quit")
                 }
             ]
         }, {
