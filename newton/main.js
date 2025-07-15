@@ -80,6 +80,7 @@ app.whenReady().then(async () => {
     loadProcessSignalHandlers();
     newton.args.loadArgs();
 
+    newton.ipc.configure( newton.args.getIpcPort() );
     if ( !await newton.ipc.isIPCServerUp() ) {
         newton.ipc.loadIPCServer();
     } else {

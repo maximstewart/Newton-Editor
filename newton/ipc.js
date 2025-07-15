@@ -8,12 +8,17 @@ const fetch      = require('electron-fetch').default
 const IPC_SERVER_IP         = "127.0.0.1";
 let window                  = null;
 let ipcServer               = null;
-let ipcServerPort           = "4563";
-let ipcServerURL            = `http://${IPC_SERVER_IP}:${ipcServerPort}`;
+let ipcServerPort           = "";
+let ipcServerURL            = "";
 
 
 const setWindow = (win) => {
-        window = win;
+        window       = win;
+}
+
+const configure = (ipcPort) => {
+    ipcServerPort = ipcPort;
+    ipcServerURL  = `http://${IPC_SERVER_IP}:${ipcServerPort}`;
 }
 
 const loadIPCServer = (fpath) => {
@@ -47,7 +52,8 @@ const loadIPCServer = (fpath) => {
 }
 
 const isIPCServerUp = async () => {
-    const response = await fetch(`${ipcServerURL}/is-up`).catch((err) => {
+    const response = await fetch(`${ipcServerURL}/is-up`)
+    .catch((err) => {
         console.debug("IPCServer (status) : Not up; okay to start.");
         return {
             text: () => {
@@ -73,9 +79,10 @@ const sendFilesToIPC = async (files) => {
 
 module.exports = {
     newtonIPC: {
-        setWindow: setWindow,
+        configure: configure,
         loadIPCServer: loadIPCServer,
         isIPCServerUp: isIPCServerUp,
         sendFilesToIPC: sendFilesToIPC,
+        setWindow: setWindow
     }
 };

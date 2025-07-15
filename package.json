@@ -9,8 +9,8 @@
     "main": "newton/main.js",
     "private": true,
     "scripts": {
-        "app": "ng build --base-href ./ && electron . --trace-warnings --start-as=build",
-        "electron-start": "electron . --trace-warnings --start-as=build",
+        "app": "ng build --base-href ./ && electron . --trace-warnings --start-as=build --ipc-port=4588",
+        "electron-start": "electron . --trace-warnings --start-as=build --ipc-port=4588",
         "electron-pack": "ng build --base-href ./ && electron-builder --dir",
         "electron-dist": "ng build --base-href ./ && electron-builder",
         "electron-dist-linux": "ng build --base-href ./ && electron-builder --linux deb zip AppImage",
