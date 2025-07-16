@@ -37,8 +37,6 @@ export class LspManagerComponent {
     activeFile: any;
 
 
-
-
     constructor() {
     }
 
@@ -130,8 +128,8 @@ export class LspManagerComponent {
     }
 
     private setActiveEditor(message: ServiceMessage) {
-        this.editor       = message.rawData.editor;
-        this.activeFile   = message.rawData.activeFile;
+        this.editor     = message.rawData.editor;
+        this.activeFile = message.rawData.activeFile;
 
         // TODO: figure out why this doesn't update the session consistently...
         // It seems maybe bound to visible state as change detector ref didn't help either.
@@ -139,10 +137,11 @@ export class LspManagerComponent {
     }
 
     private editorUpdate(message: ServiceMessage) {
+        if (!this.editor) return;
         if (!message.rawData.activeFile) return;
 
         this.editor.setSession(message.rawData.editor.getSession())
-        this.activeFile   = message.rawData.activeFile;
+        this.activeFile = message.rawData.activeFile;
 
 /*
         this.lspManagerService.setSessionFilePath(

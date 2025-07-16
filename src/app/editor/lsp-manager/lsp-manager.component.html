@@ -42,7 +42,6 @@
         <div class="col">
             Target Editor:  <label [innerText]="editor?.id || '...'"></label>
         </div>
-
         <div class="col-sm" [hidden]="!lspManagerService.workspaceFolder">
             <button class="btn btn-sm btn-dark"
                 (click)="registerEditorToLanguageClient()">

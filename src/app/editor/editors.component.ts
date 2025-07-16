@@ -131,16 +131,26 @@ export class EditorsComponent {
 
                 for (let i = 0; i < editors.length; i++) {
                     let editorComponent = editors[i];
-                    if (editorComponent.editor.session == file.session) {
+
+                    if (editorComponent.editor.session !== file.session) continue;
+
+                    let targetFile = this.filesService.getPreviousFile(file.path)
+                    if (targetFile) {
+                        editorComponent.assignSession(targetFile);
+                        if (activeComponent == editorComponent) {
+                            this.editorsService.miniMapView.cloneSession(targetFile);
+                        }
+                    } else {
+                        editorComponent.newFile();
                         if (activeComponent == editorComponent) {
                             this.editorsService.miniMapView.newFile();
                         }
-                        editorComponent.newFile();
                     }
+
                 }
 
                 activeComponent.lspManagerService.closeDocument(file.session);
-                this.filesService.delete(file);
+                this.filesService.unset(file);
             }
 
         });

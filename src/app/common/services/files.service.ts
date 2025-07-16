@@ -39,7 +39,23 @@ export class FilesService {
         return [...this.files.values()];
     }
 
-    public delete(file: NewtonFile) {
+    public getPreviousFile(path: string): NewtonFile {
+        let paths = this.getAllPaths();
+        let i     = paths.indexOf(path);
+
+        (i == 0) ? i += 1 : i -= 1;
+        return this.files.get( paths[i] );
+    }
+
+    public getNextFile(path: string): NewtonFile {
+        let paths = this.getAllPaths();
+        let i     = paths.indexOf(path);
+
+        (i > paths.length) ? i -= 1 : i += 1;
+        return this.files.get( paths[i] );
+    }
+
+    public unset(file: NewtonFile) {
         file.session.destroy();
         window.fs.closeFile(file.path);
         this.files.delete(file.path);
