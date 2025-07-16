@@ -182,6 +182,19 @@ export class CodeViewComponent extends CodeViewBase {
             }
         });
 
+        this.editor.on("mousewheel", (event) => {
+            if (event.domEvent.ctrlKey && event.domEvent.deltaY < 0) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.zoomIn();
+            }
+            else if (event.domEvent.ctrlKey && event.domEvent.deltaY > 0) {
+                event.preventDefault();
+                event.stopPropagation();
+                this.zoomOut();
+            }
+        });
+
         this.editor.on("change", () => {
             if (this.debounceId) { clearTimeout(this.debounceId); }
             this.setDebounceTimeout();
