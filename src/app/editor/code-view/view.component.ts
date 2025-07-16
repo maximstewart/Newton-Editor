@@ -187,8 +187,7 @@ export class CodeViewComponent extends CodeViewBase {
                 event.preventDefault();
                 event.stopPropagation();
                 this.zoomIn();
-            }
-            else if (event.domEvent.ctrlKey && event.domEvent.deltaY > 0) {
+            } else if (event.domEvent.ctrlKey && event.domEvent.deltaY > 0) {
                 event.preventDefault();
                 event.stopPropagation();
                 this.zoomOut();

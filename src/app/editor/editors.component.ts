@@ -55,109 +55,80 @@ export class EditorsComponent {
         this.editorsService.getMessage$().pipe(
             takeUntil(this.unsubscribe)
         ).subscribe((message: ServiceMessage) => {
-            if (message.action === "select-left-editor") {
-                let editorComponent  = this.editorsService.get(message.editorUUID);
-                if (!editorComponent.leftSiblingUUID) return;
-                let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
-                siblingComponent.editor.focus()
-            } else if (message.action === "select-right-editor") {
-                let editorComponent  = this.editorsService.get(message.editorUUID);
-                if (!editorComponent.rightSiblingUUID) return;
-                let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
-                siblingComponent.editor.focus()
-            } else if (message.action === "move-session-left") {
-                let editorComponent  = this.editorsService.get(message.editorUUID);
-                if (!editorComponent.leftSiblingUUID) return;
-
-                let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
-                let session = editorComponent.editor.getSession();
-                let siblingSession = siblingComponent.editor.getSession();
-
-                if (session == siblingSession) return;
-
-                siblingComponent.assignSession(editorComponent.activeFile);
-
-                let targetPath = this.tabsService.getRightSiblingTab(
-                    editorComponent.activeFile.path
-                )
-                if (targetPath) {
-                    editorComponent.assignSession(
-                        this.filesService.get(targetPath)
-                    );
-                } else {
-                    editorComponent.newFile();
-                }
-
-                siblingComponent.editor.focus()
-            } else if (message.action === "move-session-right") {
-                let editorComponent  = this.editorsService.get(message.editorUUID);
-                if (!editorComponent.rightSiblingUUID) return;
-
-                let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
-                let session = editorComponent.editor.getSession();
-                let siblingSession = siblingComponent.editor.getSession();
-
-                if (session == siblingSession) return;
-
-                siblingComponent.assignSession(editorComponent.activeFile);
-
-                let targetPath = this.tabsService.getRightSiblingTab(
-                    editorComponent.activeFile.path
-                )
-                if (targetPath) {
-                    editorComponent.assignSession(
-                        this.filesService.get(targetPath)
-                    );
-                } else {
-                    editorComponent.newFile();
-                }
-
-                siblingComponent.editor.focus()
-            } else if (message.action === "set-active-editor") {
-                this.editorsService.getActiveEditorComponent().removeActiveStyling();
-                this.editorsService.setActiveEditor(message.editorUUID);
-                this.editorsService.getActiveEditorComponent().addActiveStyling();
-            } else if (message.action === "set-tab-to-editor") {
-                let file            = this.filesService.get(message.filePath);
-                let editorComponent = this.editorsService.getActiveEditorComponent();
-                let editor          = editorComponent.editor;
-
-                editorComponent.assignSession(file);
-                this.editorsService.miniMapView.cloneSession(file);
-            } else if (message.action === "close-tab") {
-                let activeComponent = this.editorsService.getActiveEditorComponent();
-                let editors         = this.editorsService.getEditorsAsArray();
-                let file            = this.filesService.get(message.filePath);
-
-                for (let i = 0; i < editors.length; i++) {
-                    let editorComponent = editors[i];
-
-                    if (editorComponent.editor.session !== file.session) continue;
-
-                    let targetFile = this.filesService.getPreviousFile(file.path)
-                    if (targetFile) {
-                        editorComponent.assignSession(targetFile);
-                        if (activeComponent == editorComponent) {
-                            this.editorsService.miniMapView.cloneSession(targetFile);
-                        }
-                    } else {
-                        editorComponent.newFile();
-                        if (activeComponent == editorComponent) {
-                            this.editorsService.miniMapView.newFile();
-                        }
-                    }
-
-                }
-
-                activeComponent.lspManagerService.closeDocument(file.session);
-                this.filesService.unset(file);
+            switch ( message.action ) {
+                case "select-left-editor":
+                    this.selectLeftEditor(message);
+                    break;
+                case "select-right-editor":
+                    this.selectRightEditor(message);
+                    break;
+                case "move-session-left":
+                    this.moveSessionLeft(message);
+                    break;
+                case "move-session-right":
+                    this.moveSessionRight(message);
+                    break;
+                case "set-active-editor":
+                    this.setActiveEditor(message);
+                    break;
+                case "set-tab-to-editor":
+                    this.setTabToEditor(message);
+                   break;
+                case "close-tab":
+                    this.closeTab(message);
+                    break;
+                default:
+                    break;
             }
-
         });
 
     }
 
     private loadMainSubscribers() {
+        window.main.onMenuActions(async (action: string) => {
+            let editorComponent = this.editorsService.getActiveEditorComponent();
+            let editor          = editorComponent.editor;
+
+            switch ( action ) {
+                case "new-file":
+                    break;
+                case "open-files":
+                    editorComponent.openFiles();
+                    break;
+                case "save-file":
+                    editorComponent.saveFile();
+                    break;
+                case "save-file-as":
+                    editorComponent.saveFileAs();
+                    break;
+                case "cut":
+                    editorComponent.cutText();
+                    break;
+                case "copy":
+                    editorComponent.copyText();
+                   break;
+                case "paste":
+                    editorComponent.pasteText();
+                    break;
+                case "zoom-in":
+                    editorComponent.zoomIn()
+                    break;
+                case "zoom-out":
+                    editorComponent.zoomOut()
+                    break;
+                case "open-settings":
+                    editor.showSettingsMenu();
+                case "show-about":
+                    break;
+                case "quit":
+                    window.main.quit();
+                    break;
+                default:
+                    editor.execCommand(action);
+                    break;
+            }
+        });
+
         window.fs.onLoadFiles(async (paths: []) => {
             for (let i = 0; i < paths.length; i++) {
                 let file = new File([], "") as NewtonFile;
@@ -208,48 +179,6 @@ export class EditorsComponent {
             // this.filesService.sendMessage(message);
         });
 
-        window.main.onMenuActions(async (action: string) => {
-            let editorComponent = this.editorsService.getActiveEditorComponent();
-            let editor          = editorComponent.editor;
-
-            switch ( action ) {
-                case "new-file":
-                    break;
-                case "open-files":
-                    editorComponent.openFiles();
-                    break;
-                case "save-file":
-                    editorComponent.saveFile();
-                    break;
-                case "save-file-as":
-                    editorComponent.saveFileAs();
-                    break;
-                case "cut":
-                    editorComponent.cutText();
-                    break;
-                case "copy":
-                    editorComponent.copyText();
-                   break;
-                case "paste":
-                    editorComponent.pasteText();
-                    break;
-                case "zoom-in":
-                    editorComponent.zoomIn()
-                    break;
-                case "zoom-out":
-                    editorComponent.zoomOut()
-                    break;
-                case "open-settings":
-                    editor.showSettingsMenu();
-                case "show-about":
-                    break;
-                case "quit":
-                    window.main.quit();
-                    break;
-                default:
-                    editor.execCommand(action);
-            }
-        });
     }
 
     protected onFileDropped(files: any) {
@@ -262,4 +191,104 @@ export class EditorsComponent {
         });
     }
 
+
+    private selectLeftEditor(message: ServiceMessage) {
+        let editorComponent  = this.editorsService.get(message.editorUUID);
+        if (!editorComponent.leftSiblingUUID) return;
+        let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
+        siblingComponent.editor.focus();
+    }
+
+    private selectRightEditor(message: ServiceMessage) {
+        let editorComponent  = this.editorsService.get(message.editorUUID);
+        if (!editorComponent.rightSiblingUUID) return;
+        let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
+        siblingComponent.editor.focus();
+    }
+
+    private moveSessionLeft(message: ServiceMessage) {
+        let editorComponent  = this.editorsService.get(message.editorUUID);
+        if (!editorComponent.leftSiblingUUID) return;
+
+        let siblingComponent = this.editorsService.get(editorComponent.leftSiblingUUID);
+        this.moveSession("left", editorComponent, siblingComponent);
+    }
+
+    private moveSessionRight(message: ServiceMessage) {
+        let editorComponent  = this.editorsService.get(message.editorUUID);
+        if (!editorComponent.rightSiblingUUID) return;
+
+        let siblingComponent = this.editorsService.get(editorComponent.rightSiblingUUID);
+        this.moveSession("right", editorComponent, siblingComponent);
+    }
+
+    private moveSession(
+        direction: string,
+        editorComponent: CodeViewComponent,
+        siblingComponent: CodeViewComponent
+    ) {
+        let session = editorComponent.editor.getSession();
+        let siblingSession = siblingComponent.editor.getSession();
+
+        if (session == siblingSession) return;
+
+        let targetPath: string = this.tabsService.getRightSiblingTab(
+            editorComponent.activeFile.path
+        );
+
+        siblingComponent.assignSession(editorComponent.activeFile);
+        if (targetPath) {
+            editorComponent.assignSession(
+                this.filesService.get(targetPath)
+            );
+        } else {
+            editorComponent.newFile();
+        }
+
+        siblingComponent.editor.focus()
+    }
+
+
+    private setActiveEditor(message: ServiceMessage) {
+        this.editorsService.getActiveEditorComponent().removeActiveStyling();
+        this.editorsService.setActiveEditor(message.editorUUID);
+        this.editorsService.getActiveEditorComponent().addActiveStyling();
+    }
+    private setTabToEditor(message: ServiceMessage) {
+        let file            = this.filesService.get(message.filePath);
+        let editorComponent = this.editorsService.getActiveEditorComponent();
+        let editor          = editorComponent.editor;
+
+        editorComponent.assignSession(file);
+        this.editorsService.miniMapView.cloneSession(file);
+    }
+
+    private closeTab(message: ServiceMessage) {
+        let activeComponent = this.editorsService.getActiveEditorComponent();
+        let editors         = this.editorsService.getEditorsAsArray();
+        let file            = this.filesService.get(message.filePath);
+
+        for (let i = 0; i < editors.length; i++) {
+            let editorComponent = editors[i];
+
+            if (editorComponent.editor.session !== file.session) continue;
+
+            let targetFile = this.filesService.getPreviousFile(file.path)
+            if (targetFile) {
+                editorComponent.assignSession(targetFile);
+                if (activeComponent == editorComponent) {
+                    this.editorsService.miniMapView.cloneSession(targetFile);
+                }
+            } else {
+                editorComponent.newFile();
+                if (activeComponent == editorComponent) {
+                    this.editorsService.miniMapView.newFile();
+                }
+            }
+
+        }
+
+        activeComponent.lspManagerService.closeDocument(file.session);
+        this.filesService.unset(file);
+    }
 }

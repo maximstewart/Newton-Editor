@@ -41,17 +41,19 @@ export class FilesService {
 
     public getPreviousFile(path: string): NewtonFile {
         let paths = this.getAllPaths();
-        let i     = paths.indexOf(path);
+        if (paths.length === 0 ) return;
 
-        (i == 0) ? i += 1 : i -= 1;
+        let i = paths.indexOf(path);
+        (i === 0) ? i = paths.length - 1 : i -= 1;
         return this.files.get( paths[i] );
     }
 
     public getNextFile(path: string): NewtonFile {
         let paths = this.getAllPaths();
-        let i     = paths.indexOf(path);
+        if (paths.length === 0 ) return;
 
-        (i > paths.length) ? i -= 1 : i += 1;
+        let i = paths.indexOf(path);
+        (i === (paths.length - 1)) ? i = 0 : i += 1;
         return this.files.get( paths[i] );
     }
 

@@ -45,45 +45,21 @@ export class TabsService {
     }
 
     public getLeftSiblingTab(fpath: string): string {
-        let size = this.tabs.length;
-        let i    = 0;
+        if (this.tabs.length === 0 ) return;
 
-        for (; i < size; i++) {
-            if (this.tabs[i].path == fpath) {
-                break;
-            }
-        }
+        let i = this.tabs.indexOf(fpath);
 
-        if ( !(size > 1) ) {
-            return "";
-        }
-
-        if ( i === 0 ) {
-            return this.tabs[i + 1].path;
-        }
-
-        return this.tabs[i - 1].path;
+        (i === 0) ? i = this.tabs.length - 1 : i -= 1;
+        return this.tabs[i].path;
     }
 
     public getRightSiblingTab(fpath: string): string {
-        let size = this.tabs.length;
-        let i    = 0;
+        if (this.tabs.length === 0 ) return;
 
-        for (; i < size; i++) {
-            if (this.tabs[i].path == fpath) {
-                break;
-            }
-        }
+        let i = this.tabs.indexOf(fpath);
 
-        if ( !(size > 1) ) {
-            return "";
-        }
-
-        if ( i === (size - 1) ) {
-            return this.tabs[i - 1].path;
-        }
-
-        return this.tabs[i + 1].path;
+        (i === (this.tabs.length - 1)) ? i = 0 : i += 1;
+        return this.tabs[i].path;
     }
 
     public setNewTargetIndex(fpath: string): void {
