@@ -274,7 +274,7 @@ export class EditorsComponent {
             if (editorComponent.editor.session !== file.session) continue;
 
             let targetFile = this.filesService.getPreviousFile(file.path)
-            if (targetFile) {
+            if (targetFile && (targetFile.path !== message.filePath)) {
                 editorComponent.assignSession(targetFile);
                 if (activeComponent == editorComponent) {
                     this.editorsService.miniMapView.cloneSession(targetFile);
