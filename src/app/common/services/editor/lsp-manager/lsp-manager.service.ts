@@ -33,12 +33,13 @@ export class LspManagerService {
     public registerEditorToLSPClient(editor: any) {
         let mode = this.getMode(editor.session);
 
-        if ( this.languageProviders[mode] ) {
-            this.languageProviders[mode].registerEditor(editor);
-            return;
-        }
-
-        this.languageProviders[mode]?.registerEditor(editor);
+        this.languageProviders[mode]?.registerEditor(
+            editor,
+            {
+                filePath: editor.session["id"],
+                joinWorkspaceURI: true
+            }
+        );
     }
 
     private getLspConfigData(): Promise<string> {

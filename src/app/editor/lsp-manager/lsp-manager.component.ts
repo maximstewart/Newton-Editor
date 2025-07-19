@@ -55,6 +55,11 @@ export class LspManagerComponent {
         this.lspTextEditor = this.lspEditorComponent.editor;
         this.innerEditor   = this.sessionEditorComponent.editor;
 
+        this.lspTextEditor.on("input", () => {
+            this.lspManagerService.lspConfigDataStr =
+                this.lspTextEditor.session.getValue();
+        });
+
         this.lspManagerService.loadLspConfigData().then((lspConfigData) => {
             this.lspTextEditor.session.setMode("ace/mode/json");
             this.lspTextEditor.session.setValue(lspConfigData);

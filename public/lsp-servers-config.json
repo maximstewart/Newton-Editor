@@ -37,6 +37,7 @@
                         ]
                     },
                     "configuration": {
+                        "updateBuildConfiguration": "automatic",
                         "maven": {
                             "userSettings": "{user.home}/.config/jdtls/settings.xml",
                             "globalSettings": "{user.home}/.config/jdtls/settings.xml"
