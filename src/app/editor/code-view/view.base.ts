@@ -203,8 +203,8 @@ export class CodeViewBase {
         this.editor.setHighlightGutterLine(false);
         this.editor.setShowFoldWidgets(false);
         this.editor.setShowPrintMargin(false);
+        this.editor.session.setUseWrapMode(true);
 
-        this.editorElm.nativeElement.parentElement.classList.remove("scroller");
         this.editorElm.nativeElement.parentElement.classList.add("col-1");
         this.editorElm.nativeElement.parentElement.classList.add("zero-margin-padding");
 

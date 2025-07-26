@@ -281,6 +281,8 @@ export class CodeViewComponent extends CodeViewBase {
         }
 
         session.setMode( file.session.getMode()["$id"] );
+        session.setUseWrapMode(true);
+
         this.editor.setSession(session);
     }
 
