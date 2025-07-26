@@ -35,10 +35,7 @@ export class LspManagerService {
 
         this.languageProviders[mode]?.registerEditor(
             editor,
-            {
-                filePath: editor.session["id"],
-                joinWorkspaceURI: true
-            }
+            editor.session.lspConfig
         );
     }
 
@@ -97,8 +94,13 @@ export class LspManagerService {
             return;
         }
 
-        this.languageProviders[mode] = AceLanguageClient.for(servers);
-        // this.languageProviders[mode].requireFilePath = true;
+        this.languageProviders[mode] = AceLanguageClient.for(
+            servers,
+            {
+                manualSessionControl: true
+            }
+        );
+
         this.languageProviders[mode].changeWorkspaceFolder(this.workspaceFolder);
         return this.languageProviders[mode];
     }
@@ -108,11 +110,15 @@ export class LspManagerService {
         return LanguageProvider.create(worker);
     }
 
-    public setSessionFilePath(session: any, filePath: string = "") {
-        if ( !session || !filePath ) return;
-        let mode = this.getMode(session);
+    public registerSession(editor: any) {
+        let mode = this.getMode(editor.session);
         if ( !this.languageProviders[mode] ) return;
-        this.languageProviders[mode].setSessionFilePath(session, filePath);
+
+        this.languageProviders[mode].registerSession(
+            editor.session,
+            editor,
+            editor.session.lspConfig
+        );
     }
 
     public getMode(session: any): string {

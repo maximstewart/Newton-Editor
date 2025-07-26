@@ -114,7 +114,6 @@ const chooseFolder = () => {
             console.debug("Canceled folder selection...");
             return "";
         }
-        console.log(response)
 
         return response.filePaths[0];
     });

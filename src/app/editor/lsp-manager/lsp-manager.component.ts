@@ -101,12 +101,6 @@ export class LspManagerComponent {
 
     public registerEditorToLanguageClient() {
         this.lspManagerService.registerEditorToLSPClient(this.editor);
-/*
-        this.lspManagerService.setSessionFilePath(
-            this.editor.session,
-            this.activeFile.path
-        );
-*/
     }
 
 
@@ -148,13 +142,7 @@ export class LspManagerComponent {
         this.editor.setSession(message.rawData.editor.getSession())
         this.activeFile = message.rawData.activeFile;
 
-/*
-        this.lspManagerService.setSessionFilePath(
-            this.editor.session,
-            this.activeFile.path
-        );
-*/
-
+        this.lspManagerService.registerSession(this.editor);
     }
 
     private closeFile(message: ServiceMessage) {

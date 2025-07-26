@@ -46,6 +46,9 @@ export class CodeViewBase {
     public debounceId: number   = -1;
     public debounceWait: number = 800;
 
+    @ViewChild('contextMenu') contextMenu!: ElementRef;
+    public showContextMenu: boolean = false;
+
 
     constructor() {
     }

@@ -111,6 +111,10 @@ export class FilesService {
             file.session["id"] = path;
             file.session.setUndoManager( new UndoManager() );
             file.session.setMode( getModeForPath( file.path ).mode );
+            file.session["lspConfig"] = {
+                filePath: path,
+                joinWorkspaceURI: false
+            }
 
             this.files.set(file.path, file);
 	    } catch (error) {

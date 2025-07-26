@@ -25,6 +25,7 @@ import { CodeViewBase } from './view.base';
 import { NewtonFile } from '../../common/types/file.type';
 import { EditorType } from '../../common/types/editor.type';
 import { ServiceMessage } from '../../common/types/service-message.type';
+import { ButtonMap } from '../../common/constants/button.map';
 
 
 
@@ -159,8 +160,28 @@ export class CodeViewComponent extends CodeViewBase {
             this.updateInfoBar();
         });
 
-        this.editor.on("click", () => {
+        this.editor.on("click", (event) => {
             this.updateInfoBar();
+        });
+
+        this.editor.addEventListener("mousedown", (event) => {
+            if (ButtonMap.LEFT === event.domEvent.button) {
+                this.showContextMenu = false;
+            } else if (ButtonMap.RIGHT === event.domEvent.button) {
+                let menuElm = this.contextMenu.nativeElement;
+                let pageX = event.domEvent.pageX;
+                let pageY = event.domEvent.pageY;
+
+                const origin = {
+                    left: pageX + 5,
+                    top: pageY - 5
+                };
+
+                menuElm.style.left = `${origin.left}px`;
+                menuElm.style.top  = `${origin.top}px`;
+                this.showContextMenu = true;
+
+            }
         });
 
         this.editor.on("input", () => {
@@ -219,6 +240,28 @@ export class CodeViewComponent extends CodeViewBase {
     }
 
 
+    public prettyJSON() {
+        let data = JSON.parse(this.editor.session.getValue());
+        this.editor.session.setValue(
+            JSON.stringify(data, null, 4)
+        );
+    }
+
+    public hideContextMenu() {
+        this.showContextMenu = false;
+    }
+
+    public contextMenuClicked(event: any) {
+        this.showContextMenu = false;
+
+        const command = event.target.getAttribute("command");
+        const args    = event.target.getAttribute("args");
+
+        if (!command) return;
+
+        this[command]( (args) ? args : null );
+    }
+
     public assignSession(file: NewtonFile) {
         if (!file) return;
 
@@ -229,8 +272,13 @@ export class CodeViewComponent extends CodeViewBase {
     public cloneSession(file: NewtonFile) {
         if (!file) return;
 
-        this.activeFile = file;
-        let session     = this.aceApi.createEditSession(file.session.getValue());
+        this.activeFile    = file;
+        let session        = this.aceApi.createEditSession(file.session.getValue());
+        session["$config"] = {
+            "lsp": {
+                "filePath": file.path
+            }
+        }
 
         session.setMode( file.session.getMode()["$id"] );
         this.editor.setSession(session);

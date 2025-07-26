@@ -1,2 +1,15 @@
 <div class="editor" #editor >
 </div>
+
+<ul #contextMenu
+    class="contextMenu"
+    [hidden]="!showContextMenu"
+    (blur)="hideContextMenu"
+    (click)="contextMenuClicked($event)"
+>
+    <li command="cutText">Cut</li>
+    <li command="copyText">Copy</li>
+    <li command="pasteText">Paste</li>
+    <hr/>
+    <li command="prettyJSON">Prettify JSON</li>
+</ul>

@@ -24,6 +24,7 @@
             },
             "settings": {
                 "java": {
+                    "home": "/usr/lib/jvm/java-17-openjdk",
                     "autobuild": {
                         "enabled": false
                     },
@@ -44,8 +45,8 @@
                         },
                         "runtimes": [
                             {
-                                "name": "JavaSE-17",
-                                "path": "/usr/lib/jvm/default-runtime",
+                                "name": "JavaJDK-17",
+                                "path": "/usr/lib/jvm/java-17-openjdk",
                                 "javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
                                 "default": true
                             }
@@ -59,7 +60,6 @@
                         "{user.home}/.config/jdtls/m2/repository/**/*-javadoc.jar",
                         "lib/**/*-javadoc.jar"
                     ],
-                    "silentNotification": true,
                     "project": {
                         "encoding": "ignore",
                         "outputPath": "bin",
@@ -133,6 +133,7 @@
                         "downloadSources": true,
                         "updateSnapshots": true
                     },
+                    "silentNotification": false,
                     "signatureHelp": {
                         "enabled": true,
                         "description": {
@@ -141,6 +142,15 @@
                     },
                     "implementationsCodeLens": {
                         "enabled": true
+                    },
+                    "referencesCodeLens": {
+                        "enabled": true
+                    },
+                    "progressReports": {
+                        "enabled": false
+                    },
+                    "saveActions": {
+                        "organizeImports": true
                     }
                 }
             }
