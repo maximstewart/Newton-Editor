@@ -13,59 +13,73 @@
         "alt-socket": "ws://127.0.0.1:9999/?name=java-language-server",
         "initialization-options": {
             "bundles": [
-                "intellicode-core.jar"
             ],
             "workspaceFolders": [
                 "file://{workspace.folder}"
             ],
             "extendedClientCapabilities": {
                 "classFileContentsSupport": true,
-                "executeClientCommandSupport": true
+                "executeClientCommandSupport": false
             },
             "settings": {
                 "java": {
-                    "home": "/usr/lib/jvm/java-17-openjdk",
                     "autobuild": {
-                        "enabled": false
+                        "enabled": true
                     },
-                    "completion": {
-                        "enabled": true,
-                        "importOrder": [
-                            "java",
-                            "javax",
-                            "org",
-                            "com"
-                        ]
+                    "jdt": {
+                        "ls": {
+                            "javac": {
+                                "enabled": true
+                            },
+                            "java": {
+                                "home": "{user.home}/Portable_Apps/sdks/javasdk/jdk-22.0.2"
+                            },
+                            "lombokSupport": {
+                                "enabled": true
+                            },
+                            "protobufSupport":{
+                                "enabled": true
+                            },
+                            "androidSupport": {
+                                "enabled": true
+                            }
+                        }
                     },
                     "configuration": {
                         "updateBuildConfiguration": "automatic",
                         "maven": {
-                            "userSettings": "{user.home}/.config/jdtls/settings.xml",
-                            "globalSettings": "{user.home}/.config/jdtls/settings.xml"
+                            "userSettings": "{user.home}/.config/lsps/jdtls/settings.xml",
+                            "globalSettings": "{user.home}/.config/lsps/jdtls/settings.xml"
                         },
                         "runtimes": [
                             {
-                                "name": "JavaJDK-17",
+                                "name": "JavaSE-17",
                                 "path": "/usr/lib/jvm/java-17-openjdk",
                                 "javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
+                                "default": false
+                            },
+                            {
+                                "name": "JavaSE-22",
+                                "path": "{user.home}/Portable_Apps/sdks/javasdk/jdk-22.0.2",
+                                "javadoc": "https://docs.oracle.com/en/java/javase/22/docs/api/",
                                 "default": true
                             }
                         ]
                     },
                     "classPath": [
-                        "{user.home}/.config/jdtls/m2/repository/**/*-sources.jar",
+                        "{user.home}/.config/lsps/jdtls/m2/repository/**/*-sources.jar",
                         "lib/**/*-sources.jar"
                     ],
                     "docPath": [
-                        "{user.home}/.config/jdtls/m2/repository/**/*-javadoc.jar",
+                        "{user.home}/.config/lsps/jdtls/m2/repository/**/*-javadoc.jar",
                         "lib/**/*-javadoc.jar"
                     ],
                     "project": {
                         "encoding": "ignore",
                         "outputPath": "bin",
                         "referencedLibraries": [
-                            "lib/**/*.jar",
-                            "{user.home}/.config/jdtls/m2/repository/**/*.jar"
+                            "{user.home}/.config/lsps/jdtls/m2/repository/**/*.jar",
+                            "lib/**/*.jar"
                         ],
                         "importOnFirstTimeStartup": "automatic",
                         "importHint": true,
@@ -75,7 +89,7 @@
                         ],
                         "sourcePaths": [
                             "src",
-                            "{user.home}/.config/jdtls/m2/repository/**/*.jar"
+                            "{user.home}/.config/lsps/jdtls/m2/repository/**/*.jar"
                         ]
                     },
                     "sources": {
@@ -105,9 +119,9 @@
                                 "enabled": true
                             },
                             "version": "",
-                            "home": "abs(static/gradle-7.3.3)",
+                            "home": "{user.home}/Portable_Apps/sdks/gradle/gradle-9.0.0",
                             "java": {
-                                "home": "abs(static/launch_jres/17.0.6-linux-x86_64)"
+                                "home": "{user.home}/Portable_Apps/sdks/javasdk/jdk-22.0.2"
                             },
                             "offline": {
                                 "enabled": false
@@ -133,12 +147,53 @@
                         "downloadSources": true,
                         "updateSnapshots": true
                     },
-                    "silentNotification": false,
+                    "silentNotification": true,
+                    "contentProvider": {
+                        "preferred": "fernflower"
+                    },
                     "signatureHelp": {
                         "enabled": true,
                         "description": {
                             "enabled": true
                         }
+                    },
+                    "completion": {
+                        "enabled": true,
+                        "matchCase": "firstletter",
+                        "maxResults": 25,
+                        "guessMethodArguments": true,
+                        "lazyResolveTextEdit": {
+                            "enabled": true
+                        },
+                        "postfix": {
+                            "enabled": true
+                        },
+                        "favoriteStaticMembers": [
+                            "org.junit.Assert.*",
+                            "org.junit.Assume.*",
+                            "org.junit.jupiter.api.Assertions.*",
+                            "org.junit.jupiter.api.Assumptions.*",
+                            "org.junit.jupiter.api.DynamicContainer.*",
+                            "org.junit.jupiter.api.DynamicTest.*"
+                        ],
+                        "importOrder": [
+                            "#",
+                            "java",
+                            "javax",
+                            "org",
+                            "com"
+                        ]
+                    },
+                    "references": {
+                        "includeAccessors": true,
+                        "includeDecompiledSources": true
+                    },
+                    "codeGeneration": {
+                        "toString": {
+                            "template": "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
+                        },
+                        "insertionLocation": "afterCursor",
+                        "useBlocks": true
                     },
                     "implementationsCodeLens": {
                         "enabled": true
@@ -165,51 +220,36 @@
         "socket": "ws://127.0.0.1:9999/python",
         "socket-two": "ws://127.0.0.1:9999/?name=pylsp",
         "initialization-options": {
-            "pyls": {
-                "plugins": {
-                    "pycodestyle": {
-                        "enabled": false
-                    },
-                    "pydocstyle": {
-                        "enabled": false
-                    },
-                    "pyflakes": {
-                        "enabled": false
-                    },
-                    "pylint": {
-                        "enabled": false
-                    },
-                    "mccabe": {
-                        "enabled": false
-                    }
-                }
-            },
             "pylsp": {
+                "rope": {
+                    "ropeFolder": "{user.home}/.config/lsps/ropeproject"
+                },
                 "plugins": {
-                    "pycodestyle": {
-                        "enabled": false
+                    "ruff": {
+                        "enabled": true,
+                        "extendSelect": ["I"],
+                        "lineLength": 80
                     },
-                    "pydocstyle": {
+                    "pycodestyle": {
                         "enabled": false
                     },
                     "pyflakes": {
                         "enabled": false
                     },
                     "pylint": {
-                        "enabled": false
+                        "enabled": true
                     },
                     "mccabe": {
                         "enabled": false
                     },
-                    "ruff": true,
                     "pylsp_rope": {
-                        "rename": true
+                        "rename": false
                     },
                     "rope_rename": {
-                        "enabled": true
+                        "enabled": false
                     },
                     "rope_autoimport": {
-                        "enabled": true
+                        "enabled": false
                     },
                     "rope_completion": {
                         "enabled": false,
@@ -224,7 +264,7 @@
                         "include_function_objects": true,
                         "fuzzy": false
                     },
-                    "jedi":{
+                    "jedi": {
                         "root_dir": "file://{workspace.folder}",
                         "extra_paths": [
                             "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
@@ -259,7 +299,13 @@
                 ],
                 "environmentPath": "{user.home}/Portable_Apps/py-venvs/gtk-apps-venv/venv/bin/python",
                 "symbols": {
-                    "ignoreFolders": [".nox", ".tox", ".venv", "__pycache__", "venv"],
+                    "ignoreFolders": [
+                        ".nox",
+                        ".tox",
+                        ".venv",
+                        "__pycache__",
+                        "venv"
+                    ],
                     "maxSymbols": 20
                 }
             }

@@ -99,6 +99,11 @@ export class LspManagerComponent {
         this.lspManagerService.createLanguageProviderWithClientServer(mode);
     }
 
+    public closeLanguageClient() {
+        let mode = this.lspManagerService.getMode(this.editor.session);
+        this.lspManagerService.closeLanguageProviderWithClientServer(mode);
+    }
+
     public registerEditorToLanguageClient() {
         this.lspManagerService.registerEditorToLSPClient(this.editor);
     }

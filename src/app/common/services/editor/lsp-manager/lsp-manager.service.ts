@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
+import { CompletionProvider } from "ace-builds/src-min-noconflict/ace";
+import { CommandBarTooltip } from "ace-builds/src-min-noconflict/ext-command_bar";
+import { InlineAutocomplete } from "ace-builds/src-min-noconflict/ext-inline_autocomplete";
+
 import { AceLanguageClient, LanguageClientConfig } from 'ace-linters/build/ace-language-client';
 import { LanguageProvider } from "ace-linters";
+
+
 
 import { ServiceMessage } from '../../../types/service-message.type';
 
@@ -61,13 +67,13 @@ export class LspManagerService {
     }
 
     private getInitializationOptions(mode: string, configData: {}): {} {
-        let _initializationOptions = {};
+        let initializationOptions = {};
 
         if ( Object.keys(configData).length !== 0 && configData[mode] ) {
-            _initializationOptions = configData[mode]["initialization-options"];
+            initializationOptions = configData[mode]["initialization-options"];
         }
 
-        return _initializationOptions;
+        return initializationOptions;
     }
 
     public createLanguageProviderWithClientServer(mode: string): LanguageProvider {
@@ -75,15 +81,15 @@ export class LspManagerService {
         let servers: LanguageClientConfig[] = [];
 
         try {
-            let configData             = this.parseAndReturnLSPConfigData();
-            let _initializationOptions = this.getInitializationOptions(mode, configData);
+            let lspConfigData         = this.parseAndReturnLSPConfigData();
+            let initializationOptions = this.getInitializationOptions(mode, lspConfigData);
             servers = [
                 {
                     module: () => import("ace-linters/build/language-client"),
                     modes: mode,
                     type: "socket",
-                    socket: new WebSocket( configData[mode]["socket"] ),
-                    initializationOptions: _initializationOptions
+                    socket: new WebSocket( lspConfigData[mode]["socket"] ),
+                    initializationOptions: initializationOptions
                 }
             ];
         } catch(error) {
@@ -97,12 +103,49 @@ export class LspManagerService {
         this.languageProviders[mode] = AceLanguageClient.for(
             servers,
             {
+                workspacePath: this.workspaceFolder,
+                functionality: {
+                    hover: true,
+                    completion: {
+                        overwriteCompleters: true,
+                        lspCompleterOptions: {
+                            triggerCharacters: {
+                                add: [
+                                    " ",
+                                    ".",
+                                    "@"
+                                ]
+                            }
+                        }
+                    },
+                    // inlineCompletion: {
+                    //     overwriteCompleters: true
+                    // },
+                    completionResolve: true,
+                    format: true,
+                    documentHighlights: true,
+                    signatureHelp: true,
+                    semanticTokens: true,
+                    codeActions: true
+                },
+                //  aceComponents: {
+                //     InlineAutocomplete,
+                //     CommandBarTooltip,
+                //     CompletionProvider
+                // },
                 manualSessionControl: true
             }
         );
 
-        this.languageProviders[mode].changeWorkspaceFolder(this.workspaceFolder);
         return this.languageProviders[mode];
+    }
+
+    public closeLanguageProviderWithClientServer(mode: string): LanguageProvider {
+        if ( !this.languageProviders[mode] ) return;
+
+        let connection = this.languageProviders[mode];
+        delete this.languageProviders[mode];
+        connection.closeConnection();
     }
 
     private getLanguageProviderWithWebWorker(): LanguageProvider {
