@@ -54,7 +54,7 @@
         "ace-builds": "1.43.0",
         "ace-diff": "3.0.3",
         "ace-layout": "1.5.0",
-        "ace-linters": "1.8.1",
+        "ace-linters": "1.8.3",
         "bootstrap": "5.3.6",
         "bootstrap-icons": "1.12.1",
         "chokidar": "4.0.3",
@@ -64,7 +64,6 @@
         "rxjs": "7.8.0",
         "socket.io": "4.8.1",
         "uuid": "11.1.0",
-        "web-tree-sitter": "0.25.8",
         "zone.js": "0.15.0"
     },
     "devDependencies": {

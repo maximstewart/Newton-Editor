@@ -5,6 +5,7 @@ import { EditSession, UndoManager } from 'ace-builds';
 import { getModeForPath } from 'ace-builds/src-noconflict/ext-modelist';
 
 import { TabsService } from './editor/tabs/tabs.service';
+import { ColorTokenizerService } from './color-tokenizer.service';
 
 import { NewtonFile } from '../types/file.type';
 import { ServiceMessage } from '../types/service-message.type';
@@ -115,6 +116,9 @@ export class FilesService {
                 filePath: path,
                 joinWorkspaceURI: false
             }
+            file.session["colorTokenizer"] = new ColorTokenizerService();
+            file.session["colorTokenizer"].init();
+            file.session["colorTokenizer"].parse(data);
 
             this.files.set(file.path, file);
 	    } catch (error) {
