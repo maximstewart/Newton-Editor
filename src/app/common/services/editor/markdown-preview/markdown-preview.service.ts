@@ -9,7 +9,7 @@ import { ServiceMessage } from '../../../types/service-message.type';
     providedIn: 'root'
 })
 export class MarkdownPreviewService {
-    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject(1);
 
 
     public sendMessage(data: ServiceMessage): void {

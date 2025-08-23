@@ -8,7 +8,7 @@ import * as ace from "ace-builds/src-min-noconflict/ace";
     providedIn: 'root'
 })
 export class ColorTokenizerService {
-    readonly #RULES = {
+    readonly #RULES: {} = {
         start: [
             { token: "hex3", regex: "#[A-Fa-f0-9]{3}(?![A-Fa-f0-9])" },
             { token: "hex6", regex: "#[A-Fa-f0-9]{6}(?![A-Fa-f0-9])" },
@@ -29,6 +29,8 @@ export class ColorTokenizerService {
 
 
     constructor() {
+        Object.freeze(this.#RULES)
+
         const Tokenizer = ace.require("ace/tokenizer").Tokenizer;
         this.tokenizer  = new Tokenizer(this.#RULES);
     }

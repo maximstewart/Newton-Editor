@@ -18,7 +18,7 @@ import { ServiceMessage } from '../../../types/service-message.type';
     providedIn: 'root'
 })
 export class LspManagerService {
-    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject(1);
 
     workspaceFolder: string  = "";
     lspConfigDataStr: string = "";

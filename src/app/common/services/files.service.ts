@@ -16,7 +16,7 @@ import { ServiceMessage } from '../types/service-message.type';
     providedIn: 'root'
 })
 export class FilesService {
-    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject(1);
 
     private tabsService: TabsService = inject(TabsService);
 

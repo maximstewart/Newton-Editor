@@ -11,9 +11,9 @@ import {
     selector: '[pane-handle]'
 })
 export class PaneHandleDirective {
-    @Output() dragStart = new EventEmitter<PointerEvent>();
-    @Output() dragMove  = new EventEmitter<PointerEvent>();
-    @Output() dragEnd   = new EventEmitter<PointerEvent>();
+    @Output() dragStart: EventEmitter<PointerEvent> = new EventEmitter();
+    @Output() dragMove: EventEmitter<PointerEvent>  = new EventEmitter();
+    @Output() dragEnd: EventEmitter<PointerEvent>   = new EventEmitter();
 
     private dragging: boolean = false;
     private isHrPane: boolean = false;

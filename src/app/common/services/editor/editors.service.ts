@@ -15,19 +15,13 @@ import { EditorType } from '../../types/editor.type';
     providedIn: 'root'
 })
 export class EditorsService {
-    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
+    private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject(1);
 
-    editors: Map<string, CodeViewComponent>;
-    editorSettings: typeof EditorSettings;
+    editors: Map<string, CodeViewComponent> = new Map();
+    editorSettings: typeof EditorSettings   = EditorSettings;
 
-    activeEditor!: string;
+    activeEditor: string                    = "";
     miniMapView!: CodeViewComponent;
-
-
-    constructor() {
-        this.editorSettings = EditorSettings;
-        this.editors = new Map<string, CodeViewComponent>();
-    }
 
 
     public getEditorsAsArray(): CodeViewComponent[] {

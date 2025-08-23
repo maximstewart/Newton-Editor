@@ -11,11 +11,11 @@ import {
     selector: '[draggable-item]'
 })
 export class DraggableDirective {
-    @Output() dragStart = new EventEmitter<PointerEvent>();
-    @Output() dragMove  = new EventEmitter<PointerEvent>();
-    @Output() dragEnd   = new EventEmitter<PointerEvent>();
+    @Output() dragStart: EventEmitter<PointerEvent> = new EventEmitter();
+    @Output() dragMove: EventEmitter<PointerEvent>  = new EventEmitter();
+    @Output() dragEnd: EventEmitter<PointerEvent>   = new EventEmitter();
 
-    private dragging    = false;
+    private dragging: boolean = false;
     selected: any;
     
 

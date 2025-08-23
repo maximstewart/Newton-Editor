@@ -16,7 +16,7 @@ import { NewtonFile } from '../types/file.type';
 })
 export class DndDirective {
     @HostBinding('class.fileover') fileOver!: boolean;
-    @Output() fileDropped = new EventEmitter<any>();
+    @Output() fileDropped: EventEmitter<any> = new EventEmitter();
 
     @HostListener('dragover', ['$event'])
     onDragOver(evt: any) {

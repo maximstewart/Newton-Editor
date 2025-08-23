@@ -8,11 +8,11 @@ import { ServiceMessage } from '../../../types/service-message.type';
     providedIn: 'root'
 })
 export class InfoBarService {
-    private dataSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
-    private fpathSubject: ReplaySubject<string> = new ReplaySubject<string>(1);
-    private cursorPosSubject: ReplaySubject<any> = new ReplaySubject<any>(1);
-    private encodeingSubject: ReplaySubject<string> = new ReplaySubject<string>(1);
-    private ftypeSubject: ReplaySubject<string> = new ReplaySubject<string>(1);
+    private dataSubject: ReplaySubject<ServiceMessage> = new ReplaySubject(1);
+    private fpathSubject: ReplaySubject<string>        = new ReplaySubject(1);
+    private cursorPosSubject: ReplaySubject<any>       = new ReplaySubject(1);
+    private encodeingSubject: ReplaySubject<string>    = new ReplaySubject(1);
+    private ftypeSubject: ReplaySubject<string>        = new ReplaySubject(1);
 
 
     public setData(data: ServiceMessage): void {

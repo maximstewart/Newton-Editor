@@ -8,7 +8,7 @@ import { ReplaySubject, Observable } from 'rxjs';
 })
 export class FilesModalService {
     private showFilesModalSubject: ReplaySubject<null> = new ReplaySubject<null>(1);
-    private addFileSubject: ReplaySubject<string>  = new ReplaySubject<string>(1);
+    private addFileSubject: ReplaySubject<string>      = new ReplaySubject<string>(1);
 
 
     public showFilesModal(): void {
