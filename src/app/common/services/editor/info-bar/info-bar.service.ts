@@ -15,9 +15,6 @@ export class InfoBarService {
     private ftypeSubject: ReplaySubject<string> = new ReplaySubject<string>(1);
 
 
-    constructor() {}
-
-
     public setData(data: ServiceMessage): void {
         this.dataSubject.next(data);
     }

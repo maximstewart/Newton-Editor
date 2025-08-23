@@ -12,10 +12,6 @@ export class SearchReplaceService {
     private messageSubject: ReplaySubject<ServiceMessage> = new ReplaySubject<ServiceMessage>(1);
 
 
-    constructor() {
-    }
-
-
     public sendMessage(data: ServiceMessage): void {
         this.messageSubject.next(data);
     }

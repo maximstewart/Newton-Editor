@@ -18,8 +18,6 @@ export class TabsService {
     tabs: any[]      = [];
     newIndex: number = -1;
 
-    constructor() {}
-
 
     public push(tabData: {}): void {
         this.tabs.push(tabData);

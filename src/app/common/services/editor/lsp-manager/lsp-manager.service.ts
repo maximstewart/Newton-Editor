@@ -25,10 +25,6 @@ export class LspManagerService {
     languageProviders: {}    = {};
 
 
-    constructor() {
-    }
-
-
     public loadLspConfigData(): Promise<string | void> {
         return this.getLspConfigData().then((lspConfigData: string) => {
             this.lspConfigDataStr = lspConfigData;

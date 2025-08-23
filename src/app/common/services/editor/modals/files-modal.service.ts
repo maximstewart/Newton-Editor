@@ -11,10 +11,6 @@ export class FilesModalService {
     private addFileSubject: ReplaySubject<string>  = new ReplaySubject<string>(1);
 
 
-    constructor() {
-    }
-
-
     public showFilesModal(): void {
         this.showFilesModalSubject.next(null);
     }
