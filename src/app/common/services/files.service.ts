@@ -20,12 +20,7 @@ export class FilesService {
 
     private tabsService: TabsService = inject(TabsService);
 
-    files: Map<string, NewtonFile>;
-
-
-    constructor() {
-        this.files = new Map<string, NewtonFile>();
-    }
+    files: Map<string, NewtonFile>   = new Map();
 
 
     public get(path: string): NewtonFile {
@@ -117,7 +112,6 @@ export class FilesService {
                 joinWorkspaceURI: false
             }
             file.session["colorTokenizer"] = new ColorTokenizerService();
-            file.session["colorTokenizer"].init();
             file.session["colorTokenizer"].parse(data);
 
             this.files.set(file.path, file);

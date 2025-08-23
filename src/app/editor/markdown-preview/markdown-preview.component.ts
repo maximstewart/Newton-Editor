@@ -1,5 +1,10 @@
-import { Component, HostBinding, inject } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import {
+    Component,
+    DestroyRef,
+    HostBinding,
+    inject
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MarkdownPreviewService } from '../../common/services/editor/markdown-preview/markdown-preview.service';
 
@@ -19,7 +24,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class MarkdownPreviewComponent {
-    private unsubscribe: Subject<void>                     = new Subject();
+    readonly #destroyRef: DestroyRef                       = inject(DestroyRef);
 
     private markdownPreviewService: MarkdownPreviewService = inject(MarkdownPreviewService);
 
@@ -32,26 +37,22 @@ export class MarkdownPreviewComponent {
 
 
     constructor() {
-    }
-
-
-    private ngAfterViewInit(): void {
         this.loadSubscribers();
-    }
-
-    private ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
     }
 
     private loadSubscribers() {
         this.markdownPreviewService.getMessage$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
-            if (message.action === "toggle-markdown-preview") {
-                this.toggleMarkdownPreview(message);
-            } else if (message.action === "set-active-editor") {
-                this.setActiveEditor(message);
+            switch ( message.action ) {
+                case "toggle-markdown-preview":
+                    this.toggleMarkdownPreview(message);
+                    break;
+                case "set-active-editor":
+                    this.setActiveEditor(message);
+                    break;
+                default:
+                    break;
             }
         });
     }

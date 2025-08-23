@@ -1,4 +1,10 @@
-import { Directive, ElementRef, Input, ViewChild, inject } from '@angular/core';
+import {
+    Directive,
+    ElementRef,
+    Input,
+    ViewChild,
+    inject
+} from '@angular/core';
 import * as uuid from 'uuid';
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
@@ -48,10 +54,6 @@ export class CodeViewBase {
 
     @ViewChild('contextMenu') contextMenu!: ElementRef;
     public showContextMenu: boolean = false;
-
-
-    constructor() {
-    }
 
 
     public selectLeftEditor() {

@@ -1,5 +1,13 @@
-import { Component, ElementRef, HostBinding, Input, ViewChild, inject } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import {
+    Component,
+    DestroyRef,
+    ElementRef,
+    HostBinding,
+    Input,
+    ViewChild,
+    inject
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { SearchReplaceService } from '../../common/services/editor/search-replace/search-replace.service';
 
@@ -20,7 +28,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class SearchReplaceComponent {
-    private unsubscribe: Subject<void>                 = new Subject();
+    readonly #destroyRef: DestroyRef                   = inject(DestroyRef);
 
     private searchReplaceService: SearchReplaceService = inject(SearchReplaceService);
 
@@ -45,26 +53,22 @@ export class SearchReplaceComponent {
 
 
     constructor() {
-    }
-
-
-    private ngAfterViewInit(): void {
         this.loadSubscribers();
-    }
-
-    private ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
     }
 
     private loadSubscribers() {
         this.searchReplaceService.getMessage$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
-            if (message.action === "toggle-search-replace") {
-                this.toggleSearchReplace(message);
-            } else if (message.action === "set-active-editor") {
-                this.setActiveEditor(message);
+            switch ( message.action ) {
+                case "toggle-search-replace":
+                    this.toggleSearchReplace(message);
+                    break;
+                case "set-active-editor":
+                    this.setActiveEditor(message);
+                    break;
+                default:
+                    break;
             }
         });
     }

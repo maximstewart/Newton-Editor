@@ -1,7 +1,11 @@
-import { Component, inject } from "@angular/core";
+import {
+    Component,
+    DestroyRef,
+    inject
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import * as bootstrap from "bootstrap";
 
@@ -25,17 +29,18 @@ import 'ace-diff/dist/ace-diff-dark.min.css';
     }
 })
 export class DiffModalComponent {
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     diffModal!: bootstrap.Modal;
 
 
     constructor() {
+        this.loadSubscribers();
     }
 
 
     private ngAfterViewInit(): void {
         this.loadDiffView();
-        this.loadSubscribers();
     }
 
     private loadDiffView() {

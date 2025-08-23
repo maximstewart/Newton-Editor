@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EditorsService } from '../common/services/editor/editors.service';
 import { TabsService } from '../common/services/editor/tabs/tabs.service';
@@ -29,7 +29,7 @@ import { ServiceMessage } from '../common/types/service-message.type';
     }
 })
 export class EditorsComponent {
-    private unsubscribe: Subject<void>     = new Subject();
+    readonly #destroyRef: DestroyRef       = inject(DestroyRef);
 
     private editorsService: EditorsService = inject(EditorsService);
     private tabsService: TabsService       = inject(TabsService);
@@ -37,23 +37,14 @@ export class EditorsComponent {
 
 
     constructor() {
-    }
-
-
-    private ngAfterViewInit(): void {
         this.loadSubscribers();
         this.loadMainSubscribers();
     }
 
-    private ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
-    }
 
     private loadSubscribers() {
-
         this.editorsService.getMessage$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
             switch ( message.action ) {
                 case "select-left-editor":

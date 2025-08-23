@@ -1,5 +1,12 @@
-import { Component, ChangeDetectorRef, ElementRef, HostBinding, ViewChild, inject } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import {
+    Component,
+    ChangeDetectorRef,
+    DestroyRef,
+    ElementRef,
+    HostBinding,
+    ViewChild,
+    inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { LspManagerService } from '../../common/services/editor/lsp-manager/lsp-manager.service';
 
@@ -23,8 +30,8 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class LspManagerComponent {
-    private unsubscribe: Subject<void>            = new Subject();
-    private changeDetectorRef: ChangeDetectorRef  = inject(ChangeDetectorRef);
+    readonly #destroyRef                           = inject(DestroyRef);
+    private changeDetectorRef: ChangeDetectorRef   = inject(ChangeDetectorRef);
 
     lspManagerService: LspManagerService           = inject(LspManagerService);
 
@@ -38,17 +45,11 @@ export class LspManagerComponent {
 
 
     constructor() {
-    }
-
-
-    private ngAfterViewInit(): void {
-        this.mapEditorsAndLoadConfig();
         this.loadSubscribers();
     }
 
-    private ngOnDestroy() {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
+    private ngAfterViewInit(): void {
+        this.mapEditorsAndLoadConfig();
     }
 
     private mapEditorsAndLoadConfig() {
@@ -68,7 +69,7 @@ export class LspManagerComponent {
 
     private loadSubscribers() {
         this.lspManagerService.getMessage$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
             if (message.action === "toggle-lsp-manager") {
                 this.toggleLspManager(message);
@@ -141,8 +142,10 @@ export class LspManagerComponent {
     }
 
     private editorUpdate(message: ServiceMessage) {
-        if (!this.editor) return;
-        if (!message.rawData.activeFile) return;
+        if (
+            !this.editor ||
+            !message.rawData.activeFile
+        ) return;
 
         this.editor.setSession(message.rawData.editor.getSession())
         this.activeFile = message.rawData.activeFile;

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.service';
 
@@ -17,7 +17,7 @@ import { InfoBarService } from '../../common/services/editor/info-bar/info-bar.s
     }
 })
 export class InfoBarComponent {
-    private unsubscribe: Subject<void>     = new Subject();
+    readonly #destroyRef: DestroyRef       = inject(DestroyRef);
 
     private infoBarService: InfoBarService = inject(InfoBarService);
 
@@ -28,18 +28,14 @@ export class InfoBarComponent {
     ftype: string     = "";
 
 
-    constructor() {}
-
-
-    private ngAfterViewInit(): void {
+    constructor() {
         this.loadSubscribers();
     }
 
 
     private loadSubscribers() {
-
         this.infoBarService.updateInfoBarFPath$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((fpath: string) => {
             this.fpath = fpath;
             let _path  = fpath;
@@ -52,19 +48,19 @@ export class InfoBarComponent {
         });
 
         this.infoBarService.updateInfoBarCursorPos$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((cursorPos: any) => {
             this.cursorPos = `${cursorPos.row + 1}:${cursorPos.column}`;
         });
 
         this.infoBarService.updateInfoBarEncodeing$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((encodeing: string) => {
             this.encodeing = encodeing;
         });
 
         this.infoBarService.updateInfoBarFType$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((ftype: string) => {
             let mode   = ftype.split("/");
             this.ftype = mode[ mode.length - 1 ];

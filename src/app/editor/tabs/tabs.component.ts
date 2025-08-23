@@ -1,7 +1,12 @@
-import { Component, ChangeDetectorRef, inject } from '@angular/core';
+import {
+    Component,
+    ChangeDetectorRef,
+    DestroyRef,
+    inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 
@@ -24,7 +29,7 @@ import { ServiceMessage } from '../../common/types/service-message.type';
     }
 })
 export class TabsComponent {
-    private unsubscribe: Subject<void>           = new Subject();
+    readonly #destroyRef                         = inject(DestroyRef);
 
     private tabsService: TabsService             = inject(TabsService);
     private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -33,36 +38,36 @@ export class TabsComponent {
 
 
     constructor() {
-    }
-
-    private ngAfterViewInit(): void {
         this.loadSubscribers();
     }
 
-    private ngOnDestroy(): void {
-        this.unsubscribe.next();
-        this.unsubscribe.complete();
-    }
 
     private loadSubscribers() {
         this.tabsService.getMessage$().pipe(
-            takeUntil(this.unsubscribe)
+            takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
-            if (message.action === "create-tab") {
-                this.createTab(message.fileName, message.fileUUID, message.filePath);
-            } else if (message.action === "file-changed") {
-                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
-                elm.classList.add("file-changed");
-                elm.classList.remove("file-deleted");
-            } else if (message.action === "file-deleted") {
-                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
-                elm.classList.add("file-deleted");
-                elm.classList.remove("file-changed");
-            } else if (message.action === "file-saved") {
-                let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
-                elm.classList.remove("file-deleted");
-                elm.classList.remove("file-changed");
+            let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
+
+            switch ( message.action ) {
+                case "create-tab":
+                    this.createTab(message.fileName, message.fileUUID, message.filePath);
+                    break;
+                case "file-changed":
+                    elm.classList.add("file-changed");
+                    elm.classList.remove("file-deleted");
+                    break;
+                case "file-deleted":
+                    elm.classList.add("file-deleted");
+                    elm.classList.remove("file-changed");
+                    break;
+                case "file-saved":
+                    elm.classList.remove("file-deleted");
+                    elm.classList.remove("file-changed");
+                    break;
+                default:
+                    break;
             }
+
         });
     }
 
