@@ -37,6 +37,11 @@ export const Keybindings: Array<{}> = [
         bindKey: {win: "ctrl-r", mac: "ctrl-r"},
         readOnly: false
     }, {
+
+        name: "terminalPopup",
+        bindKey: {win: "ctrl-shift-.", mac: "ctrl-shift-."},
+        readOnly: false
+    }, {
         name: "newFile",
         bindKey: {win: "ctrl-t", mac: "ctrl-t"},
         service: "editorsService",

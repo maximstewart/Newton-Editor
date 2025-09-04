@@ -5,6 +5,7 @@ import { TabsComponent } from './editor/tabs/tabs.component';
 import { EditorsComponent } from './editor/editors.component';
 import { SearchReplaceComponent } from "./editor/search-replace/search-replace.component";
 import { MarkdownPreviewComponent } from "./editor/markdown-preview/markdown-preview.component";
+import { TerminalComponent } from "./editor/terminal/terminal.component";
 import { LspManagerComponent } from "./editor/lsp-manager/lsp-manager.component";
 
 
@@ -17,6 +18,7 @@ import { LspManagerComponent } from "./editor/lsp-manager/lsp-manager.component"
         EditorsComponent,
         SearchReplaceComponent,
         MarkdownPreviewComponent,
+        TerminalComponent,
         LspManagerComponent,
     ],
     templateUrl: './app.component.html',

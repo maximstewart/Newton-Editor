@@ -150,6 +150,7 @@ export class CodeViewComponent extends CodeViewBase {
 
             this.editorsService.sendMessage(message);
             this.searchReplaceService.sendMessage(message);
+            this.terminalService.sendMessage(message);
 
             message            = new ServiceMessage();
             message.action     = "set-active-editor";

@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electron', {
 
 contextBridge.exposeInMainWorld('main', {
     onMenuActions: (callback) => ipcRenderer.on('menu-actions', (_event, action) => callback(action)),
+    onTerminalActions: (callback) => ipcRenderer.on('terminal-actions', (_event, action) => callback(action)),
     quit: () => ipcRenderer.invoke("quit"),
     toggleFullScreen: () => ipcRenderer.invoke("toggleFullScreen"),
 });

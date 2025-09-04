@@ -20,6 +20,7 @@ declare global {
         },
         main: {
             onMenuActions: (arg0: any) => Promise<string>,
+            onTerminalActions: (arg0: any) => Promise<string>,
             quit: any,
             toggleFullScreen: any,
         },

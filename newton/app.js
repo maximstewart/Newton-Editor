@@ -5,6 +5,7 @@ const { menu }            = require('./menu');
 const { systemTray }      = require('./system-tray');
 const { argsParser }      = require('./args-parser');
 const { settingsManager } = require('./settings-manager');
+const { terminal }        = require('./terminal');
 const { newtonFs }        = require('./fs');
 const { newtonIPC }       = require('./ipc');
 
@@ -55,6 +56,7 @@ const createWindow = (startType = "build", debug = false, args = []) => {
 
     menu.load(window);
     systemTray.load(menu.menuStruct);
+    terminal.load(window);
 
     // window.setAutoHideMenuBar(true)
 
