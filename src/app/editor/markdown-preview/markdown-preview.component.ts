@@ -6,6 +6,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { marked } from 'marked';
+
 import { MarkdownPreviewService } from '../../common/services/editor/markdown-preview/markdown-preview.service';
 
 import { ServiceMessage } from '../../common/types/service-message.type';
@@ -29,7 +31,7 @@ export class MarkdownPreviewComponent {
     private markdownPreviewService: MarkdownPreviewService = inject(MarkdownPreviewService);
 
     @HostBinding("class.hidden") isHidden: boolean         = true;
-    converter: any                                         = new showdown.Converter();
+    converter: any                                         = marked;
     defaultHtml: string                                    = "<h1>NOT a Markdown file...</h1>"
     bodyHtml: string                                       = "";
 
@@ -85,7 +87,7 @@ export class MarkdownPreviewComponent {
         let mdStr     = this.editorComponent.editor.session.getValue();
         let pathParts = this.editorComponent.activeFile.path.split("/");
         let basePath  = "file://" + pathParts.slice(0, -1).join("/");
-        this.bodyHtml = this.converter.makeHtml(
+        this.bodyHtml = this.converter.parse(
             mdStr.replaceAll("](images", `](${basePath}/images`)
                 .replaceAll("](imgs", `](${basePath}/imgs`)
                 .replaceAll("](pictures", `](${basePath}/pictures`)

@@ -1,1 +1,1 @@
-declare var showdown: any;
+// declare var showdown: any;
