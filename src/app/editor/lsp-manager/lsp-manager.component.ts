@@ -14,6 +14,8 @@ import { CodeViewComponent } from '../code-view/view.component';
 
 import { ServiceMessage } from '../../common/types/service-message.type';
 
+import { ButtonMap } from '../../common/constants/button.map';
+
 
 
 @Component({
@@ -42,6 +44,9 @@ export class LspManagerComponent {
     innerEditor: any;
     editor: any;
     activeFile: any;
+
+    @ViewChild('contextMenu') contextMenu!: ElementRef;
+    public showContextMenu: boolean = false;
 
 
     constructor() {
@@ -80,6 +85,47 @@ export class LspManagerComponent {
             } else if (message.action === "close-file") {
                 this.closeFile(message);
             }
+        });
+    }
+
+    protected handleActionMouseUp(event: any): void {
+        if (ButtonMap.LEFT === event.button) return;
+
+        let target = event.target;
+
+        let menuElm = this.contextMenu.nativeElement;
+        let pageX = event.clientX;
+        let pageY = event.clientY;
+
+        const origin = {
+            left: pageX + 5,
+            top: pageY - 5
+        };
+
+        menuElm.style.left   = `${origin.left}px`;
+        menuElm.style.top    = `${origin.top}px`;
+        this.showContextMenu = true;
+    }
+
+    public hideContextMenu() {
+        this.showContextMenu = false;
+    }
+
+    public contextMenuClicked(event: any) {
+        this.showContextMenu = false;
+
+        const command = event.target.getAttribute("command");
+        const args    = event.target.getAttribute("args");
+
+        if (!command) return;
+
+        this[command]( (args) ? args : null );
+    }
+
+    public pasteText() {
+        navigator.clipboard.readText().then((pasteText) => {
+            if (pasteText.includes("\n") || !pasteText.startsWith("/")) return;
+            this.lspManagerService.workspaceFolder = pasteText;
         });
     }
 

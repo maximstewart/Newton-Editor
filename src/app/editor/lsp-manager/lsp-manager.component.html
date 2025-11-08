@@ -3,7 +3,9 @@
     <div class="row mt-2 mb-3">
 
         <div class="col clear-right-padding">
-            <div class="input-group-sm">
+            <div class="input-group-sm"
+                (mouseup)="handleActionMouseUp($event)"
+            >
                 <label class="form-control" [innerText]="lspManagerService.workspaceFolder || 'Project Path...'">
                 </label>
             </div>
@@ -64,3 +66,12 @@
     </div>
 
 </div>
+
+<ul #contextMenu
+    class="contextMenu"
+    [hidden]="!showContextMenu"
+    (blur)="hideContextMenu"
+    (click)="contextMenuClicked($event)"
+>
+    <li command="pasteText">Paste</li>
+</ul>

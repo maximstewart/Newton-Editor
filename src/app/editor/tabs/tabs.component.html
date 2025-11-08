@@ -25,7 +25,7 @@
 <ul #contextMenu
     class="contextMenu"
     [hidden]="!showContextMenu"
-    (blur)="hideContextMenu"
+    (blur)="hideContextMenu()"
     (click)="contextMenuClicked($event)"
 >
     <li command="close">Close</li>

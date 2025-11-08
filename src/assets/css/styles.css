@@ -72,6 +72,28 @@
 
 
 
+.contextMenu {
+    z-index: 999;
+    overflow: auto;
+    position: absolute;
+    min-width: 2em;
+    max-width: 8em;
+    padding: 0.2em;
+    top: 0em;
+    right: 0em;
+    background-color: gray;
+}
+
+.contextMenu li:hover {
+    background-color: rgba(0, 124, 0, 0.64);
+    cursor: pointer;
+}
+
+.contextMenu li {
+    padding: 0em 0.2em;
+}
+
+
 .zero-margin-padding {
     margin: 0px;
     padding: 0px;
