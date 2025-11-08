@@ -158,6 +158,11 @@ export class CodeViewComponent extends CodeViewBase {
             this.lspManagerService.sendMessage(message);
             this.markdownPreviewService.sendMessage(message);
 
+            message            = new ServiceMessage();
+            message.action     = "highlight-active-tab";
+            message.filePath   = this.activeFile?.path;
+            this.tabsService.sendMessage(message);
+
             this.updateInfoBar();
         });
 
@@ -226,7 +231,6 @@ export class CodeViewComponent extends CodeViewBase {
             message.action   = "file-changed";
             message.filePath = this.activeFile.path;
             this.tabsService.sendMessage(message);
-
         });
 
         this.editor.on("changeSession", (session) => {
@@ -235,6 +239,11 @@ export class CodeViewComponent extends CodeViewBase {
             message.rawData    = this;
 
             this.lspManagerService.sendMessage(message);
+
+            message            = new ServiceMessage();
+            message.action     = "highlight-active-tab";
+            message.filePath   = this.activeFile?.path;
+            this.tabsService.sendMessage(message);
 
             this.updateInfoBar();
         });

@@ -43,6 +43,7 @@ export class TabsComponent {
 
     tabs: any[] = this.tabsService.tabs;
     targetEvent!: any;
+    activeTab!: any;
 
 
     constructor() {
@@ -54,7 +55,7 @@ export class TabsComponent {
         this.tabsService.getMessage$().pipe(
             takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
-            let elm = document.querySelectorAll(`[title="${message.filePath}"]`)[1];
+            let elm = document.querySelector(`[title="${message.filePath}"]`);
 
             switch ( message.action ) {
                 case "create-tab":
@@ -71,6 +72,42 @@ export class TabsComponent {
                 case "file-saved":
                     elm.classList.remove("file-deleted");
                     elm.classList.remove("file-changed");
+                    break;
+                case "highlight-active-tab":
+                    console.log("\n\n")
+                    console.log(message)
+                    console.log(elm)
+                    console.log(this.activeTab)
+
+                    if (!elm) {
+                        if (this.activeTab) {
+                            this.activeTab.classList.remove("active-tab")
+                            this.activeTab = elm;
+                        }
+
+                        break;
+                    };
+
+                    if (this.activeTab) {
+                        if (
+                            this.activeTab.getAttribute("title") == elm.getAttribute("title")
+                        ) {
+                            break;
+                        }
+
+                        this.activeTab.classList.remove("active-tab")
+                    }
+
+                    this.activeTab = elm;
+                    elm.classList.add("active-tab");
+                    elm.scrollIntoView(
+                        {
+                            behavior: "smooth",
+                            block: "center",
+                            inline: "center"
+                        }
+                    );
+
                     break;
                 default:
                     break;
@@ -208,21 +245,26 @@ export class TabsComponent {
         let target = event.target;
 
         if ( target.classList.contains("tab") ) {
-            this.tabsService.sendEditorsServiceAMessage(
-                "set-tab-to-editor",
-                event.srcElement.getAttribute("title")
-            );
+            let fpath = event.srcElement.getAttribute("title")
+            this.tabsService.sendEditorsServiceAMessage("set-tab-to-editor", fpath);
 
+            // this.updateActiveTabHighlight(fpath);
         } else if ( target.classList.contains("title") ) {
-            this.tabsService.sendEditorsServiceAMessage(
-                "set-tab-to-editor",
-                event.srcElement.parentElement.getAttribute("title")
-            );
+            let fpath = event.srcElement.parentElement.getAttribute("title")
+            this.tabsService.sendEditorsServiceAMessage("set-tab-to-editor", fpath);
+            // this.updateActiveTabHighlight(fpath);
         } else if ( target.classList.contains("close-button") ) {
             this.tabsService.closeTab(
                 event.srcElement.parentElement.getAttribute("title")
             );
         }
+    }
+
+    private updateActiveTabHighlight(fpath: string): void {
+        let message      = new ServiceMessage();
+        message.action   = "highlight-active-tab";
+        message.filePath = fpath;
+        this.tabsService.sendMessage(message);
     }
 
 }
