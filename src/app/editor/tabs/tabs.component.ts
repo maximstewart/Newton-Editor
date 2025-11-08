@@ -2,6 +2,8 @@ import {
     Component,
     ChangeDetectorRef,
     DestroyRef,
+    ElementRef,
+    ViewChild,
     inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,6 +13,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TabsService } from '../../common/services/editor/tabs/tabs.service';
 
 import { ServiceMessage } from '../../common/types/service-message.type';
+
+import { ButtonMap } from '../../common/constants/button.map';
 
 
 
@@ -34,7 +38,11 @@ export class TabsComponent {
     private tabsService: TabsService             = inject(TabsService);
     private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
+    @ViewChild('contextMenu') contextMenu!: ElementRef;
+    public showContextMenu: boolean = false;
+
     tabs: any[] = this.tabsService.tabs;
+    targetEvent!: any;
 
 
     constructor() {
@@ -71,26 +79,48 @@ export class TabsComponent {
         });
     }
 
-    protected handleAction(event: any): void {
+    protected handleActionClick(event: any): void {
+        if (ButtonMap.RIGHT === event.button) return;
+
         let target = event.target;
 
-        if ( target.classList.contains("tab") ) {
-            this.tabsService.sendEditorsServiceAMessage(
-                "set-tab-to-editor",
-                event.srcElement.getAttribute("title")
-            );
+        this.showContextMenu = false;
+        this.processTargetEvent(event);
+    }
 
-        } else if ( target.classList.contains("title") ) {
-            this.tabsService.sendEditorsServiceAMessage(
-                "set-tab-to-editor",
-                event.srcElement.parentElement.getAttribute("title")
-            );
-        } else if ( target.classList.contains("close-button") ) {
-            this.tabsService.closeTab(
-                event.srcElement.parentElement.getAttribute("title")
-            );
-        }
+    protected handleActionMouseDown(event: any): void {
+        if (ButtonMap.LEFT === event.button) return;
 
+        let target = event.target;
+
+        let menuElm = this.contextMenu.nativeElement;
+        let pageX = event.clientX;
+        let pageY = event.clientY;
+
+        const origin = {
+            left: pageX + 5,
+            top: pageY - 5
+        };
+
+        menuElm.style.left   = `${origin.left}px`;
+        menuElm.style.top    = `${origin.top}px`;
+        this.targetEvent     = event;
+        this.showContextMenu = true;
+    }
+
+    public hideContextMenu() {
+        this.showContextMenu = false;
+    }
+
+    public contextMenuClicked(event: any) {
+        this.showContextMenu = false;
+
+        const command = event.target.getAttribute("command");
+        const args    = event.target.getAttribute("args");
+
+        if (!command) return;
+
+        this[command]( (args) ? args : null );
     }
 
     public createTab(title: string, uuid: string, path: string): void {
@@ -115,6 +145,84 @@ export class TabsComponent {
 
     protected dropped(event: CdkDragDrop<any>): void {
         this.tabsService.move(event.previousIndex);
+    }
+
+
+    private close(event: any): void {
+        this.tabsService.closeTab(
+            this.targetEvent.srcElement.parentElement.getAttribute("title")
+        );
+    }
+
+    private closeAll(event: any): void {
+        let elm      = this.targetEvent.srcElement.parentElement;
+        let startElm = elm;
+
+        // clear right
+        while (elm) {
+            elm = elm.nextSibling;
+            if (!elm || elm.nodeType == 8) continue;
+
+            this.tabsService.closeTab( elm.getAttribute("title") );
+        }
+
+        // clear left
+        elm = startElm;
+        while (elm) {
+            elm = elm.previousSibling;
+            if (!elm || elm.nodeType == 8) continue;
+
+            this.tabsService.closeTab( elm.getAttribute("title") );
+        }
+
+        // clear initial target
+        elm = startElm;
+        this.tabsService.closeTab( elm.getAttribute("title") );
+    }
+
+    private closeAllLeft(event: any): void {
+        let elm = this.targetEvent.srcElement.parentElement;
+
+        // clear left
+        while (elm) {
+            elm = elm.previousSibling;
+            if (!elm || elm.nodeType == 8) continue;
+
+            this.tabsService.closeTab( elm.getAttribute("title") );
+        }
+    }
+
+    private closeAllRight(event: any): void {
+        let elm = this.targetEvent.srcElement.parentElement;
+
+        // clear right
+        while (elm) {
+            elm = elm.nextSibling;
+            if (!elm || elm.nodeType == 8) continue;
+
+            this.tabsService.closeTab( elm.getAttribute("title") );
+        }
+    }
+
+    private processTargetEvent(event: any): void {
+        let target = event.target;
+
+        if ( target.classList.contains("tab") ) {
+            this.tabsService.sendEditorsServiceAMessage(
+                "set-tab-to-editor",
+                event.srcElement.getAttribute("title")
+            );
+
+        } else if ( target.classList.contains("title") ) {
+            this.tabsService.sendEditorsServiceAMessage(
+                "set-tab-to-editor",
+                event.srcElement.parentElement.getAttribute("title")
+            );
+        } else if ( target.classList.contains("close-button") ) {
+            this.tabsService.closeTab(
+                event.srcElement.parentElement.getAttribute("title")
+            );
+        }
     }
 
 }

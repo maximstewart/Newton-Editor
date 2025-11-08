@@ -3,7 +3,8 @@
      cdkDropListLockAxis="x"
      cdkDropListOrientation="horizontal"
      (cdkDropListDropped)="dropped($event)"
-     (click)="handleAction($event)"
+     (mousedown)="handleActionMouseDown($event)"
+     (click)="handleActionClick($event)"
      class="display-contents"
 >
 
@@ -20,3 +21,15 @@
     </div>
 
 </div>
+
+<ul #contextMenu
+    class="contextMenu"
+    [hidden]="!showContextMenu"
+    (blur)="hideContextMenu"
+    (click)="contextMenuClicked($event)"
+>
+    <li command="close">Close</li>
+    <li command="closeAll">Close All</li>
+    <li command="closeAllLeft">Close All Left</li>
+    <li command="closeAllRight">Close All Right</li>
+</ul>

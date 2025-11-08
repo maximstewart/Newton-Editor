@@ -45,6 +45,26 @@
     align-self: center;
 }
 
+.contextMenu {
+    display: inline-table;
+    z-index: 500;
+    position: absolute;
+    min-width: 2em;
+    padding: 0.2em;
+    top: 0em;
+    right: 0em;
+    background-color: gray;
+}
+
+.contextMenu li:hover {
+    background-color: rgba(0, 124, 0, 0.64);
+    cursor: pointer;
+}
+
+.contextMenu li {
+    padding: 0em 0.2em;
+}
+
 .close-button {
     background: rgba(116, 0, 0, 0.64);
     border-style: solid;

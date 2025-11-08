@@ -47,7 +47,7 @@ export class ColorTokenizerService {
             );
         }
 
-        console.log(this.cssLines);
+        // console.log(this.cssLines);
     }
 
     public parseLine(line: string): {} | null {
