@@ -57,6 +57,13 @@
     margin-right: 0.2em;
 }
 
+.tabs-bar-underline {
+    border-color: #fff;
+    margin-top: -.8em;
+    margin-left: -.2em;
+    border-width: 0.2em;
+}
+
 .hr-pane-handle,
 .vr-pane-handle {
       border: 2px dashed lightblue;

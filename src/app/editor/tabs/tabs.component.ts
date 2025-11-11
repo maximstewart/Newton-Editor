@@ -74,11 +74,6 @@ export class TabsComponent {
                     elm.classList.remove("file-changed");
                     break;
                 case "highlight-active-tab":
-                    console.log("\n\n")
-                    console.log(message)
-                    console.log(elm)
-                    console.log(this.activeTab)
-
                     if (!elm) {
                         if (this.activeTab) {
                             this.activeTab.classList.remove("active-tab")
