@@ -227,8 +227,10 @@ export class CodeViewComponent extends CodeViewBase {
 
             if (!this.activeFile) return;
 
+            const isClean    = this.activeFile.session.getUndoManager().isClean();
+            const hasUndo    = this.activeFile.session.getUndoManager().hasUndo();
             let message      = new ServiceMessage();
-            message.action   = "file-changed";
+            message.action   = (!isClean && hasUndo) ? "file-changed" : "file-unmodified";
             message.filePath = this.activeFile.path;
             this.tabsService.sendMessage(message);
         });

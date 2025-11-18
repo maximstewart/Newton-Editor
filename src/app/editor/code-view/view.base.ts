@@ -314,11 +314,14 @@ export class CodeViewBase {
     protected saveFile() {
         if (!this.activeFile) {
             this.saveFileAs();
+            this.activeFile.session.getUndoManager().markClean();
+
             return;
         }
 
         const text = this.activeFile.session.getValue();
         window.fs.saveFile(this.activeFile.path, text);
+        this.activeFile.session.getUndoManager().markClean();
     }
 
     protected saveFileAs() {

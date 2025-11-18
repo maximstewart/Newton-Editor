@@ -55,11 +55,14 @@ export class TabsComponent {
         this.tabsService.getMessage$().pipe(
             takeUntilDestroyed(this.#destroyRef)
         ).subscribe((message: ServiceMessage) => {
-            let elm = document.querySelector(`[title="${message.filePath}"]`);
+            let elm = document.querySelector(`.tab[title="${message.filePath}"]`);
 
             switch ( message.action ) {
                 case "create-tab":
                     this.createTab(message.fileName, message.fileUUID, message.filePath);
+                    break;
+                case "file-unmodified":
+                    elm.classList.remove("file-changed");
                     break;
                 case "file-changed":
                     elm.classList.add("file-changed");
