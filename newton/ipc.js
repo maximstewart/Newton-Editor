@@ -42,6 +42,9 @@ const loadIPCServer = (fpath) => {
         console.debug("Load File(s) : ", req.body);
 
         window.webContents.send('load-files', req.body);
+        window.show();
+        window.focus();
+
         res.status(200).send('');
     });
 
