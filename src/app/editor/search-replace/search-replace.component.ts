@@ -36,15 +36,19 @@ export class SearchReplaceComponent {
     @ViewChild('findEntryElm') findEntryElm!: ElementRef;
     @ViewChild('replaceEntryElm') replaceEntryElm!: ElementRef;
 
+    @Input() query: string                 = "";
+    @Input() findOptions: string           = "";
+    @Input() isQueryLong: boolean          = false;
+    @Input() isQueryNotFound: boolean      = false;
+    @Input() totalCount: number            = 0;
+
     private editor!: any;
 
-    @Input() findOptions: string           = "";
     private useWholeWordSearch: boolean    = false;
     private searchOnlyInSelection: boolean = false;
     private useCaseSensitive: boolean      = false;
     private useRegex: boolean              = false;
     private selection: string              = "";
-    private query: string                  = "";
     private toStr: string                  = "";
     private isBackwards: boolean           = false;
     private isWrap: boolean                = true;
@@ -179,17 +183,25 @@ export class SearchReplaceComponent {
         this.findOptions = findOptionsStr;
     }
 
+    public findPreviousEntry() {
+        this.editor.findPrevious();
+    }
 
     public findNextEntry() {
         this.editor.findNext();
     }
 
+    public findEntryKeyUpHandler(event: KeyboardEvent) {
+        if (!event.ctrlKey || !this.query) return;
+
+        if (event.key === "ArrowUp")   this.findPreviousEntry();
+        if (event.key === "ArrowDown") this.findNextEntry();
+    }
+
     public findAllEntries() {
         this.query = this.findEntryElm.nativeElement.value;
 
-        if (!this.query) return;
-
-        let totalCount = this.editor.findAll(this.query, {
+        this.totalCount = this.editor.findAll(this.query, {
             backwards: this.isBackwards,
             wrap: this.isWrap,
             caseSensitive: this.useCaseSensitive,
@@ -197,25 +209,19 @@ export class SearchReplaceComponent {
             regExp: this.useRegex,
             range: this.searchOnlyInSelection
         });
+
+        if (this.totalCount === 0) this.isQueryNotFound = true;
     }
 
-    public findPreviousEntry() {
-        this.editor.findPrevious();
-    }
-
-    public replaceEntry(event: any) {
-        if (event instanceof KeyboardEvent) {
-            if (event.key !== "Enter") {
-                return;
-            }
-        }
+    public replaceEntry(event: KeyboardEvent) {
+        if (this.isQueryLong || this.isQueryNotFound) return;
 
         let fromStr = this.findEntryElm.nativeElement.value;
         let toStr   = this.replaceEntryElm.nativeElement.value;
 
         if (!fromStr) return;
 
-        let totalCount = this.editor.replace(toStr, fromStr, {
+        this.editor.replace(toStr, fromStr, {
             backwards: this.isBackwards,
             wrap: this.isWrap,
             caseSensitive: this.useCaseSensitive,
@@ -229,12 +235,14 @@ export class SearchReplaceComponent {
     }
 
     public replaceAll() {
+        if (this.isQueryLong || this.isQueryNotFound) return;
+
         let fromStr = this.findEntryElm.nativeElement.value;
         let toStr   = this.replaceEntryElm.nativeElement.value;
 
         if (!fromStr) return;
 
-        let totalCount = this.editor.replaceAll(toStr, fromStr, {
+        this.editor.replaceAll(toStr, fromStr, {
             backwards: this.isBackwards,
             wrap: this.isWrap,
             caseSensitive: this.useCaseSensitive,
@@ -242,23 +250,27 @@ export class SearchReplaceComponent {
             regExp: this.useRegex,
             range: this.searchOnlyInSelection
         });
+
+        this.isQueryNotFound = true;
     }
 
     public searchForString() {
-        if (event instanceof KeyboardEvent) {
-            if (event.key !== "Enter") {
-                return;
-            }
-        }
+        if (this.searchTimeoutId) { clearTimeout(this.searchTimeoutId); }
 
         this.query = this.findEntryElm.nativeElement.value;
 
-        if (!this.query) return;
+        if (!this.query) {
+            this.isQueryLong     = false;
+            this.isQueryNotFound = false;
 
-        if (this.searchTimeoutId) { clearTimeout(this.searchTimeoutId); }
+            return;
+        }
+
+        this.isQueryLong = (this.query.length > 80);
+        if (this.isQueryLong) return;
 
         this.searchTimeoutId = setTimeout(() => {
-            let totalCount = this.editor.find(this.query, {
+            this.totalCount   = this.editor.findAll(this.query, {
                 backwards: this.isBackwards,
                 wrap: this.isWrap,
                 caseSensitive: this.useCaseSensitive,
@@ -266,6 +278,8 @@ export class SearchReplaceComponent {
                 regExp: this.useRegex,
                 range: this.searchOnlyInSelection
             });
+
+            this.isQueryNotFound = (this.totalCount === 0);
         }, this.searchTimeout);
     }
 
