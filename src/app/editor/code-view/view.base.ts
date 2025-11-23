@@ -14,7 +14,6 @@ import { EditorsService } from '../../common/services/editor/editors.service';
 import { FilesService } from '../../common/services/files.service';
 import { SearchReplaceService } from '../../common/services/editor/search-replace/search-replace.service';
 import { MarkdownPreviewService } from '../../common/services/editor/markdown-preview/markdown-preview.service';
-import { TerminalService } from '../../common/services/editor/terminal/terminal.service';
 import { LspManagerService } from '../../common/services/editor/lsp-manager/lsp-manager.service';
 
 import { EditorSettings } from "../../common/configs/editor.config";
@@ -39,7 +38,6 @@ export class CodeViewBase {
     protected filesService: FilesService                     = inject(FilesService);
     protected searchReplaceService: SearchReplaceService     = inject(SearchReplaceService);
     protected markdownPreviewService: MarkdownPreviewService = inject(MarkdownPreviewService);
-    protected terminalService: TerminalService               = inject(TerminalService);
     protected lspManagerService: LspManagerService           = inject(LspManagerService);
 
     @ViewChild('editor') editorElm!: ElementRef;
@@ -132,12 +130,6 @@ export class CodeViewBase {
         this.searchReplaceService.sendMessage(message);
 
         // this.editor.execCommand("replace");
-    }
-
-    public terminalPopup() {
-        let message        = new ServiceMessage();
-        message.action     = "toggle-terminal";
-        this.terminalService.sendMessage(message);
     }
 
     public showFilesList() {

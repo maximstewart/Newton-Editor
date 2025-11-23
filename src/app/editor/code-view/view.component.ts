@@ -142,7 +142,7 @@ export class CodeViewComponent extends CodeViewBase {
     private loadNewtonEventBindings(): void {
 
         // Note:  https://ajaxorg.github.io/ace-api-docs/interfaces/ace.Ace.EditorEvents.html
-        this.editor.on("focus", (e) => {
+        this.editor.on("focus", (event) => {
             let message        = new ServiceMessage();
             message.action     = "set-active-editor";
             message.editorUUID = this.uuid;
@@ -150,7 +150,6 @@ export class CodeViewComponent extends CodeViewBase {
 
             this.editorsService.sendMessage(message);
             this.searchReplaceService.sendMessage(message);
-            this.terminalService.sendMessage(message);
 
             message            = new ServiceMessage();
             message.action     = "set-active-editor";
