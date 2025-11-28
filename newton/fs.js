@@ -185,10 +185,33 @@ const closeFile = (fpath) => {
     unwatchFile(fpath);
 }
 
+const readAndInjectCSS = (window, filePath) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error(`Error reading CSS file: ${filePath}`, err);
+            return;
+        }
+
+        window.webContents.insertCSS(data);
+    });
+}
+
+const readAndInjectJS = (window, filePath) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error(`Error reading JS file: ${filePath}`, err);
+            return;
+        }
+
+        window.webContents.executeJavaScript(data);
+    });
+}
+
 
 
 module.exports = {
     newtonFs: {
+        CONFIG_PATH: CONFIG_PATH,
         setWindow: setWindow,
         chooseFolder: chooseFolder,
         openFiles: openFiles,
@@ -200,6 +223,8 @@ module.exports = {
         getLspConfigData: getLspConfigData,
         getSettingsConfigData: getSettingsConfigData,
         saveSettingsConfigData: saveSettingsConfigData,
+        readAndInjectJS: readAndInjectJS,
+        readAndInjectCSS: readAndInjectCSS,
         loadFilesWatcher: loadFilesWatcher,
         unwatchFile: unwatchFile,
     }

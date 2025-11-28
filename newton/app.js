@@ -54,6 +54,20 @@ const createWindow = (startType = "build", debug = false, args = []) => {
         window.webContents.send('load-files', args);
     });
 
+    window.webContents.on('did-finish-load', () => {
+        const cssFiles = [
+            path.join(newtonFs.CONFIG_PATH, 'override.css')
+        ];
+
+        const jsFiles = [
+            // path.join(newtonFs.CONFIG_PATH, 'scripts', 'script1.js'),
+            // path.join(newtonFs.CONFIG_PATH, 'scripts', 'script2.js')
+        ];
+
+        cssFiles.forEach(cssFile => newtonFs.readAndInjectCSS(window, cssFile));
+        jsFiles.forEach(jsFile => newtonFs.readAndInjectJS(window, jsFile));
+    });
+
     menu.load(window);
     systemTray.load(menu.menuStruct);
     terminal.load(window);
