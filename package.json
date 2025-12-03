@@ -44,7 +44,10 @@
             "maintainer": "ITDominator"
         }
     },
-    "postinstall": "electron-builder install-app-deps",
+    "overrides": {
+      "glob": "9.0.0",
+      "rimraf": "4.3.1"
+    },
     "dependencies": {
         "ace-diff": "3.0.3",
         "ace-layout": "1.5.0",
@@ -75,7 +78,7 @@
         "concurrently": "9.1.2",
         "electron": "36.2.0",
         "@electron/remote": "2.1.2",
-        "electron-builder": "26.0.12",
+        "electron-builder": "22.7.0",
         "jasmine-core": "5.6.0",
         "jimp": "1.6.0",
         "karma": "6.4.0",
