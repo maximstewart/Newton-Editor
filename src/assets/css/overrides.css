@@ -1,4 +1,31 @@
+/* FONTS */
+@font-face {
+  font-family: "JetBrainsMono-Regular";
+  src: url("../fonts/JetBrainsMono-Regular.woff2") format('woff');
+}
+
+@font-face {
+  font-family: "JetBrainsMono-Light";
+  src: url("../fonts/JetBrainsMono-Light.woff2") format('woff');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "SourceCodePro-Regular";
+  src: url("../fonts/SourceCodePro-Regular.ttf");
+}
+
+@font-face {
+  font-family: "SourceCodePro-Light";
+  src: url("../fonts/SourceCodePro-Light.ttf");
+  font-weight: bold;
+}
+
+
 /* TAGS */
+* {
+    font-family: "SourceCodePro-Light" !important;
+}
 
 html {
     background-color: rgba(40, 44, 52, 0.64);
