@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+
+import { WebsocketService } from './common/services/websocket.service';
 
 import { InfoBarComponent } from './editor/info-bar/info-bar.component';
 import { TabsComponent } from './editor/tabs/tabs.component';
@@ -28,6 +30,17 @@ import { LspManagerComponent } from "./editor/lsp-manager/lsp-manager.component"
 export class AppComponent {
     title = 'Newton';
 
+    protected ws: WebsocketService = inject(WebsocketService);
+
+
     constructor() {}
+
+    ngOnInit() {
+        // TODO: Set with dynamic address and port
+        this.ws.connect('ws://localhost:7272').subscribe(msg => {
+            console.log(msg);
+            // this.ws.send("{ 'text': 'Hello server!' }");
+        });
+    }
 
 }
