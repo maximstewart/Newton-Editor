@@ -33,12 +33,64 @@ export class AppComponent {
     protected ws: WebsocketService = inject(WebsocketService);
 
 
-    constructor() {}
+    constructor() {
+        this.checkIfNotElectronMode();
+    }
 
-    ngOnInit() {
+
+    ngOnInit() {}
+
+    checkIfNotElectronMode() {
+        if (
+            window.electron ||
+            window.main     ||
+            window.fs
+        ) { return; }
+
+        this.setupWebsocket();
+        this.setupWindowBindings();
+    }
+
+    setupWindowBindings() {
+        window.electron ??= {
+            node: () => { return "" },
+            chrome: () => { return "" },
+            electron: () => { return "" },
+        };
+
+        window.main ??= {
+            onMenuActions: () => {},
+            onTerminalActions: () => {},
+            quit: () => {},
+            toggleFullScreen: () => {},
+        };
+
+        window.fs ??= {
+            getLspConfigData: () => {
+                return new Promise((resolve, reject) => {
+                    resolve("{}");
+                });
+            },
+            getFileContents: () => {},
+            openFiles: () => {},
+            saveFile: () => {},
+            saveFileAs: () => {},
+            chooseFolder: () => {},
+            closeFile: () => {},
+            getPathForFile: () => {},
+            onLoadFiles: () => {},
+            onUpdateFilePath: () => {},
+            onSavedFile: () => {},
+            onChangedFile: () => {},
+            onDeletedFile: () => {},
+        };
+    }
+
+    setupWebsocket() {
         // TODO: Set with dynamic address and port
         this.ws.connect('ws://localhost:7272').subscribe(msg => {
             console.log(msg);
+            console.log(window.fs);
             // this.ws.send("{ 'text': 'Hello server!' }");
         });
     }

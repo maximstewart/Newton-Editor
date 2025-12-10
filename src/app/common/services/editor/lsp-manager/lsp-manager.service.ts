@@ -42,7 +42,7 @@ export class LspManagerService {
     }
 
     private getLspConfigData(): Promise<string> {
-        return window.fs.getLspConfigData();
+        return window?.fs.getLspConfigData();
     }
 
     private parseAndReturnLSPConfigData(): {} {

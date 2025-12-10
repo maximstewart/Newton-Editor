@@ -55,7 +55,7 @@ export class FilesService {
 
     public unset(file: NewtonFile) {
         file.session.destroy();
-        window.fs.closeFile(file.path);
+        window?.fs.closeFile(file.path);
         this.files.delete(file.path);
     }
 
@@ -76,7 +76,7 @@ export class FilesService {
     ): Promise<NewtonFile | undefined | null> {
 	    for (let i = 0; i < files.length; i++) {
 		    const file = files[i];
-		    const path = window.fs.getPathForFile(file);
+		    const path = window?.fs.getPathForFile(file);
 
 		    if (!file || !path) continue;
 		    if ( this.files.get(path) ) continue;
@@ -101,7 +101,7 @@ export class FilesService {
 	        file.hash     = btoa(file.path);
 
 	        if (loadFileContents)
-	            data = await window.fs.getFileContents(file.path);
+	            data = await window?.fs.getFileContents(file.path);
 
             file.session       = new EditSession(data);
             file.session["id"] = path;

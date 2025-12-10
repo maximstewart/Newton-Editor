@@ -11,33 +11,35 @@
 import 'zone.js';  // Included with Angular CLI.
 
 
+// Note: Is set to 'any' b/c of desire to set 'render'
+// side if running outside of electron mode.
 declare global {
     interface Window {
         electron: {
-            node: () => Promise<string>,
-            chrome: () => Promise<string>,
-            electron: () => Promise<string>,
+            node: any,
+            chrome: any,
+            electron: any,
         },
         main: {
-            onMenuActions: (arg0: any) => Promise<string>,
-            onTerminalActions: (arg0: any) => Promise<string>,
+            onMenuActions: any,
+            onTerminalActions: any,
             quit: any,
             toggleFullScreen: any,
         },
         fs: {
-            getLspConfigData: () => Promise<string>,
-            getFileContents: (arg0: any) => Promise<string>,
-            openFiles: (arg0) => Promise<string>,
-            saveFile: (arg0: any, arg1: any) => Promise<string>,
-            saveFileAs: () => Promise<string>,
-            chooseFolder: () => Promise<string>,
-            closeFile: (arg0: any) => Promise<string>,
+            getLspConfigData: any,
+            getFileContents: any,
+            openFiles: any,
+            saveFile: any,
+            saveFileAs: any,
+            chooseFolder: any,
+            closeFile: any,
             getPathForFile: any,
-            onLoadFiles: (arg0: any) => Promise<string>,
-            onUpdateFilePath: (arg0: any) => Promise<string>,
-            onSavedFile: (arg0: any) => Promise<string>,
-            onChangedFile: (arg0: any) => Promise<string>,
-            onDeletedFile: (arg0: any) => Promise<string>,
+            onLoadFiles: any,
+            onUpdateFilePath: any,
+            onSavedFile: any,
+            onChangedFile: any,
+            onDeletedFile: any,
         }
     }
 }

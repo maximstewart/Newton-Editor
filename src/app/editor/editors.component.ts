@@ -76,7 +76,7 @@ export class EditorsComponent {
     }
 
     private loadMainSubscribers() {
-        window.main.onMenuActions(async (action: string) => {
+        window?.main.onMenuActions(async (action: string) => {
             let editorComponent = this.editorsService.getActiveEditorComponent();
             let editor          = editorComponent.editor;
 
@@ -112,7 +112,7 @@ export class EditorsComponent {
                 case "show-about":
                     break;
                 case "quit":
-                    window.main.quit();
+                    window?.main.quit();
                     break;
                 default:
                     editor.execCommand(action);
@@ -120,7 +120,7 @@ export class EditorsComponent {
             }
         });
 
-        window.fs.onLoadFiles(async (paths: []) => {
+        window?.fs.onLoadFiles(async (paths: []) => {
             for (let i = 0; i < paths.length; i++) {
                 let file = new File([], "") as NewtonFile;
 
@@ -135,7 +135,7 @@ export class EditorsComponent {
             this.editorsService.setSession(file);
         });
 
-        window.fs.onChangedFile(async (path: string, data: string) => {
+        window?.fs.onChangedFile(async (path: string, data: string) => {
             let file = this.filesService.get(path);
             file.session.setValue(data);
 
@@ -147,7 +147,7 @@ export class EditorsComponent {
             this.tabsService.sendMessage(message);
         });
 
-        window.fs.onDeletedFile(async (path: string) => {
+        window?.fs.onDeletedFile(async (path: string) => {
             let message      = new ServiceMessage();
             message.action   = "file-deleted";
             message.filePath = path;
@@ -156,7 +156,7 @@ export class EditorsComponent {
             this.filesService.sendMessage(message);
         });
 
-        window.fs.onSavedFile(async (path: string) => {
+        window?.fs.onSavedFile(async (path: string) => {
             let message      = new ServiceMessage();
             message.action   = "file-saved";
             message.filePath = path;
@@ -164,7 +164,7 @@ export class EditorsComponent {
             this.tabsService.sendMessage(message);
         });
 
-        window.fs.onUpdateFilePath(async (path: string) => {
+        window?.fs.onUpdateFilePath(async (path: string) => {
             console.log("TODO (onUpdateFilePath) :", path);
             // this.tabsService.sendMessage(message);
             // this.filesService.sendMessage(message);

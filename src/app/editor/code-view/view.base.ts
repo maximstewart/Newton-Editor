@@ -187,7 +187,7 @@ export class CodeViewBase {
     }
 
     public toggleFullScreen() {
-        window.main.toggleFullScreen();
+        window?.main.toggleFullScreen();
     }
 
     public setAsReadOnly() {
@@ -300,7 +300,7 @@ export class CodeViewBase {
             startDir = pathParts.join( '/' );
         }
 
-        window.fs.openFiles(startDir);
+        window?.fs.openFiles(startDir);
     }
 
     protected saveFile() {
@@ -312,18 +312,18 @@ export class CodeViewBase {
         }
 
         const text = this.activeFile.session.getValue();
-        window.fs.saveFile(this.activeFile.path, text);
+        window?.fs.saveFile(this.activeFile.path, text);
         this.activeFile.session.getUndoManager().markClean();
     }
 
     protected saveFileAs() {
-        window.fs.saveFileAs().then((path: string) => {
+        window?.fs.saveFileAs().then((path: string) => {
             if (!path) return;
 
             let file: NewtonFile = new File([""], path, {});
             const text           = this.editor.session.getValue();
 
-            window.fs.saveFile(path, text);
+            window?.fs.saveFile(path, text);
             this.filesService.addFile(
                 path,
                 file,
@@ -364,6 +364,6 @@ export class CodeViewBase {
     }
 
     private quit() {
-        window.main.quit();
+        window?.main.quit();
     }
 }

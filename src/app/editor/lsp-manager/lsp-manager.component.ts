@@ -134,7 +134,7 @@ export class LspManagerComponent {
     }
 
     public setWorkspaceFolder() {
-        window.fs.chooseFolder().then((folder: string) => {
+        window?.fs.chooseFolder().then((folder: string) => {
             if (!folder) return;
 
             this.lspManagerService.workspaceFolder = folder;
