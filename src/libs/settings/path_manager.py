@@ -32,8 +32,8 @@ class PathManager:
         self._CSS_FILE: str          = f"{self._HOME_CONFIG_PATH}/stylesheet.css"
         self._KEY_BINDINGS_FILE: str = f"{self._HOME_CONFIG_PATH}/key-bindings.json"
         self._PID_FILE: str          = f"{self._HOME_CONFIG_PATH}/{APP_NAME.lower()}.pid"
-        self._UI_WIDEGTS_PATH: str   = f"{self._HOME_CONFIG_PATH}/ui_widgets"
-        self._CONTEXT_MENU: str      = f"{self._HOME_CONFIG_PATH}/contexct_menu.json"
+        self._UI_WIDGETS_PATH: str   = f"{self._HOME_CONFIG_PATH}/ui_widgets"
+        self._CONTEXT_MENU: str      = f"{self._HOME_CONFIG_PATH}/context_menu.json"
         self._WINDOW_ICON: str       = f"{self._DEFAULT_ICONS}/{APP_NAME.lower()}.png"
 
         # self._USR_CONFIG_FILE: str   = f"{self._USR_PATH}/settings.json"
@@ -44,8 +44,8 @@ class PathManager:
         # self._KEY_BINDINGS_FILE: str = f"key-bindings.json"
         # self._PID_FILE: str          = f"{APP_NAME.lower()}.pid"
         # self._WINDOW_ICON: str       = f"{APP_NAME.lower()}.png"
-        # self._UI_WIDEGTS_PATH: str   = f"ui_widgets"
-        # self._CONTEXT_MENU: str      = f"contexct_menu.json"
+        # self._UI_WIDGETS_PATH: str   = f"ui_widgets"
+        # self._CONTEXT_MENU: str      = f"context_menu.json"
         # self._DEFAULT_ICONS: str     = f"icons"
 
 
@@ -78,14 +78,14 @@ class PathManager:
             self._WINDOW_ICON  = f"{self._USR_PATH}/icons/{APP_NAME.lower()}.png"
             if not path.exists(self._WINDOW_ICON):
                 raise MissingConfigError("Unable to find the application icon.")
-        if not path.exists(self._UI_WIDEGTS_PATH):
-            self._UI_WIDEGTS_PATH  = f"{self._USR_PATH}/ui_widgets"
+        if not path.exists(self._UI_WIDGETS_PATH):
+            self._UI_WIDGETS_PATH  = f"{self._USR_PATH}/ui_widgets"
         if not path.exists(self._CONTEXT_MENU):
-            self._CONTEXT_MENU  = f"{self._USR_PATH}/contexct_menu.json"
+            self._CONTEXT_MENU  = f"{self._USR_PATH}/context_menu.json"
 
 
     def get_glade_file(self)       -> str: return self._GLADE_FILE
-    def get_ui_widgets_path(self)  -> str: return self._UI_WIDEGTS_PATH
+    def get_ui_widgets_path(self)  -> str: return self._UI_WIDGETS_PATH
     def get_context_path(self)     -> str: return self._CONTEXT_PATH
     def get_plugins_path(self)     -> str: return self._PLUGINS_PATH
     def get_css_file(self)         -> str: return self._CSS_FILE
