@@ -1,0 +1,33 @@
+# Python imports
+
+# Lib imports
+import gi
+
+gi.require_version('GtkSource', '4')
+
+from gi.repository import GtkSource
+from gi.repository import Gio
+
+# Application imports
+from ..source_file import SourceFile
+
+
+
+def execute(
+    view: GtkSource.View,
+):
+    logger.debug("Update Info Bar Command")
+    buffer = view.get_buffer()
+    file   = view.files_manager.get_file(buffer)
+
+    if not file: return
+
+    iter   = buffer.get_iter_at_mark( buffer.get_insert() )
+    line   = iter.get_line() + 1
+    column = iter.get_line_offset()
+    ftype  = file.ftype.get_id() if hasattr(file.ftype, "get_id") else file.ftype
+
+    event_system.emit(
+        "set-info-labels",
+        (file.fpath, f"{line}:{column}", ftype, file.encoding)
+    )

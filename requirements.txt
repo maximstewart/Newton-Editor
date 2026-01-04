@@ -1,0 +1,7 @@
+PyGObject==3.40.1
+pygobject-stubs --no-cache-dir --config-settings=config=Gtk3,Gdk3,Soup2
+setproctitle==1.2.2
+pyxdg==0.27
+psutil==5.8.0
+pycryptodome==3.20.0
+sqlmodel==0.0.19

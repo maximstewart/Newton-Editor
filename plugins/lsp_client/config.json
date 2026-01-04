@@ -1,0 +1,7 @@
+{
+    "lsp_manager_start_command": ["python", "/opt/lsp-manager.zip"],
+    "websocket": {
+        "host": "localhost",
+        "port": 8765
+    }
+}

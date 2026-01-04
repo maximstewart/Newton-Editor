@@ -1,0 +1,12 @@
+{
+    "keybindings": {
+        "help"                   : "F1",
+        "guake_key"              : "",
+        "rename-files"           : ["F2", "<Control>e"],
+        "open-terminal"          : "F4",
+        "refresh-tab"            : ["F5", "<Control>r"],
+        "load-interactive-debug" : "<Control>d",
+        "tggl-top-main-menubar"  : "Alt_L",
+        "tear-down"              : "<Control>q"
+    }
+}

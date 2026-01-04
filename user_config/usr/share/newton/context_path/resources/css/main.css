@@ -1,0 +1,48 @@
+/* IDs */
+
+#bg {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    z-index: -999;
+    object-fit: cover;
+}
+
+#bg img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -999;
+}
+
+
+/* CLASSES */
+.scroller {
+    -webkit-scrollbar-color: #00000084 #ffffff64;
+	-webkit-scrollbar-width: thin;
+
+	scrollbar-color: #00000084 #ffffff64;
+	scrollbar-width: thin;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+/* Other message text colors */
+.error-txt   { color: rgb(170, 18, 18); }
+.warning-txt { color: rgb(255, 168, 0); }
+.success=txt { color: rgb(136, 204, 39); }

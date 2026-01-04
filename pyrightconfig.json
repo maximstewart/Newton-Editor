@@ -1,0 +1,13 @@
+{
+    "reportUndefinedVariable": false,
+    "reportUnusedVariable": false,
+    "reportUnusedImport": true,
+    "reportDuplicateImport": true,
+    "executionEnvironments": [
+        {
+            "root": "./src/versions/solarfm-0.0.1/solarfm"
+        }
+    ],
+    "venvPath": ".",
+    "venv": ".venv"
+}

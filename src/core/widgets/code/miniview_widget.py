@@ -1,0 +1,38 @@
+# Python imports
+
+# Lib imports
+import gi
+gi.require_version('GtkSource', '4')
+from gi.repository.GtkSource import Map
+
+
+# Application imports
+
+
+
+class MiniViewWidget(Map):
+    def __init__(self):
+        super(MiniViewWidget, self).__init__()
+
+        self._setup_styling()
+        self._setup_signals()
+        self._subscribe_to_events()
+        self._load_widgets()
+
+
+    def _setup_styling(self):
+        self.set_hexpand(False)
+        ctx = self.get_style_context()
+        ctx.add_class("mini-view")
+
+    def _setup_signals(self):
+        ...
+
+    def _subscribe_to_events(self):
+        event_system.subscribe(f"set-mini-view", self.set_smini_view)
+
+    def _load_widgets(self):
+        ...
+
+    def set_smini_view(self, source_view):
+        self.set_view(source_view)

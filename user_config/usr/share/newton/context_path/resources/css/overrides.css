@@ -1,0 +1,29 @@
+html, body {
+    display: block;
+//    background-color: #32383e00;
+    background-color: rgba(39, 43, 52, 0.64);
+    color: #ffffff;
+    text-wrap: wrap;
+}
+
+body {
+    overflow: hidden;
+}
+
+ul, li {
+    list-style: none;
+}
+
+.modal-content {
+    background-color: rgba(50, 56, 62, 0.74);
+    border-color: rgba(249, 148, 6, 0.74)74;
+}
+
+.card {
+    background-color: rgba(50, 56, 62, 0.84);
+}
+
+.label-as-badge {
+    border-radius: 1em;
+    cursor: pointer;
+}

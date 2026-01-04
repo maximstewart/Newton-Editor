@@ -1,0 +1,19 @@
+# Python imports
+
+# Lib imports
+import gi
+
+gi.require_version('GtkSource', '4')
+
+from gi.repository import GtkSource
+
+# Application imports
+
+
+
+def execute(
+    view: GtkSource.View  = None
+):
+    logger.debug("Has Focus Command")
+    ctx = view.get_parent().get_style_context()
+    return ctx.has_class("source-view-focused")
