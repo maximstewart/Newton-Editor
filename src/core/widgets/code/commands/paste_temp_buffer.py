@@ -15,7 +15,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Paste Temp Buffer Command")
+    logger.debug("Command: Paste Temp Buffer")
 
     view.clear_temp_cut_buffer_delayed()
 

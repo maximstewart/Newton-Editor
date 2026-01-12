@@ -11,11 +11,11 @@ from gi.repository import Gio
 
 
 
-class GeneralInfoWidget(Gtk.Box):
-    """ docstring for StatusInfoWidget. """
+class InfoBarWidget(Gtk.Box):
+    """ docstring for InfoBarWidget. """
 
     def __init__(self):
-        super(GeneralInfoWidget, self).__init__()
+        super(InfoBarWidget, self).__init__()
 
         self._setup_styling()
         self._setup_signals()
@@ -76,9 +76,6 @@ class GeneralInfoWidget(Gtk.Box):
         gfile = "" if not gfile else gfile
 
         if isinstance(gfile, str):
-            # path = gfile
-            # path = "..." + path[-120: -1] if len(path) >= 123 else path
-            # self.path_label.set_text( path )
             self.path_label.set_text( gfile )
             self.path_label.set_tooltip_text( gfile )
         else:

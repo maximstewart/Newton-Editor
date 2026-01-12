@@ -14,5 +14,5 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Line Up Command")
+    logger.debug("Command: Line Up")
     view.emit("move-lines", False)

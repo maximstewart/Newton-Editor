@@ -14,9 +14,9 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Go-To Command")
+    logger.debug("Command: Go-To")
 
-    file    = view.command.exec("get_current_file")
+    file    = view.command.get_file(view)
     gfile   = file.get_location()
     uri     = gfile.get_uri()
 

@@ -14,8 +14,6 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Get File Type Command")
-
-    buffer = view.get_buffer()
-    file   = view.files_manager.get_file(buffer)
+    logger.debug("Command: Get File Type")
+    file = view.command.get_file(view)
     return file.ftype 

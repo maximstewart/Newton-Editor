@@ -16,9 +16,9 @@ from ..source_file import SourceFile
 def execute(
     view: GtkSource.View,
 ):
-    logger.debug("Update Info Bar Command")
-    buffer = view.get_buffer()
-    file   = view.files_manager.get_file(buffer)
+    logger.debug("Command: Update Info Bar")
+    file   = view.command.get_file(view)
+    buffer = file.buffer
 
     if not file: return
 

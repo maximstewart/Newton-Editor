@@ -17,7 +17,7 @@ def execute(
     view: GtkSource.View,
     uris: list = []
 ):
-    logger.debug("DnD Load Files Command")
+    logger.debug("Command: DnD Load Files")
     for uri in uris:
         try:
             gfile = Gio.File.new_for_uri(uri)

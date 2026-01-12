@@ -9,7 +9,7 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from libs.dto.code_event import CodeEvent
+from libs.dto.code import FocusedViewEvent
 
 from ..source_file import SourceFile
 
@@ -18,10 +18,5 @@ from ..source_file import SourceFile
 def execute(
     view: GtkSource.View,
 ):
-    logger.debug("Set MiniView  Command")
+    logger.debug("Command: Set MiniView")
     event_system.emit("set-mini-view", (view,))
-
-    event       = CodeEvent()
-    event.etype = "focused_view_change"
-    event.view  = view
-    view.notify_observers(event)

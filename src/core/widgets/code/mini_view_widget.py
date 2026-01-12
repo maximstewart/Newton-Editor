@@ -21,9 +21,10 @@ class MiniViewWidget(Map):
 
 
     def _setup_styling(self):
-        self.set_hexpand(False)
         ctx = self.get_style_context()
         ctx.add_class("mini-view")
+
+        self.set_hexpand(False)
 
     def _setup_signals(self):
         ...

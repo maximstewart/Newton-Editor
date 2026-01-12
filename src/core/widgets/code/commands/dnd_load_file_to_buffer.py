@@ -9,6 +9,7 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
+from ..command_helpers import update_info_bar_if_focused
 
 
 
@@ -16,13 +17,13 @@ def execute(
     view: GtkSource.View,
     uri: str
 ):
-    logger.debug("DnD Load File To Buffer Command")
+    logger.debug("Command: DnD Load File To Buffer")
 
-    buffer = view.get_buffer()
-    file   = view.files_manager.get_file(buffer)
+    file   = view.command.get_file(view)
+    buffer = file.buffer
 
     if not file.ftype == "buffer":
-        file = view.command.exec("new_file")
+        file = view.command.new_file(view)
 
     gfile  = Gio.File.new_for_uri(uri)
     view.command.exec_with_args(
@@ -30,6 +31,4 @@ def execute(
         (view, gfile, file)
     )
 
-    has_focus = view.command.exec("has_focus")
-    if has_focus:
-        view.command.exec("update_info_bar")
+    update_info_bar_if_focused(view.command, view)

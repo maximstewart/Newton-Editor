@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
-from ..widgets.code.general_info_widget import GeneralInfoWidget
+from ..widgets.code.info_bar_widget import InfoBarWidget
 from .code.code_container import CodeContainer
 from ..widgets.save_file_dialog import SaveFileDialog
 from ..widgets.controls.open_files_button import OpenFilesButton
@@ -44,5 +44,5 @@ class CenterContainer(Gtk.Box):
         SaveFileDialog()
         OpenFilesButton()
 
-        self.add( GeneralInfoWidget() )
+        self.add( InfoBarWidget() )
         self.add( CodeContainer() )

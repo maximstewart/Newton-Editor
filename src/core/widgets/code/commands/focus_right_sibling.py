@@ -14,6 +14,6 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Focus Right Sibling Command")
+    logger.debug("Command: Focus Right Sibling")
     if not view.sibling_right: return
     view.sibling_right.grab_focus()

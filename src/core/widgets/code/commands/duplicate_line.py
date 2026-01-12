@@ -14,7 +14,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Duplicate Line Command")
+    logger.debug("Command: Duplicate Line")
 
     buffer = view.get_buffer()
 

@@ -14,5 +14,5 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Show Completion Command")
-    view.completion.request_completion()
+    logger.debug("Command: Show Completion")
+    view.command.request_completion(view)

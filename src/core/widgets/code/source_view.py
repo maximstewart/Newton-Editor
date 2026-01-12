@@ -9,29 +9,19 @@ from gi.repository import Gtk
 from gi.repository import GLib
 from gi.repository import GtkSource
 
-# Application imports
-from libs.mixins.observable_mixin import ObservableMixin
-
-from .mixins.source_view_events_mixin import SourceViewEventsMixin
 from .mixins.source_view_dnd_mixin import SourceViewDnDMixin
 
-from .source_files_manager import SourceFilesManager
-from .completion_manager import CompletionManager
-from .command_system import CommandSystem
-from .key_mapper import KeyMapper
 
 
-
-class SourceView(GtkSource.View, ObservableMixin, SourceViewEventsMixin, SourceViewDnDMixin):
+class SourceView(GtkSource.View, SourceViewDnDMixin):
     def __init__(self):
         super(SourceView, self).__init__()
 
-        self.observers            = []
         self._cut_temp_timeout_id = None
         self._cut_buffer          = ""
 
-        self.sibling_right = None
-        self.sibling_left  = None
+        self.sibling_right        = None
+        self.sibling_left         = None
 
         self._setup_styles()
         self._setup_signals()
@@ -63,39 +53,14 @@ class SourceView(GtkSource.View, ObservableMixin, SourceViewEventsMixin, SourceV
         self.set_highlight_current_line(True)
 
     def _setup_signals(self):
-        self.map_id =  self.connect("map", self._init_map)
-
-        self.connect("focus-in-event", self._focus_in_event)
         self.connect("drag-data-received", self._on_drag_data_received)
-        self.connect("move-cursor", self._move_cursor)
-        self.connect("key-press-event", self._key_press_event)
-        self.connect("key-release-event", self._key_release_event)
-        self.connect("button-press-event", self._button_press_event)
-        self.connect("button-release-event", self._button_release_event)
 
     def _subscribe_to_events(self):
         ...
 
     def _load_widgets(self):
-        self._set_up_dnd()
-        event_system.emit("register-view-to-tabs-widget", (self,))
-
-    def _init_map(self, view):
-        self.disconnect(self.map_id)
-        del self.map_id
-
-        GLib.idle_add(self._init_show)
-
-    def _init_show(self):
         self.language_manager     = GtkSource.LanguageManager()
         self.style_scheme_manager = GtkSource.StyleSchemeManager()
-
-        self.key_mapper           = KeyMapper()
-        self.command              = CommandSystem()
-        self.completion           = CompletionManager()
-
-        self.command.set_data(self)
-        self.completion.set_completer( self.get_completion() )
 
         self.style_scheme_manager.append_search_path(
             f"{settings_manager.path_manager.get_home_config_path()}/code_styles"
@@ -104,18 +69,7 @@ class SourceView(GtkSource.View, ObservableMixin, SourceViewEventsMixin, SourceV
             f"{settings_manager.settings.theming.syntax_theme}"
         )
 
-        self.command.exec("new_file")
-
-        if not self.sibling_right: return
-
-        self.grab_focus()
-        self.command.exec("load_start_files")
-
-        return False
-
-    def set_files_manager(self, files_manager: SourceFilesManager):
-        self.files_manager = files_manager
-        self.files_manager.add_observer(self)
+        self._set_up_dnd()
 
     def clear_temp_cut_buffer_delayed(self):
         if self._cut_temp_timeout_id:

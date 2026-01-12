@@ -12,18 +12,21 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from libs.mixins.observable_mixin import ObservableMixin
-from libs.dto.code_event import CodeEvent
+from libs.dto.code import (
+    CodeEvent,
+    TextChangedEvent,
+    TextInsertedEvent,
+    FilePathSetEvent,
+    ModifiedChangedEvent
+)
 
 from .source_buffer import SourceBuffer
 
 
 
-class SourceFile(GtkSource.File, ObservableMixin):
+class SourceFile(GtkSource.File):
     def __init__(self):
         super(SourceFile, self).__init__()
-
-        self.observers            = []
 
         self.encoding: str        = "UTF-8"
         self.fname: str           = "buffer"
@@ -43,24 +46,21 @@ class SourceFile(GtkSource.File, ObservableMixin):
             self._modified_changed
         )
 
+    def _changed(self, buffer: SourceBuffer):
+        event        = TextChangedEvent()
+        event.file   = self
+        event.buffer = buffer
+
+        self.emit(event)
 
     def _insert_text(self, buffer: SourceBuffer, location: Gtk.TextIter,
         text: str, length: int
     ):
-        event        = CodeEvent()
-        event.etype  = "insert_text"
+        event        = TextInsertedEvent()
         event.file   = self
         event.buffer = buffer
 
-        self.notify_observers(event)
-
-    def _changed(self, buffer: SourceBuffer):
-        event        = CodeEvent()
-        event.etype  = "changed"
-        event.file   = self
-        event.buffer = buffer
-
-        self.notify_observers(event)
+        self.emit(event)
 
     def _mark_set(self, buffer: SourceBuffer, location: Gtk.TextIter,
         mark: Gtk.TextMark
@@ -70,16 +70,15 @@ class SourceFile(GtkSource.File, ObservableMixin):
         # event.file   = self
         # event.buffer = buffer
 
-        # self.notify_observers(event)
+        # self.emit(event)
         ...
 
     def _modified_changed(self, buffer: SourceBuffer):
-        event        = CodeEvent()
-        event.etype  = "modified_changed"
+        event        = ModifiedChangedEvent()
         event.file   = self
         event.buffer = buffer
 
-        self.notify_observers(event)
+        self.emit(event)
 
 
     def _write_file(self, gfile: Gio.File):
@@ -109,14 +108,13 @@ class SourceFile(GtkSource.File, ObservableMixin):
         if not gfile: return
         self.set_location(gfile)
 
-        self.fpath = gfile.get_path()
-        self.fname = gfile.get_basename()
+        self.fpath   = gfile.get_path()
+        self.fname   = gfile.get_basename()
 
-        event        = CodeEvent()
-        event.etype  = "set_path"
+        event        = FilePathSetEvent()
         event.file   = self
 
-        self.notify_observers(event)
+        self.emit(event)
 
     def save(self):
         self._write_file( self.get_location() )
@@ -131,7 +129,10 @@ class SourceFile(GtkSource.File, ObservableMixin):
         return file
 
     def close(self):
-        self.observers.clear()
-
-        del self.observers
         del self.buffer
+
+    def emit(self, event: CodeEvent):
+        ...
+
+    def emit_to(self, controller: str, event: CodeEvent):
+        ...

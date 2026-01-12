@@ -14,7 +14,8 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Get Current File Command")
+    logger.debug("Command: Get Current File")
 
-    buffer = view.get_buffer()
-    return view.files_manager.get_file(buffer)
+    file = view.command.get_file(view)
+
+    return file

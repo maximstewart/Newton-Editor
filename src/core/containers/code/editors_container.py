@@ -4,17 +4,17 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
+from gi.repository import GLib
 
 # Application imports
-from ...widgets.separator_widget import Separator
-from ...widgets.code.miniview_widget import MiniViewWidget
-from .paned_editors_container import PanedEditorsContainer
 
 
 
-class EditorsContainer(Gtk.Box):
-    def __init__(self):
+class EditorsContainer(Gtk.Paned):
+    def __init__(self, code_base: any):
         super(EditorsContainer, self).__init__()
+
+        self.code_base = code_base
 
         self._setup_styling()
         self._setup_signals()
@@ -23,16 +23,54 @@ class EditorsContainer(Gtk.Box):
 
 
     def _setup_styling(self):
-        ...
+        self.ctx = self.get_style_context()
+        self.ctx.add_class("paned-editors-container")
+
+        self.set_hexpand(True)
+        self.set_vexpand(True)
+        self.set_wide_handle(True)
 
     def _setup_signals(self):
-        ...
+        self.map_id = self.connect("map", self._init_map)
+        # self.map_id = self.connect("show", self._init_map)
 
     def _subscribe_to_events(self):
         ...
 
     def _load_widgets(self):
-        self.add( Separator("separator_left") )
-        self.add( PanedEditorsContainer() )
-        self.add( Separator("separator_right") )
-        self.add( MiniViewWidget() )
+        self.scrolled_win1, \
+        self.scrolled_win2 = self._create_views()
+
+        self.add1(self.scrolled_win1)
+        self.add2(self.scrolled_win2)
+
+    def _create_views(self):
+        scrolled_win1 = Gtk.ScrolledWindow()
+        scrolled_win2 = Gtk.ScrolledWindow()
+
+        source_view1  = self.code_base.create_source_view()
+        source_view2  = self.code_base.create_source_view()
+
+        source_view1.sibling_right = source_view2
+        source_view2.sibling_left  = source_view1
+
+        scrolled_win1.add( source_view1 )
+        scrolled_win2.add( source_view2 )
+
+        return scrolled_win1, scrolled_win2
+
+    def _init_map(self, view):
+        def _first_show_init():
+            self.disconnect(self.map_id)
+            del self.map_id
+
+            self.set_position(
+                (self.get_allocated_width() / 2) + 250
+            )
+
+            self.code_base.first_map_load()
+
+            del self.code_base
+            return False
+
+        GLib.timeout_add(225, _first_show_init)

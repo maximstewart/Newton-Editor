@@ -9,14 +9,13 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from ..source_file import SourceFile
 
 
 
 def execute(
     view: GtkSource.View,
 ):
-    logger.debug("Load Start File(s) Command")
+    logger.debug("Command: Load Start File(s)")
 
     starting_files = settings_manager.get_starting_files()
 
@@ -25,8 +24,7 @@ def execute(
     file   = starting_files.pop()
     file   = file.replace("FILE|", "")
     gfile  = Gio.File.new_for_path(file)
-    buffer = view.get_buffer()
-    file   = view.files_manager.get_file(buffer)
+    file   = view.command.get_file(view)
 
     view.command.exec_with_args(
         "load_file",

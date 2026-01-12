@@ -3,7 +3,18 @@
 # Lib imports
 
 # Application imports
+from libs.dto.code import (
+    CodeEvent,
+    RequestCompletionEvent,
+    GetFileEvent,
+    GetSwapFileEvent,
+    AddNewFileEvent,
+    RemoveFileEvent,
+)
+
 from . import commands
+
+from .source_view import SourceView
 
 
 
@@ -32,3 +43,55 @@ class CommandSystem:
 
         method = getattr(commands, command)
         return method.execute(*args)
+
+
+    def emit(self, event: CodeEvent):
+        """ Monky patch 'emit' from command controller... """
+        ...
+
+    def emit_to(self, controller: str, event: CodeEvent):
+        """ Monky patch 'emit' from command controller... """
+        ...
+
+
+    def get_file(self, view: SourceView):
+        event        = GetFileEvent()
+        event.view   = view
+        event.buffer = view.get_buffer()
+
+        self.emit_to("files", event)
+
+        return event.response
+
+    def get_swap_file(self, view: SourceView):
+        event        = GetSwapFileEvent()
+        event.view   = self
+        event.buffer = view.get_buffer()
+
+        self.emit_to("files", event)
+
+        return event.response
+
+    def new_file(self, view: SourceView):
+        event       = AddNewFileEvent()
+        event.view  = view
+
+        self.emit_to("files", event)
+
+        return event.response
+
+    def remove_file(self, view: SourceView):
+        event        = RemoveFileEvent()
+        event.view   = view
+        event.buffer = view.get_buffer()
+
+        self.emit_to("files", event)
+
+        return event.response
+
+    def request_completion(self, view: SourceView):
+        event        = RequestCompletionEvent()
+        event.view   = view
+        event.buffer = view.get_buffer()
+
+        self.emit_to("completion", event)

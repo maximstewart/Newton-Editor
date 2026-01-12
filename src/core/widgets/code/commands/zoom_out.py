@@ -14,7 +14,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Zoom Out Command")
+    logger.debug("Command: Zoom Out")
 
     ctx = view.get_style_context()
     if view.zoom_level > 1:

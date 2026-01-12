@@ -10,6 +10,7 @@ from gi.repository import Gio
 
 # Application imports
 from ..source_file import SourceFile
+from ..command_helpers import set_language_and_style
 
 
 
@@ -18,15 +19,10 @@ def execute(
     gfile: Gio.File,
     file: SourceFile = None,
 ):
-    logger.debug("Load File Command")
+    logger.debug("Command: Load File")
     if not file:
-        file = view.files_manager.new()
+        file = view.command.new_file(view)
 
     file.load_path(gfile)
 
-    language   = view.language_manager \
-                       .guess_language(file.fname, None)
-    file.ftype = language
-
-    file.buffer.set_language(language)
-    file.buffer.set_style_scheme(view.syntax_theme)
+    set_language_and_style(view, file)

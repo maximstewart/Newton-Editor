@@ -14,7 +14,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Set Focus Border Command")
+    logger.debug("Command: Set Focus Border")
     ctx = view.get_parent().get_style_context()
     ctx.add_class("source-view-focused")
 

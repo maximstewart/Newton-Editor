@@ -14,7 +14,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Get Text Command")
+    logger.debug("Command: Get Text")
 
     buffer = view.get_buffer()
     start_itr, end_itr = buffer.get_bounds()

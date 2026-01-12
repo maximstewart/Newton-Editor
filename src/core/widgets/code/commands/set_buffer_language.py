@@ -15,9 +15,9 @@ def execute(
     view: GtkSource.View,
     language: str
 ):
-    logger.debug("Set Buffer Language Command")
+    logger.debug("Command: Set Buffer Language")
 
-    buffer = editor.get_buffer()
+    buffer = view.get_buffer()
     buffer.set_language(
         view.language_manager.get_language(language)
     )

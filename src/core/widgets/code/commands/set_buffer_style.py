@@ -15,9 +15,9 @@ def execute(
     view: GtkSource.View,
     style: str
 ):
-    logger.debug("Set Buffer Style Command")
+    logger.debug("Command: Set Buffer Style")
 
-    buffer = editor.get_buffer()
+    buffer = view.get_buffer()
     buffer.set_style_scheme(
         view.style_scheme_manager.get_scheme(style)
     )

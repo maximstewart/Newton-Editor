@@ -14,7 +14,7 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Buffer Undo Command")
+    logger.debug("Command: Buffer Undo")
 
     buffer       = view.get_buffer()
     undo_manager = buffer.get_undo_manager()

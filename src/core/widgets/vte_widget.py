@@ -70,16 +70,17 @@ class VteWidget(Vte.Terminal):
 
         # Note:  '-->:' is used as a delimiter to split on to get command actual.
         #              !!!  DO NOT REMOVE UNLESS CODE UPDATED ACCORDINGLY  !!!
+        # Also, KEEP the <space> prefix in commands to keep from inserting to bash history.
         startup_cmds = [
-            "env -i /bin/bash --noprofile --norc\n",
-            "export TERM='xterm-256color'\n",
-            "export LC_ALL=C\n",
-            "export XDG_RUNTIME_DIR='/run/user/1000'\n",
-            "export DISPLAY=:0\n",
-            f"export XAUTHORITY='{settings_manager.path_manager.get_home_path()}/.Xauthority'\n",
-            f"\nexport HOME='{settings_manager.path_manager.get_home_path()}'\n",
-            "export PS1='\\h@\\u \\W -->: '\n",
-            "clear\n"
+            " env -i /bin/bash --noprofile --norc\n",
+            " export TERM='xterm-256color'\n",
+            " export LC_ALL=C\n",
+            " export XDG_RUNTIME_DIR='/run/user/1000'\n",
+            " export DISPLAY=:0\n",
+            f" export XAUTHORITY='{settings_manager.path_manager.get_home_path()}/.Xauthority'\n",
+            f" \nexport HOME='{settings_manager.path_manager.get_home_path()}'\n",
+            " export PS1='\\h@\\u \\W -->: '\n",
+            " clear\n"
         ]
 
         for i in startup_cmds:

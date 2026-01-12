@@ -14,6 +14,6 @@ from gi.repository import GtkSource
 def execute(
     view: GtkSource.View  = None
 ):
-    logger.debug("Has Focus Command")
+    logger.debug("Command: Has Focus")
     ctx = view.get_parent().get_style_context()
     return ctx.has_class("source-view-focused")
