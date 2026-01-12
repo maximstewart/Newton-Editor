@@ -3,20 +3,8 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    FilePathSetEvent,
-    GetSwapFileEvent,
-    GetFileEvent,
-    AddNewFileEvent,
-    PopFileEvent,
-    SwapFileEvent,
-    RemoveFileEvent,
-    AddedNewFileEvent,
-    SwappedFileEvent,
-    PoppedFileEvent,
-    RemovedFileEvent
-)
+from libs.dto.code import CodeEvent
+from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..source_file import SourceFile
 from ..source_buffer import SourceBuffer
@@ -31,20 +19,20 @@ class FilesController(ControllerBase, list):
 
 
     def _controller_message(self, event: CodeEvent):
-        if isinstance(event, AddNewFileEvent):
+        if isinstance(event, Event_Factory_Types.AddNewFileEvent):
             self.new_file(event)
-        elif isinstance(event, SwapFileEvent):
+        elif isinstance(event, Event_Factory_Types.SwapFileEvent):
             self.swap_file(event)
-        elif isinstance(event, PopFileEvent):
+        elif isinstance(event, Event_Factory_Types.PopFileEvent):
             self.pop_file(event)
-        elif isinstance(event, RemoveFileEvent):
+        elif isinstance(event, Event_Factory_Types.RemoveFileEvent):
             self.remove_file(event)
-        elif isinstance(event, GetFileEvent):
+        elif isinstance(event, Event_Factory_Types.GetFileEvent):
             self.get_file(event)
-        elif isinstance(event, GetSwapFileEvent):
+        elif isinstance(event, Event_Factory_Types.GetSwapFileEvent):
             self.get_swap_file(event)
 
-    def get_file(self, event: GetFileEvent):
+    def get_file(self, event: Event_Factory_Types.GetFileEvent):
         if not event.buffer: return
 
         for file in self:
@@ -54,7 +42,7 @@ class FilesController(ControllerBase, list):
 
             return file
 
-    def get_swap_file(self, event: GetSwapFileEvent):
+    def get_swap_file(self, event: Event_Factory_Types.GetSwapFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -68,23 +56,25 @@ class FilesController(ControllerBase, list):
 
             return swapped_file, next_file
 
-    def new_file(self, event: AddNewFileEvent):
+    def new_file(self, event: Event_Factory_Types.AddNewFileEvent):
         file           = SourceFile()
         file.emit      = self.emit
         file.emit_to   = self.emit_to
 
         event.response = file
 
-        eve            = AddedNewFileEvent()
-        eve.view       = event.view
-        eve.file       = file
+        eve = Event_Factory.create_event(
+            "added_new_file",
+            view = event.view,
+            file = file
+        )
         self.message_all(eve)
 
         self.append(file)
 
         return file
 
-    def swap_file(self, event: GetSwapFileEvent):
+    def swap_file(self, event: Event_Factory_Types.GetSwapFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -98,7 +88,7 @@ class FilesController(ControllerBase, list):
 
             return swapped_file, next_file
 
-    def pop_file(self, event: PopFileEvent):
+    def pop_file(self, event: Event_Factory_Types.PopFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -110,15 +100,17 @@ class FilesController(ControllerBase, list):
 
             event.response  = [popped_file, next_file]
 
-            eve           = PoppedFileEvent()
-            eve.view      = view
-            eve.file      = popped_file
-            eve.next_file = next_file
-            self.message_all(eve)
+        eve = Event_Factory.create_event(
+            "popped_file",
+            view      = view,
+            file      = popped_file,
+            next_file = next_file
+        )
+        self.message_all(eve)
 
-            return popped_file, next_file
+        return popped_file, next_file
 
-    def remove_file(self, event: RemoveFileEvent):
+    def remove_file(self, event: Event_Factory_Types.RemoveFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -129,11 +121,13 @@ class FilesController(ControllerBase, list):
 
             event.response   = next_file
 
-            eve              = RemovedFileEvent()
-            eve.view         = event.view
-            eve.ignore_focus = True
-            eve.file         = file
-            eve.next_file    = next_file
+            eve = Event_Factory.create_event(
+                "removed_file",
+                view         = event.view,
+                ignore_focus = True,
+                file         = file,
+                next_file    = next_file
+            )
             self.message_all(eve)
 
             self.remove(file)

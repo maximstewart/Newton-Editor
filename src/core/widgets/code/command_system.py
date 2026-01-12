@@ -3,14 +3,8 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    RequestCompletionEvent,
-    GetFileEvent,
-    GetSwapFileEvent,
-    AddNewFileEvent,
-    RemoveFileEvent,
-)
+from libs.dto.code import CodeEvent
+from .event_factory import Event_Factory, Event_Factory_Types
 
 from . import commands
 
@@ -55,43 +49,47 @@ class CommandSystem:
 
 
     def get_file(self, view: SourceView):
-        event        = GetFileEvent()
-        event.view   = view
-        event.buffer = view.get_buffer()
+        event = Event_Factory.create_get_file(
+            view   = view,
+            buffer = view.get_buffer()
+        )
 
         self.emit_to("files", event)
 
         return event.response
 
     def get_swap_file(self, view: SourceView):
-        event        = GetSwapFileEvent()
-        event.view   = self
-        event.buffer = view.get_buffer()
+        event = Event_Factory.create_get_swap_file(
+            view   = view,
+            buffer = view.get_buffer()
+        )
 
         self.emit_to("files", event)
 
         return event.response
 
     def new_file(self, view: SourceView):
-        event       = AddNewFileEvent()
-        event.view  = view
+        event = Event_Factory.create_event("add_new_file", view = view)
 
         self.emit_to("files", event)
 
         return event.response
 
     def remove_file(self, view: SourceView):
-        event        = RemoveFileEvent()
-        event.view   = view
-        event.buffer = view.get_buffer()
+        event = Event_Factory.create_remove_file(
+            view   = view,
+            buffer = view.get_buffer()
+        )
 
         self.emit_to("files", event)
 
         return event.response
 
     def request_completion(self, view: SourceView):
-        event        = RequestCompletionEvent()
-        event.view   = view
-        event.buffer = view.get_buffer()
+        event = Event_Factory.create_event(
+            "request_completion",
+            view   = view,
+            buffer = view.get_buffer()
+        )
 
         self.emit_to("completion", event)

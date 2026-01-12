@@ -3,16 +3,8 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    FocusedViewEvent,
-    FilePathSetEvent,
-    RemoveFileEvent,
-    SetActiveFileEvent,
-    AddedNewFileEvent,
-    PoppedFileEvent,
-    RemovedFileEvent
-)
+from libs.dto.code import CodeEvent
+from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..tabs_widget import TabsWidget
 from ..tab_widget import TabWidget
@@ -32,30 +24,32 @@ class TabsController(ControllerBase):
 
 
     def _controller_message(self, event: CodeEvent):
-        if isinstance(event, FocusedViewEvent):
+        if isinstance(event, Event_Factory_Types.FocusedViewEvent):
             self.active_view = event.view
-        elif isinstance(event, FilePathSetEvent):
+        elif isinstance(event, Event_Factory_Types.FilePathSetEvent):
             self.update_tab_label(event)
-        elif isinstance(event, AddedNewFileEvent):
+        elif isinstance(event, Event_Factory_Types.AddedNewFileEvent):
             self.add_tab(event)
-        elif isinstance(event, PoppedFileEvent):
+        elif isinstance(event, Event_Factory_Types.PoppedFileEvent):
             ...
-        elif isinstance(event, RemovedFileEvent):
+        elif isinstance(event, Event_Factory_Types.RemovedFileEvent):
             self.remove_tab(event)
     
     def get_tabs_widget(self):
         return self.tabs_widget
 
-    def update_tab_label(self, event: FilePathSetEvent):
+    def update_tab_label(self, event: Event_Factory_Types.FilePathSetEvent):
         for tab in self.tabs_widget.get_children():
             if not event.file == tab.file: continue
             tab.label.set_label(event.file.fname)
             break
 
-    def add_tab(self, event: AddedNewFileEvent):
+    def add_tab(self, event: Event_Factory_Types.AddedNewFileEvent):
         def set_active_tab(tab, eve, file):
-            event        = SetActiveFileEvent()
-            event.buffer = tab.get_parent().file.buffer
+            event = Event_Factory.create_event(
+                "set_active_file",
+                buffer = tab.get_parent().file.buffer
+            )
 
             self.active_view.set_buffer(
                 tab.get_parent().file.buffer
@@ -64,8 +58,10 @@ class TabsController(ControllerBase):
             self.message_all(event)
 
         def close_tab(tab, eve, file):
-            event        = RemoveFileEvent()
-            event.buffer = tab.get_parent().file.buffer
+            event = Event_Factory.create_event(
+                "remove_file",
+                buffer = tab.get_parent().file.buffer
+            )
 
             self.message_all(event)
 
@@ -78,7 +74,7 @@ class TabsController(ControllerBase):
         self.tabs_widget.add(tab)
         tab.show()
 
-    def remove_tab(self, event: RemovedFileEvent):
+    def remove_tab(self, event: Event_Factory_Types.RemovedFileEvent):
         for tab in self.tabs_widget.get_children():
             if not event.file == tab.file: continue
 

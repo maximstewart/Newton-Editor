@@ -3,16 +3,7 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    GetCommandSystemEvent,
-    CursorMovedEvent,
-    TextChangedEvent,
-    FocusedViewEvent,
-    SetActiveFileEvent,
-    RemoveFileEvent,
-    RemovedFileEvent
-)
+from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..command_system import CommandSystem
 from ..key_mapper import KeyMapper
@@ -32,7 +23,7 @@ class SourceViewsController(ControllerBase, list):
 
 
     def get_command_system(self):
-        event = GetCommandSystemEvent()
+        event = Event_Factory.create_event("get_command_system")
         self.message_to("commands", event)
         command = event.response
 
@@ -49,10 +40,10 @@ class SourceViewsController(ControllerBase, list):
         self.append(source_view)
         return source_view
 
-    def _controller_message(self, event: CodeEvent):
-        if isinstance(event, RemovedFileEvent):
+    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
+        if isinstance(event, Event_Factory_Types.RemovedFileEvent):
             self._remove_file(event)
-        if isinstance(event, TextChangedEvent):
+        elif isinstance(event, Event_Factory_Types.TextChangedEvent):
             self.active_view.command.exec("update_info_bar")
 
     def _map_signals(self, source_view: SourceView):
@@ -70,21 +61,21 @@ class SourceViewsController(ControllerBase, list):
         view.command.exec("set_focus_border")
         view.command.exec("update_info_bar")
 
-        event        = FocusedViewEvent()
-        event.view   = view
+        event = Event_Factory.create_focused_view(view = view)
         self.emit(event)
 
     def _move_cursor(self, view, step, count, extend_selection):
-        event        = CursorMovedEvent()
         buffer       = view.get_buffer()
         iter         = buffer.get_iter_at_mark( buffer.get_insert() )
         line         = iter.get_line()
         char         = iter.get_line_offset()
 
-        event.view   = view
-        event.buffer = buffer 
-        event.line   = line
-        event.char   = char
+        event = Event_Factory.create_cursor_moved(
+            view   = view,
+            buffer = buffer,
+            line   = line,
+            char   = char
+        )
 
         self.emit(event)
 
@@ -102,7 +93,7 @@ class SourceViewsController(ControllerBase, list):
 
         view.command.exec(command)
 
-        return False
+        return True
 
     def _key_release_event(self, view, eve):
         command = self.key_mapper._key_release_event(eve)
@@ -110,9 +101,9 @@ class SourceViewsController(ControllerBase, list):
 
         view.command.exec(command)
 
-        return False
+        return True
 
-    def _remove_file(self, event: RemovedFileEvent):
+    def _remove_file(self, event: Event_Factory_Types.RemovedFileEvent):
         for view in self:
             if not event.file.buffer == view.get_buffer(): continue
             if not event.next_file:

@@ -12,13 +12,8 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    TextChangedEvent,
-    TextInsertedEvent,
-    FilePathSetEvent,
-    ModifiedChangedEvent
-)
+from libs.dto.code import CodeEvent
+from .event_factory import Event_Factory, Event_Factory_Types
 
 from .source_buffer import SourceBuffer
 
@@ -47,19 +42,18 @@ class SourceFile(GtkSource.File):
         )
 
     def _changed(self, buffer: SourceBuffer):
-        event        = TextChangedEvent()
-        event.file   = self
-        event.buffer = buffer
-
+        event = Event_Factory.create_text_changed(buffer = buffer)
+        event.file = self
         self.emit(event)
 
     def _insert_text(self, buffer: SourceBuffer, location: Gtk.TextIter,
         text: str, length: int
     ):
-        event        = TextInsertedEvent()
-        event.file   = self
-        event.buffer = buffer
-
+        event = Event_Factory.create_event(
+            "text_inserted",
+            file   = self,
+            buffer = buffer
+        )
         self.emit(event)
 
     def _mark_set(self, buffer: SourceBuffer, location: Gtk.TextIter,
@@ -74,12 +68,11 @@ class SourceFile(GtkSource.File):
         ...
 
     def _modified_changed(self, buffer: SourceBuffer):
-        event        = ModifiedChangedEvent()
-        event.file   = self
-        event.buffer = buffer
+        event = Event_Factory.create_modified_changed(
+            file = self, buffer = buffer
+        )
 
         self.emit(event)
-
 
     def _write_file(self, gfile: Gio.File):
         if not gfile: return
@@ -111,9 +104,7 @@ class SourceFile(GtkSource.File):
         self.fpath   = gfile.get_path()
         self.fname   = gfile.get_basename()
 
-        event        = FilePathSetEvent()
-        event.file   = self
-
+        event = Event_Factory.create_event("file_path_set", file = self)
         self.emit(event)
 
     def save(self):
