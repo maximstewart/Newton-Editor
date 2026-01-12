@@ -88,7 +88,10 @@ class SourceViewsController(ControllerBase, list):
         self.active_view.command.exec("update_info_bar")
 
     def _key_press_event(self, view, eve):
-        command = self.key_mapper._key_press_event(eve)
+        command   = self.key_mapper._key_press_event(eve)
+        is_future = self.key_mapper._key_release_event(eve)
+
+        if is_future: return True
         if not command: return False
 
         view.command.exec(command)
@@ -97,6 +100,9 @@ class SourceViewsController(ControllerBase, list):
 
     def _key_release_event(self, view, eve):
         command = self.key_mapper._key_release_event(eve)
+        is_past = self.key_mapper._key_press_event(eve)
+
+        if is_past: return True
         if not command: return False
 
         view.command.exec(command)

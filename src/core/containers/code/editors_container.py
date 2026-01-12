@@ -32,7 +32,6 @@ class EditorsContainer(Gtk.Paned):
 
     def _setup_signals(self):
         self.map_id = self.connect("map", self._init_map)
-        # self.map_id = self.connect("show", self._init_map)
 
     def _subscribe_to_events(self):
         ...
@@ -41,8 +40,8 @@ class EditorsContainer(Gtk.Paned):
         self.scrolled_win1, \
         self.scrolled_win2 = self._create_views()
 
-        self.add1(self.scrolled_win1)
-        self.add2(self.scrolled_win2)
+        self.pack1( self.scrolled_win1, True, True )
+        self.pack2( self.scrolled_win2, True, True )
 
     def _create_views(self):
         scrolled_win1 = Gtk.ScrolledWindow()
@@ -64,13 +63,9 @@ class EditorsContainer(Gtk.Paned):
             self.disconnect(self.map_id)
             del self.map_id
 
-            self.set_position(
-                (self.get_allocated_width() / 2) + 250
-            )
-
             self.code_base.first_map_load()
 
             del self.code_base
             return False
 
-        GLib.timeout_add(225, _first_show_init)
+        GLib.timeout_add(100, _first_show_init)
