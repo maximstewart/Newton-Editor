@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code.code_event import CodeEvent
+from ..event_factory import Event_Factory_Types
 
 
 
@@ -17,8 +17,8 @@ class ControllerContext:
         super(ControllerContext, self).__init__()
 
 
-    def message_to(self, name: str, event: CodeEvent):
+    def message_to(self, name: str, event: Event_Factory_Types.CodeEvent):
         raise ControllerContextException("Controller Context 'message_to' must be overriden by Controller Manager...")
 
-    def message_all(self, event: CodeEvent):
+    def message_all(self, event: Event_Factory_Types.CodeEvent):
         raise ControllerContextException("Controller Context 'message_all' must be overriden by Controller Manager...")
