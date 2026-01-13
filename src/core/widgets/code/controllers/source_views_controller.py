@@ -10,7 +10,7 @@ from ..key_mapper import KeyMapper
 
 from ..source_view import SourceView
 
-from .controller_base import ControllerBase
+from .foundation.controller_base import ControllerBase
 
 
 

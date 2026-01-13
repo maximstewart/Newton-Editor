@@ -9,7 +9,7 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from ..source_file import SourceFile
+from ...source_file import SourceFile
 from ..command_helpers import set_language_and_style
 
 

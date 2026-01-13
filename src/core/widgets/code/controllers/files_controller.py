@@ -3,13 +3,12 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import CodeEvent
 from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..source_file import SourceFile
 from ..source_buffer import SourceBuffer
 
-from .controller_base import ControllerBase
+from .foundation.controller_base import ControllerBase
 
 
 
@@ -18,7 +17,7 @@ class FilesController(ControllerBase, list):
         super(FilesController, self).__init__()
 
 
-    def _controller_message(self, event: CodeEvent):
+    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
         if isinstance(event, Event_Factory_Types.AddNewFileEvent):
             self.new_file(event)
         elif isinstance(event, Event_Factory_Types.SwapFileEvent):

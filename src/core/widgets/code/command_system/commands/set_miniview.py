@@ -6,12 +6,8 @@ import gi
 gi.require_version('GtkSource', '4')
 
 from gi.repository import GtkSource
-from gi.repository import Gio
 
 # Application imports
-from libs.dto.code import FocusedViewEvent
-
-from ..source_file import SourceFile
 
 
 

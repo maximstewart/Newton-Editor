@@ -12,7 +12,6 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from libs.dto.code import CodeEvent
 from .event_factory import Event_Factory, Event_Factory_Types
 
 from .source_buffer import SourceBuffer
@@ -122,8 +121,8 @@ class SourceFile(GtkSource.File):
     def close(self):
         del self.buffer
 
-    def emit(self, event: CodeEvent):
+    def emit(self, event: Event_Factory_Types.CodeEvent):
         ...
 
-    def emit_to(self, controller: str, event: CodeEvent):
+    def emit_to(self, controller: str, event: Event_Factory_Types.CodeEvent):
         ...

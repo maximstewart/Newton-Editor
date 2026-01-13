@@ -29,10 +29,10 @@ class EventFactory(Singleton):
         event = event_class()
 
         for key, value in kwargs.items():
-            if hasattr(event, key):
-                setattr(event, key, value)
-            else:
+            if not hasattr(event, key):
                 raise ValueError(f"Event class {event_class.__name__} has no attribute '{key}'")
+
+            setattr(event, key, value)
 
         return event
 
@@ -46,9 +46,11 @@ class EventFactory(Singleton):
         logger.debug(f"Auto-registered {len(self._event_classes)} event types")
 
     def _is_valid_event_class(self, obj) -> bool:
-        return (inspect.isclass(obj) and 
-                issubclass(obj, CodeEvent) and 
-                obj != CodeEvent)
+        return (
+            inspect.isclass(obj)       and
+            issubclass(obj, CodeEvent) and
+            obj != CodeEvent
+        )
 
     def _class_name_to_event_type(self, class_name: str) -> str:
         base_name = class_name[:-5] if class_name.endswith('Event') else class_name

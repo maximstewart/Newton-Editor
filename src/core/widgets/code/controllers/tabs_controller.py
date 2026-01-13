@@ -3,7 +3,6 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import CodeEvent
 from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..tabs_widget import TabsWidget
@@ -11,7 +10,7 @@ from ..tab_widget import TabWidget
 
 from ..source_view import SourceView
 
-from .controller_base import ControllerBase
+from .foundation.controller_base import ControllerBase
 
 
 
@@ -23,7 +22,7 @@ class TabsController(ControllerBase):
         self.tabs_widget: TabsWidget = TabsWidget()
 
 
-    def _controller_message(self, event: CodeEvent):
+    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
         if isinstance(event, Event_Factory_Types.FocusedViewEvent):
             self.active_view = event.view
         elif isinstance(event, Event_Factory_Types.FilePathSetEvent):

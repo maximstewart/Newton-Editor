@@ -9,7 +9,6 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from ..source_file import SourceFile
 
 
 

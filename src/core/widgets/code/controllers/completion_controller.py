@@ -8,19 +8,12 @@ from gi.repository import GLib
 from gi.repository import GtkSource
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    FocusedViewEvent,
-    RequestCompletionEvent,
-    CursorMovedEvent,
-    TextChangedEvent,
-    TextInsertedEvent
-)
+from ..event_factory import Event_Factory, Event_Factory_Types
 
 from ..completion_providers.example_completion_provider import ExampleCompletionProvider
 from ..completion_providers.lsp_completion_provider import LSPCompletionProvider
 
-from .controller_base import ControllerBase
+from .foundation.controller_base import ControllerBase
 
 
 
@@ -33,17 +26,17 @@ class CompletionController(ControllerBase):
         self._lsp_provider: LSPCompletionProvider = LSPCompletionProvider()
 
 
-    def _controller_message(self, event: CodeEvent):
-        if isinstance(event, FocusedViewEvent):
+    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
+        if isinstance(event, Event_Factory_Types.FocusedViewEvent):
             self._completor = event.view.get_completion()
 
             if not self._timeout_id: return
 
             GLib.source_remove(self._timeout_id)
             self._timeout_id = None
-        elif isinstance(event, RequestCompletionEvent):
+        elif isinstance(event, Event_Factory_Types.RequestCompletionEvent):
             self.request_completion()
-        # elif isinstance(event, TextInsertedEvent):
+        # elif isinstance(event, Event_Factory_Types.TextInsertedEvent):
         #     self.request_completion()
 
     def _process_request_completion(self):

@@ -9,7 +9,7 @@ gi.require_version('GtkSource', '4')
 from gi.repository import GtkSource
 
 # Application imports
-from ..source_file import SourceFile
+from ...source_file import SourceFile
 from ..command_helpers import update_info_bar_if_focused
 
 

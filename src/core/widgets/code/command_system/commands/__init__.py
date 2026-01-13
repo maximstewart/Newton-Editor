@@ -1,5 +1,5 @@
 """
-    Commands Package
+    Code Commands Package
 """
 
 import pkgutil

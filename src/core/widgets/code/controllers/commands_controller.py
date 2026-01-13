@@ -3,15 +3,11 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import (
-    CodeEvent,
-    GetCommandSystemEvent,
-    FocusedViewEvent
-)
+from ..event_factory import Event_Factory_Types
 
 from ..command_system import CommandSystem
 
-from .controller_base import ControllerBase
+from .foundation.controller_base import ControllerBase
 
 
 
@@ -20,8 +16,8 @@ class CommandsController(ControllerBase, list):
         super(CommandsController, self).__init__()
 
 
-    def _controller_message(self, event: CodeEvent):
-        if isinstance(event, GetCommandSystemEvent):
+    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
+        if isinstance(event, Event_Factory_Types.GetCommandSystemEvent):
             event.response = self.get_command_system()
 
     def get_command_system(self):

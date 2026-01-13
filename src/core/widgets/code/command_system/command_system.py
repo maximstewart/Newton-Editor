@@ -3,12 +3,10 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code import CodeEvent
-from .event_factory import Event_Factory, Event_Factory_Types
+from ..event_factory import Event_Factory, Event_Factory_Types
+from ..source_view import SourceView
 
 from . import commands
-
-from .source_view import SourceView
 
 
 
@@ -39,11 +37,11 @@ class CommandSystem:
         return method.execute(*args)
 
 
-    def emit(self, event: CodeEvent):
+    def emit(self, event: Event_Factory_Types.CodeEvent):
         """ Monky patch 'emit' from command controller... """
         ...
 
-    def emit_to(self, controller: str, event: CodeEvent):
+    def emit_to(self, controller: str, event: Event_Factory_Types.CodeEvent):
         """ Monky patch 'emit' from command controller... """
         ...
 
