@@ -6,9 +6,9 @@ import re
 # Lib imports
 
 # Application imports
-from libs.singleton import Singleton
-from libs.dto.code import CodeEvent
-from libs.dto import code
+from ..singleton import Singleton
+from .dto.code import CodeEvent
+from .dto import code
 
 
 

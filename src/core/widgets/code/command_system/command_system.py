@@ -3,7 +3,8 @@
 # Lib imports
 
 # Application imports
-from ..event_factory import Event_Factory, Event_Factory_Types
+from libs.code.event_factory import Event_Factory, Event_Factory_Types
+
 from ..source_view import SourceView
 
 from . import commands

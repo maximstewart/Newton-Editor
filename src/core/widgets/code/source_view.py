@@ -9,6 +9,7 @@ from gi.repository import Gtk
 from gi.repository import GLib
 from gi.repository import GtkSource
 
+# Application imports
 from .mixins.source_view_dnd_mixin import SourceViewDnDMixin
 
 

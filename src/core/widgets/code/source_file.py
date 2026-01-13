@@ -12,7 +12,7 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from .event_factory import Event_Factory, Event_Factory_Types
+from libs.code.event_factory import Event_Factory, Event_Factory_Types
 
 from .source_buffer import SourceBuffer
 

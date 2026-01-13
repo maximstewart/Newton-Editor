@@ -1,5 +1,5 @@
 """
-    DTO Class Package
+    Libs DTO(s) Package
 """
 
 from .event import Event

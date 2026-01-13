@@ -8,12 +8,11 @@ from gi.repository import GLib
 from gi.repository import GtkSource
 
 # Application imports
-from ..event_factory import Event_Factory, Event_Factory_Types
+from libs.code.event_factory import Event_Factory, Event_Factory_Types
+from libs.code.controllers.controller_base import ControllerBase
 
 from ..completion_providers.example_completion_provider import ExampleCompletionProvider
 from ..completion_providers.lsp_completion_provider import LSPCompletionProvider
-
-from .foundation.controller_base import ControllerBase
 
 
 

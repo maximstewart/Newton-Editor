@@ -3,12 +3,12 @@
 # Lib imports
 
 # Application imports
-from ..event_factory import Event_Factory, Event_Factory_Types
+from libs.code.event_factory import Event_Factory, Event_Factory_Types
+from libs.code.controllers.controller_base import ControllerBase
 
 from ..source_file import SourceFile
 from ..source_buffer import SourceBuffer
 
-from .foundation.controller_base import ControllerBase
 
 
 

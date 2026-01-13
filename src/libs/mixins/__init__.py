@@ -1,3 +1,3 @@
 """
-    Libs.Mixins Package
+    Libs Mixins Package
 """

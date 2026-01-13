@@ -5,10 +5,10 @@
 # Application imports
 from libs.singleton import Singleton
 
-from ..event_factory import Event_Factory_Types
+from libs.code.event_factory import Event_Factory_Types
 
-from .foundation.controller_base import ControllerBase
-from .foundation.controller_context import ControllerContext
+from libs.code.controllers.controller_base import ControllerBase
+from libs.code.controllers.controller_context import ControllerContext
 
 
 

@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
-from .event_factory import Event_Factory_Types
+from libs.code.event_factory import Event_Factory_Types
 
 from .source_view import SourceView
 from .source_file import SourceFile

@@ -5,7 +5,7 @@
 # Application imports
 from libs.singleton import Singleton
 
-from ...event_factory import Event_Factory_Types
+from ..event_factory import Event_Factory_Types
 
 from .emit_dispatcher import EmitDispatcher
 from .controller_context import ControllerContext
