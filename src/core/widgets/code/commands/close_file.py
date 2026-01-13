@@ -16,5 +16,5 @@ def execute(
     view: GtkSource.View  = None
 ):
     logger.debug("Command: Close File")
-    view.command.remove_file()
+    view.command.remove_file(view)
     update_info_bar_if_focused(view.command, view)
