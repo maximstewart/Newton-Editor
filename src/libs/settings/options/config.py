@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 # Application imports
 
 
-@dataclass
+@dataclass(slots = True)
 class Config:
     base_of_home: str                = ""
     hide_hidden_files: str           = "true"

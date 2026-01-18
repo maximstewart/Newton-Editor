@@ -6,7 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
-from libs.code.event_factory import Event_Factory_Types
+from libs.event_factory import Code_Event_Types
 
 from .source_view import SourceView
 from .source_file import SourceFile
@@ -37,7 +37,7 @@ class TabsWidget(Gtk.ButtonBox):
     def _load_widgets(self):
         ...
 
-    def add_tab(self, event: Event_Factory_Types.CodeEvent):
+    def add_tab(self, event: Code_Event_Types.CodeEvent):
         """Add a tab widget for the given file event."""
         if not hasattr(self, 'tabs'):
             return
@@ -61,7 +61,7 @@ class TabsWidget(Gtk.ButtonBox):
 
         self.tabs.add(tab)
 
-    def remove_tab(self, event: Event_Factory_Types.CodeEvent):
+    def remove_tab(self, event: Code_Event_Types.CodeEvent):
         """Remove a tab widget for the given file event."""
         if not hasattr(self, 'tabs'):
             return
@@ -75,7 +75,7 @@ class TabsWidget(Gtk.ButtonBox):
 
             return
     
-    def update_tab_label(self, event: Event_Factory_Types.CodeEvent):
+    def update_tab_label(self, event: Code_Event_Types.CodeEvent):
         """Update tab label for the given file event."""
         if not hasattr(self, 'tabs'):
             return

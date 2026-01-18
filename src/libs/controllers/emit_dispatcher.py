@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from ..event_factory import Event_Factory_Types
+from ..dto.base_event import BaseEvent
 
 
 
@@ -12,8 +12,8 @@ class EmitDispatcher:
         super(EmitDispatcher, self).__init__()
 
 
-    def emit(self, event: Event_Factory_Types.CodeEvent):
+    def emit(self, event: BaseEvent):
         self.message_all(event)
 
-    def emit_to(self, controller: str, event: Event_Factory_Types.CodeEvent):
+    def emit_to(self, controller: str, event: BaseEvent):
         self.message_to(controller, event)

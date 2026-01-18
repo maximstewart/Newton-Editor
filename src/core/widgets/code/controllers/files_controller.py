@@ -3,8 +3,8 @@
 # Lib imports
 
 # Application imports
-from libs.code.event_factory import Event_Factory, Event_Factory_Types
-from libs.code.controllers.controller_base import ControllerBase
+from libs.controllers.controller_base import ControllerBase
+from libs.event_factory import Event_Factory, Code_Event_Types
 
 from ..source_file import SourceFile
 from ..source_buffer import SourceBuffer
@@ -17,21 +17,21 @@ class FilesController(ControllerBase, list):
         super(FilesController, self).__init__()
 
 
-    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
-        if isinstance(event, Event_Factory_Types.AddNewFileEvent):
+    def _controller_message(self, event: Code_Event_Types.CodeEvent):
+        if isinstance(event, Code_Event_Types.AddNewFileEvent):
             self.new_file(event)
-        elif isinstance(event, Event_Factory_Types.SwapFileEvent):
+        elif isinstance(event, Code_Event_Types.SwapFileEvent):
             self.swap_file(event)
-        elif isinstance(event, Event_Factory_Types.PopFileEvent):
+        elif isinstance(event, Code_Event_Types.PopFileEvent):
             self.pop_file(event)
-        elif isinstance(event, Event_Factory_Types.RemoveFileEvent):
+        elif isinstance(event, Code_Event_Types.RemoveFileEvent):
             self.remove_file(event)
-        elif isinstance(event, Event_Factory_Types.GetFileEvent):
+        elif isinstance(event, Code_Event_Types.GetFileEvent):
             self.get_file(event)
-        elif isinstance(event, Event_Factory_Types.GetSwapFileEvent):
+        elif isinstance(event, Code_Event_Types.GetSwapFileEvent):
             self.get_swap_file(event)
 
-    def get_file(self, event: Event_Factory_Types.GetFileEvent):
+    def get_file(self, event: Code_Event_Types.GetFileEvent):
         if not event.buffer: return
 
         for file in self:
@@ -41,7 +41,7 @@ class FilesController(ControllerBase, list):
 
             return file
 
-    def get_swap_file(self, event: Event_Factory_Types.GetSwapFileEvent):
+    def get_swap_file(self, event: Code_Event_Types.GetSwapFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -55,7 +55,7 @@ class FilesController(ControllerBase, list):
 
             return swapped_file, next_file
 
-    def new_file(self, event: Event_Factory_Types.AddNewFileEvent):
+    def new_file(self, event: Code_Event_Types.AddNewFileEvent):
         file           = SourceFile()
         file.emit      = self.emit
         file.emit_to   = self.emit_to
@@ -73,7 +73,7 @@ class FilesController(ControllerBase, list):
 
         return file
 
-    def swap_file(self, event: Event_Factory_Types.GetSwapFileEvent):
+    def swap_file(self, event: Code_Event_Types.GetSwapFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -87,7 +87,7 @@ class FilesController(ControllerBase, list):
 
             return swapped_file, next_file
 
-    def pop_file(self, event: Event_Factory_Types.PopFileEvent):
+    def pop_file(self, event: Code_Event_Types.PopFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):
@@ -109,7 +109,7 @@ class FilesController(ControllerBase, list):
 
         return popped_file, next_file
 
-    def remove_file(self, event: Event_Factory_Types.RemoveFileEvent):
+    def remove_file(self, event: Code_Event_Types.RemoveFileEvent):
         if not event.buffer: return
 
         for i, file in enumerate(self):

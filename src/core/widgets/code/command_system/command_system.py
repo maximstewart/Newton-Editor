@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from libs.code.event_factory import Event_Factory, Event_Factory_Types
+from libs.event_factory import Event_Factory, Code_Event_Types
 
 from ..source_view import SourceView
 
@@ -38,17 +38,18 @@ class CommandSystem:
         return method.execute(*args)
 
 
-    def emit(self, event: Event_Factory_Types.CodeEvent):
+    def emit(self, event: Code_Event_Types.CodeEvent):
         """ Monky patch 'emit' from command controller... """
         ...
 
-    def emit_to(self, controller: str, event: Event_Factory_Types.CodeEvent):
+    def emit_to(self, controller: str, event: Code_Event_Types.CodeEvent):
         """ Monky patch 'emit' from command controller... """
         ...
 
 
     def get_file(self, view: SourceView):
-        event = Event_Factory.create_get_file(
+        event = Event_Factory.create_event(
+            "get_file",
             view   = view,
             buffer = view.get_buffer()
         )
@@ -58,7 +59,8 @@ class CommandSystem:
         return event.response
 
     def get_swap_file(self, view: SourceView):
-        event = Event_Factory.create_get_swap_file(
+        event = Event_Factory.create_event(
+            "get_swap_file",
             view   = view,
             buffer = view.get_buffer()
         )
@@ -75,7 +77,8 @@ class CommandSystem:
         return event.response
 
     def remove_file(self, view: SourceView):
-        event = Event_Factory.create_remove_file(
+        event = Event_Factory.create_event(
+            "removed_file",
             view   = view,
             buffer = view.get_buffer()
         )

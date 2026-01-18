@@ -4,11 +4,12 @@ from dataclasses import dataclass, field
 # Lib imports
 
 # Application imports
+from ..base_event import BaseEvent
 
 
 
 @dataclass
-class CodeEvent:
+class CodeEvent(BaseEvent):
     ignore_focus: bool = False
     view: any          = None
     file: any          = None

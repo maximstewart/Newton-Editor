@@ -3,8 +3,8 @@
 # Lib imports
 
 # Application imports
-from libs.code.event_factory import Event_Factory, Event_Factory_Types
-from libs.code.controllers.controller_base import ControllerBase
+from libs.controllers.controller_base import ControllerBase
+from libs.event_factory import Event_Factory, Code_Event_Types
 
 from ..command_system import CommandSystem
 from ..key_mapper import KeyMapper
@@ -39,10 +39,10 @@ class SourceViewsController(ControllerBase, list):
         self.append(source_view)
         return source_view
 
-    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
-        if isinstance(event, Event_Factory_Types.RemovedFileEvent):
+    def _controller_message(self, event: Code_Event_Types.CodeEvent):
+        if isinstance(event, Code_Event_Types.RemovedFileEvent):
             self._remove_file(event)
-        elif isinstance(event, Event_Factory_Types.TextChangedEvent):
+        elif isinstance(event, Code_Event_Types.TextChangedEvent):
             self.active_view.command.exec("update_info_bar")
 
     def _map_signals(self, source_view: SourceView):
@@ -60,7 +60,7 @@ class SourceViewsController(ControllerBase, list):
         view.command.exec("set_focus_border")
         view.command.exec("update_info_bar")
 
-        event = Event_Factory.create_focused_view(view = view)
+        event = Event_Factory.create_event("focused_view", view = view)
         self.emit(event)
 
     def _move_cursor(self, view, step, count, extend_selection):
@@ -69,7 +69,8 @@ class SourceViewsController(ControllerBase, list):
         line         = iter.get_line()
         char         = iter.get_line_offset()
 
-        event = Event_Factory.create_cursor_moved(
+        event = Event_Factory.create_event(
+            "cursor_moved",
             view   = view,
             buffer = buffer,
             line   = line,
@@ -108,7 +109,7 @@ class SourceViewsController(ControllerBase, list):
 
         return True
 
-    def _remove_file(self, event: Event_Factory_Types.RemovedFileEvent):
+    def _remove_file(self, event: Code_Event_Types.RemovedFileEvent):
         for view in self:
             if not event.file.buffer == view.get_buffer(): continue
             if not event.next_file:

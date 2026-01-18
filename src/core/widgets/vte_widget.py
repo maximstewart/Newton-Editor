@@ -12,7 +12,6 @@ from gi.repository import GLib
 from gi.repository import Vte
 
 # Application imports
-from libs.dto.event import Event
 
 
 

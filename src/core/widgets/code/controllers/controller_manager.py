@@ -5,10 +5,10 @@
 # Application imports
 from libs.singleton import Singleton
 
-from libs.code.event_factory import Event_Factory_Types
+from libs.controllers.controller_base import ControllerBase
+from libs.controllers.controller_context import ControllerContext
 
-from libs.code.controllers.controller_base import ControllerBase
-from libs.code.controllers.controller_context import ControllerContext
+from libs.event_factory import Code_Event_Types
 
 
 
@@ -43,9 +43,9 @@ class ControllerManager(Singleton, dict):
     def get_controllers_key_list(self) -> list[str]:
         return self.keys()
 
-    def message_to(self, name: str, event: Event_Factory_Types.CodeEvent):
+    def message_to(self, name: str, event: Code_Event_Types.CodeEvent):
         self[name]._controller_message(event)
 
-    def message_all(self, event: Event_Factory_Types.CodeEvent):
+    def message_all(self, event: Code_Event_Types.CodeEvent):
         for key in self.keys():
             self[key]._controller_message(event)

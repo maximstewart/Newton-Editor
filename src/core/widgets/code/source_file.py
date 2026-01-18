@@ -12,7 +12,7 @@ from gi.repository import GtkSource
 from gi.repository import Gio
 
 # Application imports
-from libs.code.event_factory import Event_Factory, Event_Factory_Types
+from libs.event_factory import Event_Factory, Code_Event_Types
 
 from .source_buffer import SourceBuffer
 
@@ -41,7 +41,7 @@ class SourceFile(GtkSource.File):
         )
 
     def _changed(self, buffer: SourceBuffer):
-        event = Event_Factory.create_text_changed(buffer = buffer)
+        event = Event_Factory.create_event("text_changed", buffer = buffer)
         event.file = self
         self.emit(event)
 
@@ -58,16 +58,17 @@ class SourceFile(GtkSource.File):
     def _mark_set(self, buffer: SourceBuffer, location: Gtk.TextIter,
         mark: Gtk.TextMark
     ):
-        # event        = CodeEvent()
-        # event.etype  = "mark_set"
-        # event.file   = self
-        # event.buffer = buffer
+        # event = Event_Factory.create_event(
+        #     "mark_set",
+        #     file = self, buffer = buffer
+        # )
 
         # self.emit(event)
         ...
 
     def _modified_changed(self, buffer: SourceBuffer):
-        event = Event_Factory.create_modified_changed(
+        event = Event_Factory.create_event(
+            "modified_changed",
             file = self, buffer = buffer
         )
 
@@ -121,8 +122,8 @@ class SourceFile(GtkSource.File):
     def close(self):
         del self.buffer
 
-    def emit(self, event: Event_Factory_Types.CodeEvent):
+    def emit(self, event: Code_Event_Types.CodeEvent):
         ...
 
-    def emit_to(self, controller: str, event: Event_Factory_Types.CodeEvent):
+    def emit_to(self, controller: str, event: Code_Event_Types.CodeEvent):
         ...

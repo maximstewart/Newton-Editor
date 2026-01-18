@@ -3,12 +3,11 @@
 # Lib imports
 
 # Application imports
-from libs.code.event_factory import Event_Factory_Types
+from libs.controllers.controller_base import ControllerBase
 
-from libs.code.controllers.controller_base import ControllerBase
+from libs.event_factory import Code_Event_Types
 
 from ..command_system import CommandSystem
-
 
 
 
@@ -17,8 +16,8 @@ class CommandsController(ControllerBase, list):
         super(CommandsController, self).__init__()
 
 
-    def _controller_message(self, event: Event_Factory_Types.CodeEvent):
-        if isinstance(event, Event_Factory_Types.GetCommandSystemEvent):
+    def _controller_message(self, event: Code_Event_Types.CodeEvent):
+        if isinstance(event, Code_Event_Types.GetCommandSystemEvent):
             event.response = self.get_command_system()
 
     def get_command_system(self):

@@ -10,7 +10,7 @@ from gi.repository import WebKit2
 
 # Application imports
 from libs.settings.other.webkit_ui_settings import WebkitUISettings
-from libs.dto.event import Event
+from libs.dto.base_event import BaseEvent
 
 
 class WebkitUI(WebKit2.WebView):
@@ -55,7 +55,7 @@ class WebkitUI(WebKit2.WebView):
         message  = js_value.to_string()
 
         try:
-            event = Event( **json.loads(message) )
+            event = BaseEvent( **json.loads(message) )
             event_system.emit("handle-bridge-event", (event,))
         except Exception as e:
             logger.info(e)
