@@ -1,3 +1,0 @@
-"""
-    Gtk Plugins DTO Module
-"""

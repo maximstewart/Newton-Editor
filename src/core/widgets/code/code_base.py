@@ -3,7 +3,8 @@
 # Lib imports
 
 # Application imports
-from .controllers.controller_manager import ControllerManager
+from libs.controllers.controller_manager import ControllerManager
+
 from .controllers.files_controller import FilesController
 from .controllers.tabs_controller import TabsController
 from .controllers.commands_controller import CommandsController

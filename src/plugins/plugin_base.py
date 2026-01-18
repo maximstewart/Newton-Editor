@@ -13,8 +13,8 @@ class PluginBaseException(Exception):
 
 
 class PluginBase:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(PluginBase, self).__init__(*args, **kwargs)
         self.name          = "Example Plugin"  # NOTE: Need to remove after establishing private bidirectional 1-1 message bus
                                                #       where self.name should not be needed for message comms
 

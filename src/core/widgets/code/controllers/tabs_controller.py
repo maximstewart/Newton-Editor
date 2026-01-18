@@ -53,7 +53,7 @@ class TabsController(ControllerBase):
                 tab.get_parent().file.buffer
             )
 
-            self.message_all(event)
+            self.message(event)
 
         def close_tab(tab, eve, file):
             event = Event_Factory.create_event(
@@ -61,7 +61,7 @@ class TabsController(ControllerBase):
                 buffer = tab.get_parent().file.buffer
             )
 
-            self.message_all(event)
+            self.message(event)
 
         tab = TabWidget()
         tab.file = event.file

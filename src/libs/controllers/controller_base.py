@@ -30,9 +30,12 @@ class ControllerBase(Singleton, EmitDispatcher):
     def set_controller_context(self, controller_context: ControllerContext):
         self.controller_context = controller_context
 
+    def message(self, event: BaseEvent):
+        return self.controller_context.message(event)
+
     def message_to(self, name: str, event: BaseEvent):
         return self.controller_context.message_to(name, event)
 
-    def message_all(self, event: BaseEvent):
-        return self.controller_context.message_all(event)
-
+    def message_to_selected(self, names: list[str], event: BaseEvent):
+        for name in names:
+            self.controller_context.message_to_selected(name, event)

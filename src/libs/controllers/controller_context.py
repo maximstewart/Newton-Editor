@@ -17,8 +17,11 @@ class ControllerContext:
         super(ControllerContext, self).__init__()
 
 
+    def message(self, event: BaseEvent):
+        raise ControllerContextException("Controller Context 'message' must be overriden by Controller Manager...")
+
     def message_to(self, name: str, event: BaseEvent):
         raise ControllerContextException("Controller Context 'message_to' must be overriden by Controller Manager...")
 
-    def message_all(self, event: BaseEvent):
-        raise ControllerContextException("Controller Context 'message_all' must be overriden by Controller Manager...")
+    def message_to_selected(self, name: list, event: BaseEvent):
+        raise ControllerContextException("Controller Context 'message_to_selected' must be overriden by Controller Manager...")

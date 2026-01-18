@@ -3,12 +3,11 @@
 # Lib imports
 
 # Application imports
-from libs.singleton import Singleton
+from ..singleton import Singleton
+from ..event_factory import Code_Event_Types
 
-from libs.controllers.controller_base import ControllerBase
-from libs.controllers.controller_context import ControllerContext
-
-from libs.event_factory import Code_Event_Types
+from .controller_base import ControllerBase
+from .controller_context import ControllerContext
 
 
 
@@ -25,7 +24,7 @@ class ControllerManager(Singleton, dict):
     def _crete_controller_context(self) -> ControllerContext:
         controller_context             = ControllerContext()
         controller_context.message_to  = self.message_to
-        controller_context.message_all = self.message_all
+        controller_context.message = self.message
 
         return controller_context
 
@@ -46,6 +45,6 @@ class ControllerManager(Singleton, dict):
     def message_to(self, name: str, event: Code_Event_Types.CodeEvent):
         self[name]._controller_message(event)
 
-    def message_all(self, event: Code_Event_Types.CodeEvent):
+    def message(self, event: Code_Event_Types.CodeEvent):
         for key in self.keys():
             self[key]._controller_message(event)

@@ -67,7 +67,7 @@ class FilesController(ControllerBase, list):
             view = event.view,
             file = file
         )
-        self.message_all(eve)
+        self.message(eve)
 
         self.append(file)
 
@@ -105,7 +105,7 @@ class FilesController(ControllerBase, list):
             file      = popped_file,
             next_file = next_file
         )
-        self.message_all(eve)
+        self.message(eve)
 
         return popped_file, next_file
 
@@ -127,7 +127,7 @@ class FilesController(ControllerBase, list):
                 file         = file,
                 next_file    = next_file
             )
-            self.message_all(eve)
+            self.message(eve)
 
             self.remove(file)
             file.close()

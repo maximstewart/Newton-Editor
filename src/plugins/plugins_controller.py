@@ -11,7 +11,8 @@ import gi
 from gi.repository import GLib
 
 # Application imports
-from .dto.manifest_meta import ManifestMeta
+from libs.dto.plugins.manifest_meta import ManifestMeta
+
 from .plugin_reload_mixin import PluginReloadMixin
 from .manifest_manager import ManifestManager
 
