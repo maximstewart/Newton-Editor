@@ -18,7 +18,7 @@ def execute(
 ):
     logger.debug("Command: New File")
 
-    file       = view.command.new_file(view)
+    file = view.command.new_file(view)
     set_language_and_style(view, file)
 
     view.set_buffer(file.buffer)
