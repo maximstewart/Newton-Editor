@@ -8,8 +8,4 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Requests:
-    ui_target: str        = ""
-    ui_target_id: str     = ""
-    pass_events: bool     = False
-    pass_ui_objects: list = field(default_factory = lambda: [])
-    bind_keys: list       = field(default_factory = lambda: [])
+    bind_keys: list = field(default_factory = lambda: [])

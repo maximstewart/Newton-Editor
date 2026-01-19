@@ -28,16 +28,16 @@ class EventSystem(Singleton):
     def _resume_processing_events(self):
         self._is_paused = False
 
-    def subscribe(self, event_type, fn):
+    def subscribe(self, event_type: str, fn: callable):
         self.subscribers[event_type].append(fn)
 
-    def unsubscribe(self, event_type, fn):
+    def unsubscribe(self, event_type: str, fn: callable):
         self.subscribers[event_type].remove(fn)
 
-    def unsubscribe_all(self, event_type):
+    def unsubscribe_all(self, event_type: str):
         self.subscribers.pop(event_type, None)
 
-    def emit(self, event_type, data = None):
+    def emit(self, event_type: str, data: tuple = ()):
         if self._is_paused and event_type != "resume_event_processing":
             return
 
@@ -51,7 +51,7 @@ class EventSystem(Singleton):
                 else:
                     fn()
 
-    def emit_and_await(self, event_type, data = None):
+    def emit_and_await(self, event_type: str, data: tuple = ()):
         if self._is_paused and event_type != "resume_event_processing":
             return
 

@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from libs.singleton import Singleton
+from ..singleton import Singleton
 
 from ..dto.base_event import BaseEvent
 
@@ -25,7 +25,7 @@ class ControllerBase(Singleton, EmitDispatcher):
 
 
     def _controller_message(self, event: BaseEvent):
-        raise ControllerBaseException("Controller Base must override '_controller_message'...")
+        raise ControllerBaseException("Controller Base '_controller_message' must be overridden...")
 
     def set_controller_context(self, controller_context: ControllerContext):
         self.controller_context = controller_context

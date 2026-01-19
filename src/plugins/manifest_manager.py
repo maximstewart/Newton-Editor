@@ -21,8 +21,8 @@ class ManifestManager:
 
         self._plugins_path         = settings_manager.path_manager.get_plugins_path()
 
-        self.pre_launch_manifests  = []
-        self.post_launch_manifests = []
+        self.pre_launch_manifests: list  = []
+        self.post_launch_manifests: list = []
 
         self.load_manifests()
 
@@ -60,7 +60,7 @@ class ManifestManager:
             else:
                 self.post_launch_manifests.append(manifest_meta)
 
-    def get_pre_launch_manifests(self) -> dict:
+    def get_pre_launch_plugins(self) -> dict:
         return self.pre_launch_manifests
 
     def get_post_launch_plugins(self) -> None:
