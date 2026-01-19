@@ -41,6 +41,7 @@ class CodeBase:
         self.controller_manager.register_controller("completion", completion_controller)
         self.controller_manager.register_controller("source_views", source_views_controller)
         self.controller_manager.register_controller("plugins", plugins_controller)
+        self.controller_manager.register_controller("widgets", widget_registery)
 
     def get_tabs_widget(self):
         return self.controller_manager["tabs"].get_tabs_widget()

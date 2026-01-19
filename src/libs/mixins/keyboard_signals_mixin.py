@@ -19,6 +19,12 @@ valid_keyvalue_pat = re.compile(r"[a-z0-9A-Z-_\[\]\(\)\| ]")
 class KeyboardSignalsMixin:
     """ KeyboardSignalsMixin keyboard hooks controller. """
 
+    was_midified_key   = False
+    ctrl_down          = False
+    shift_down         = False
+    alt_down           = False
+
+
     # TODO: Need to set methods that use this to somehow check the keybindings state instead.
     def unset_keys_and_data(self, widget = None, eve = None):
         self.ctrl_down    = False
@@ -34,7 +40,7 @@ class KeyboardSignalsMixin:
             self.alt_down     = False
 
     def on_global_key_press_controller(self, eve, user_data):
-        keyname = Gdk.keyval_name(user_data.keyval).lower()
+        keyname   = Gdk.keyval_name(user_data.keyval).lower()
         modifiers = Gdk.ModifierType(user_data.get_state() & ~Gdk.ModifierType.LOCK_MASK)
 
         self.was_midified_key = True if modifiers != 0 else False

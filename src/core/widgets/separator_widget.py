@@ -13,9 +13,8 @@ class Separator(Gtk.Separator):
     def __init__(self, id: str = None, ORIENTATION: int = 0):
         super(Separator, self).__init__()
 
-        builder = settings_manager.get_builder()
         if id:
-            builder.expose_object(id, self)
+            widget_registery.expose_object(id, self)
 
         self.ORIENTATION = ORIENTATION
         self._setup_styling()

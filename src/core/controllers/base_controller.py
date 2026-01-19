@@ -6,17 +6,19 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from plugins import plugins_controller
+
 from libs.mixins.ipc_signals_mixin import IPCSignalsMixin
 from libs.mixins.keyboard_signals_mixin import KeyboardSignalsMixin
 
 from ..containers.base_container import BaseContainer
 
-from .base_controller_data import BaseControllerData
+from .base_controller_mixin import BaseControllerMixin
 from .bridge_controller import BridgeController
 
 
 
-class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerData):
+class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerMixin):
     """ docstring for BaseController. """
 
     def __init__(self):
@@ -32,6 +34,16 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerData):
         settings_manager.set_end_load_time()
         settings_manager.log_load_time()
 
+
+    def _setup_controller_data(self):
+        self.window             = settings_manager.get_main_window()
+        self.base_container     = BaseContainer()
+        self.plugins_controller = plugins_controller
+
+        widget_registery.expose_object("main_window", self.window)
+        settings_manager.register_signals_to_builder([self, self.base_container])
+
+        self._collect_files_dirs()
 
     def _setup_styling(self):
         ...
@@ -61,11 +73,3 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerData):
     def _tggl_top_main_menubar(self):
         logger.debug("_tggl_top_main_menubar > stub...")
 
-    def _load_glade_file(self):
-        self.builder.add_from_file( settings_manager.path_manager.get_glade_file() )
-        self.builder.expose_object("main_window", self.window)
-
-        settings_manager.set_builder(self.builder)
-        self.base_container = BaseContainer()
-
-        settings_manager.register_signals_to_builder([self, self.base_container])
