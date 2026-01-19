@@ -3,6 +3,8 @@
 # Lib imports
 
 # Application imports
+from plugins import plugins_controller
+
 from libs.controllers.controller_manager import ControllerManager
 
 from .controllers.files_controller import FilesController
@@ -38,7 +40,7 @@ class CodeBase:
         self.controller_manager.register_controller("commands", commands_controller)
         self.controller_manager.register_controller("completion", completion_controller)
         self.controller_manager.register_controller("source_views", source_views_controller)
-        # self.controller_manager.register_controller("plugins", plugins_controller)
+        self.controller_manager.register_controller("plugins", plugins_controller)
 
     def get_tabs_widget(self):
         return self.controller_manager["tabs"].get_tabs_widget()

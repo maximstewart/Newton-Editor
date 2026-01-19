@@ -58,28 +58,29 @@ class VteWidget(Vte.Terminal):
         ...
 
     def _do_session_spawn(self):
+        env = [
+            "DISPLAY=:0",
+            "LC_ALL=C",
+            "TERM='xterm-256color'",
+            f"HOME='{settings_manager.path_manager.get_home_path()}'",
+            "XDG_RUNTIME_DIR='/run/user/1000'",
+            f"XAUTHORITY='{settings_manager.path_manager.get_home_path()}/.Xauthority'",
+            "HISTFILE=/dev/null",
+            "HISTSIZE=0",
+            "HISTFILESIZE=0",
+            "PS1=\\h@\\u \\W -->: ",
+        ]
+
         self.spawn_sync(
             Vte.PtyFlags.DEFAULT,
             settings_manager.path_manager.get_home_path(),
             ["/bin/bash"],
-            [],
+            env,
             GLib.SpawnFlags.DEFAULT,
             None, None,
         )
 
-        # Note:  '-->:' is used as a delimiter to split on to get command actual.
-        #              !!!  DO NOT REMOVE UNLESS CODE UPDATED ACCORDINGLY  !!!
-        # Also, KEEP the <space> prefix in commands to keep from inserting to bash history.
         startup_cmds = [
-            " env -i /bin/bash --noprofile --norc\n",
-            " export TERM='xterm-256color'\n",
-            " export LC_ALL=C\n",
-            " export XDG_RUNTIME_DIR='/run/user/1000'\n",
-            " export DISPLAY=:0\n",
-            f" export XAUTHORITY='{settings_manager.path_manager.get_home_path()}/.Xauthority'\n",
-            f" \nexport HOME='{settings_manager.path_manager.get_home_path()}'\n",
-            " export PS1='\\h@\\u \\W -->: '\n",
-            " clear\n"
         ]
 
         for i in startup_cmds:

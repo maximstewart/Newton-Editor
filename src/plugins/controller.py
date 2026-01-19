@@ -47,7 +47,8 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
 
 
     def _controller_message(self, event: BaseEvent):
-        ...
+        for manifest_meta in self._plugin_collection:
+            manifest_meta.instance._controller_message(event)
 
     def _collect_search_locations(self, path: str, locations: list):
         locations.append(path)
@@ -121,7 +122,6 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
     def execute_plugin(self, module: type, manifest_meta: ManifestMeta):
         plugin                               = module.Plugin()
         plugin.plugin_context: PluginContext = self.create_plugin_context()
-        plugin._controller_message: callable = self._controller_message
 
         manifest               = manifest_meta.manifest
         manifest_meta.instance = plugin

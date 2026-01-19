@@ -6,14 +6,19 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from libs.dto.base_event import BaseEvent
+
 from plugins.plugin_base import PluginBase
 
 
 
 class Plugin(PluginBase):
     def __init__(self):
-        super().__init__()
+        super(Plugin, self).__init__()
 
+
+    def _controller_message(self, event: BaseEvent):
+        ...
 
     def load(self):
         ui_element = self.requests_ui_element("plugin_control_list")

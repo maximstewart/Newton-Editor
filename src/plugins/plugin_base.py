@@ -21,7 +21,7 @@ class PluginBase:
         self.plugin_context: PluginContext = None
 
 
-    def _controller_message(self):
+    def _controller_message(self, event: BaseEvent):
         raise PluginBaseException("Plugin Base '_controller_message' must be overriden by Plugin")
 
     def load(self):

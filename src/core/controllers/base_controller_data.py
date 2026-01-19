@@ -6,7 +6,8 @@ from shutil import which
 # Lib imports
 
 # Application imports
-from plugins.plugins_controller import PluginsController
+from plugins import plugins_controller
+
 from ..builder_wrapper import BuilderWrapper
 
 
@@ -17,7 +18,7 @@ class BaseControllerData:
     def _setup_controller_data(self) -> None:
         self.window             = settings_manager.get_main_window()
         self.builder            = BuilderWrapper()
-        self.plugins_controller = PluginsController()
+        self.plugins_controller = plugins_controller
 
         self.base_container     = None
         self.was_midified_key   = False
