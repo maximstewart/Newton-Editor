@@ -5,7 +5,7 @@
 # Application imports
 from libs.dto.base_event import BaseEvent
 
-from .plugin_context import PluginContext
+from ..plugin_context import PluginContext
 
 
 
@@ -31,19 +31,19 @@ class PluginBase:
         raise PluginBaseException("Plugin Base 'run' must be overriden by Plugin")
 
     def requests_ui_element(self, element_id: str):
-        return self.plugin_context.requests_ui_element(element_id)
+        raise PluginBaseException("Plugin Base 'requests_ui_element' must be overriden by Plugin")
 
     def message(self, event: BaseEvent):
-        return self.plugin_context.message(event)
+        raise PluginBaseException("Plugin Base 'message' must be overriden by Plugin")
 
     def message_to(self, name: str, event: BaseEvent):
-        return self.plugin_context.message_to(name, event)
+        raise PluginBaseException("Plugin Base 'message_to' must be overriden by Plugin")
 
     def message_to_selected(self, names: list[str], event: BaseEvent):
-        return self.plugin_context.message_to_selected(names, event)
+        raise PluginBaseException("Plugin Base 'message_to_selected' must be overriden by Plugin")
 
     def emit(self, event_type: str, data: tuple = ()):
-        self.plugin_context.emit(event_type, data)
+        raise PluginBaseException("Plugin Base 'emit' must be overriden by Plugin")
 
     def emit_and_await(self, event_type: str, data: tuple = ()):
-        self.plugin_context.emit_and_await(event_type, data)
+        raise PluginBaseException("Plugin Base 'emit_and_await' must be overriden by Plugin")

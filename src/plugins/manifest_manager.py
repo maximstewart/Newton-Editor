@@ -32,11 +32,8 @@ class ManifestManager:
 
         for path, folder in [
             [join(self._plugins_path, item), item]
-            if
-                os.path.isdir( join(self._plugins_path, item) )
-            else
-                None
             for item in os.listdir(self._plugins_path)
+            if os.path.isdir( join(self._plugins_path, item) )
         ]:
             self.load(folder, path)
 

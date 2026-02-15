@@ -1,20 +1,55 @@
-/* ----  Make most desired things base transparent  ---- */
+/* ----  Overrides  ---- */
+text selection {
+    background-color: #44475a;
+    color: #FFA500;
+}
 
 /* ----  Make most desired things base transparent  ---- */
 popover,
 popover > box,
 notebook,
 header,
-stack,
-scrolledwindow,
-viewport {
+stack {
     background: rgba(0, 0, 0, 0.0);
     color: rgba(255, 255, 255, 1);
 }
 
-scrolledwindow * {
-    background: rgba(0, 0, 0, 0.0);
+
+/* The scrolled window itself */
+scrolledwindow,
+scrolledwindow viewport,
+textview,
+textview text {
+    background-color: transparent;
 }
+
+scrollbar {
+    background-color: #2a2a2a;
+}
+
+/* The track */
+scrollbar trough {
+    background-color: transparent;
+    /*background-color: #2a2a2a;*/
+    border-radius: 6px;
+}
+
+/* The draggable handle */
+scrollbar slider {
+    background-color: #555;
+    border-radius: 6px;
+    min-width: 10px;
+    min-height: 10px;
+}
+
+scrollbar slider:hover {
+    background-color: #777;
+}
+
+scrollbar slider:active {
+    background-color: #999;
+}
+
 
 border {
     background: rgba(39, 43, 52, 0.84);
@@ -41,192 +76,78 @@ tab:checked {
     color: rgba(255, 255, 255, 1);
 }
 
+
+/* the mini view container of text */
+.mini-view > text {
+    background: rgba(39, 43, 52, 0.64);
+}
+
+/* draggable overlay of the miniview */
+.mini-view > * {
+    background-color: rgba(124, 124, 124, 0.34);
+    color: rgba(255, 255, 255, 1);
+    font-size: 1px;
+}
+
+
 .base-container {
     margin: 10px;
 }
 
 
-.source-view-focused > * {
+.source-view-focused {
     border-style: solid;
     border-color: white;
     border-width: 0.05em;
 }
 
+.tab-widget {
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    margin-right: 0.8em;
+
+    border-top-style: solid;
+    border-top-color: rgba(255, 255, 255, 0.64);
+    border-top-width: 2px;
+
+    border-left-style: solid;
+    border-left-color: rgba(255, 255, 255, 0.64);
+    border-left-width: 2px;
+
+    border-right-style: solid;
+    border-right-color: rgba(255, 255, 255, 0.64);
+    border-right-width: 2px;
+}
+
+.tab-label {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.tab-close-bttn {
+    background: rgba(116, 0, 0, 0.64);
+    border-color: rgba(0, 0, 0, 0.64);
+    color: rgba(255, 255, 255, 0.64);
+    border-style: solid;
+    border-width: 1px;
+}
+
+.tab-close-bttn:hover {
+    background: rgba(256, 0, 0, 0.64);
+}
 
 
+.file-changed {
+    color: rgba(255, 168, 0, 0.64);
+}
 
+.file-deleted {
+    color: rgba(255, 0, 0, 0.64);
+}
 
-
-
-
-
-
-
-
-
-
-/*popover,*/
-/*popover > box*/
-/*.main-window > box,*/
-/*.main-window > box > box,*/
-/*.main-window > box > box > paned,*/
-/*.main-window > box > box > paned > notebook,*/
-/*.main-window > box > box > paned > notebook > stack,*/
-/*.main-window > box > box > paned > notebook > stack > scrolledwindow > textview > * {*/
-/*    background: rgba(0, 0, 0, 0.0);*/
-/*    color: rgba(255, 255, 255, 1);*/
-/*}*/
-
-
-/* ----  top controls  ---- */
-/*.main-window > box > box > button,*/
-/*.main-window > box > box > buttonbox > button {*/
-/*    background: rgba(39, 43, 52, 0.64);*/
-/*    margin-left: 12px;*/
-/*    margin-right: 12px;*/
-/*}*/
-
-
-/*  status bar */
-/*.main-window > box > statusbar {*/
-/*    background: rgba(39, 43, 52, 0.64);*/
-/*    padding-left: 96px;*/
-/*    padding-right: 96px;*/
-/*}*/
-
-
-/* ----  notebook headers  ---- */
-/*notebook > header {*/
-/*    background: rgba(39, 43, 52, 0.72);*/
-/*}*/
-
-/*notebook > header > tabs > tab {*/
-/*    color: rgba(255, 255, 255, 1);*/
-/*}*/
-
-/*notebook > header > tabs > tab:active {*/
-/*    background: rgba(0, 0, 0, 0.0);*/
-/*}*/
-
-
-/* ----  notebook tab buttons  ---- */
-/*tab > box > button {*/
-/*    background: rgba(116, 0, 0, 0.64);*/
-/*}*/
-
-/*tab > box > button:hover {*/
-/*    background: rgba(256, 0, 0, 0.64);*/
-/*}*/
-
-/*notebook > header > tabs > tab:checked {*/
-    /* Neon Blue 00e8ff */
-    /* background-color: rgba(0, 232, 255, 0.2); */
-
-/*    background-color: rgba(255, 255, 255, 0.46);*/
-
-    /* Dark Bergundy */
-    /* background-color: rgba(116, 0, 0, 0.25); */
-
-/*    color: rgba(255, 255, 255, 0.8);*/
-/*}*/
-
-/*.notebook-selected-focus {*/
-    /* Neon Blue 00e8ff border */
-    /* border: 2px solid rgba(0, 232, 255, 0.34); */
-
-/*    border: 2px solid rgba(255, 255, 255, 0.46);*/
-
-    /* Dark Bergundy */
-    /* border: 2px solid rgba(116, 0, 0, 0.64); */
-/*}*/
-
-
-/* ----  source code notebooks  ---- */
-/*notebook > stack > scrolledwindow > textview {*/
-/*    background: rgba(39, 43, 52, 0.64);*/
-/*    color: rgba(255, 255, 255, 1);*/
-/*}*/
-
-/*textview {*/
-/*	padding-bottom: 50em;*/
-/*}*/
-
-
-/* any popover */
-/*popover {*/
-/*    background: rgba(39, 43, 52, 0.86);*/
-/*    color: rgba(255, 255, 255, 1);*/
-/*}*/
-
-/* ----  make text selection slightly transparent  ---- */
-/** selection {*/
-/*    background-color: rgba(0, 115, 115, 0.34);*/
-    /* Bergundy */
-    /* background-color: rgba(116, 0, 0, 0.64); */
-/*    color: rgba(255, 255, 255, 0.5);*/
-/*}*/
-
-
-/* ----  miniview properties  ---- */
-/*.source-view,*/
-/*.mini-view {*/
-/*    font-family: Monospace;*/
-/*}*/
-
-/* the mini view container of text */
-/*.mini-view > text {*/
-/*    background: rgba(39, 43, 52, 0.64);*/
-/*}*/
-
-/* draggable overlay of the miniview */
-/*.mini-view > * {*/
-/*    background: rgba(64, 64, 64, 0.32);*/
-/*    color: rgba(255, 255, 255, 1);*/
-/*    font-size: 1px;*/
-/*}*/
-
-/*.mini-view > text {*/
-/*    background: rgba(39, 43, 52, 0.64);*/
-/*}*/
-
-
-/* other properties */
-/*.buffer_changed {*/
-/*    color: rgba(255, 168, 0, 1.0);*/
-    /* color: rgba(0, 232, 255, 0.64); */
-/*}*/
-
-
-/*.searching,*/
-/*.search_success,*/
-/*.search_fail {*/
-/*    border-style: solid;*/
-/*}*/
-
-/*.searching      {*/
-/*    border-color: rgba(0, 225, 225, 0.64);*/
-/*}*/
-/*.search_success {*/
-/*    background: rgba(136, 204, 39, 0.12);*/
-/*    border-color: rgba(136, 204, 39, 1);*/
-/*}*/
-/*.search_fail    {*/
-/*    background: rgba(170, 18, 18, 0.12);*/
-/*    border-color: rgba(200, 18, 18, 1);*/
-/*}*/
-
-
-
-
-
-
-
-
-
-
-.error_txt   { color: rgb(170, 18, 18); }
-.warning_txt { color: rgb(255, 168, 0); }
-.success_txt { color: rgb(136, 204, 39); }
+.error-txt   { color: rgb(170, 18, 18); }
+.warning-txt { color: rgb(255, 168, 0); }
+.success-txt { color: rgb(136, 204, 39); }
 
 
 

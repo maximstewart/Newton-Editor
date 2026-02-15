@@ -8,11 +8,11 @@ from gi.repository import Gtk
 # Application imports
 from libs.dto.base_event import BaseEvent
 
-from plugins.plugin_base import PluginBase
+from plugins.plugin_types import PluginUI
 
 
 
-class Plugin(PluginBase):
+class Plugin(PluginUI):
     def __init__(self):
         super(Plugin, self).__init__()
 

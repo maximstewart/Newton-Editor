@@ -10,13 +10,17 @@ from gi.repository import GLib
 from gi.repository import GtkSource
 
 # Application imports
+from libs.dto.states import SourceViewStates
+
 from .mixins.source_view_dnd_mixin import SourceViewDnDMixin
 
 
 
 class SourceView(GtkSource.View, SourceViewDnDMixin):
-    def __init__(self):
+    def __init__(self, state: SourceViewStates = SourceViewStates.INSERT):
         super(SourceView, self).__init__()
+
+        self.state                = state
 
         self._cut_temp_timeout_id = None
         self._cut_buffer          = ""

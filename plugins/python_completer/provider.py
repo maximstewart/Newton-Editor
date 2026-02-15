@@ -13,6 +13,7 @@ import jedi
 from jedi.api import Script
 
 # Application imports
+from .provider_response_cache import ProviderResponseCache
 
 
 
@@ -39,10 +40,12 @@ class PythonCompletionProvider(GObject.Object, GtkSource.CompletionProvider):
     """
     __gtype_name__ = 'PythonProvider'
 
-    def __init__(self, file):
+    def __init__(self):
         GObject.Object.__init__(self)
+
+        self.response_cache: ProviderResponseCache = ProviderResponseCache()
         self._theme = Gtk.IconTheme.get_default()
-        self._file  = file
+        self._file  = None
 
     def do_get_name(self):
         return "Python Code Completion"
@@ -51,12 +54,11 @@ class PythonCompletionProvider(GObject.Object, GtkSource.CompletionProvider):
         return context.get_iter()[1] if isinstance(context.get_iter(), tuple) else context.get_iter()
 
     def do_match(self, context):
+        word = self.response_cache.get_word(context)
+        if not word or len(word) < 2: return False
+
         iter = self.get_iter_correctly(context)
         iter.backward_char()
-
-        buffer = iter.get_buffer()
-        if buffer.get_context_classes_at_iter(iter) != ['no-spell-check']:
-            return False
 
         ch = iter.get_char()
         # NOTE: Look to re-add or apply supprting logic to use spaces
@@ -65,32 +67,51 @@ class PythonCompletionProvider(GObject.Object, GtkSource.CompletionProvider):
         if not (ch in ('_', '.') or ch.isalnum()):
             return False
 
+        buffer = iter.get_buffer()
+        if buffer.get_context_classes_at_iter(iter) != ['no-spell-check']:
+            return False
+
         return True
 
     def do_get_priority(self):
-        return 1
+        return 5
 
     def do_get_activation(self):
+        """ The context for when a provider will show results """
         return GtkSource.CompletionActivation.INTERACTIVE
 
     def do_populate(self, context):
+        # Note: Filtering needs to happen before getting here in some type of symbol cache
         # TODO: Maybe convert async?
+        if not self._file: return
+
         it        = self.get_iter_correctly(context)
         buffer    = it.get_buffer()
         proposals = []
 
-        doc_text    = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), False)
-        iter_cursor = buffer.get_iter_at_mark(buffer.get_insert())
+        doc_text    = buffer.get_text(
+            buffer.get_start_iter(),
+            buffer.get_end_iter(),
+            False
+        )
+        iter_cursor = buffer.get_iter_at_mark( buffer.get_insert() )
         linenum     = iter_cursor.get_line() + 1
         charnum     = iter_cursor.get_line_index()
 
         def create_generator():
-            for completion in Jedi.get_script(self._file, doc_text).complete(line = linenum, column = None, fuzzy = False):
+            if not self._file: return
+
+            for completion in Jedi.get_script(self._file, doc_text).complete(
+                line   = linenum,
+                column = None,
+                fuzzy  = False
+            ):
                 comp_item = GtkSource.CompletionItem.new()
                 comp_item.set_label(completion.name)
                 comp_item.set_text(completion.name)
                 comp_item.set_icon(self.get_icon_for_type(completion.type))
                 comp_item.set_info(completion.docstring())
+
                 yield comp_item
 
         for item in create_generator():

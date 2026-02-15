@@ -4,6 +4,8 @@
 
 
 from .code_event import CodeEvent
+from .register_provider_event import RegisterProviderEvent
+
 from .get_command_system_event import GetCommandSystemEvent
 from .request_completion_event import RequestCompletionEvent
 from .cursor_moved_event import CursorMovedEvent
@@ -18,6 +20,7 @@ from .added_new_file_event import AddedNewFileEvent
 from .swapped_file_event import SwappedFileEvent
 from .popped_file_event import PoppedFileEvent
 from .removed_file_event import RemovedFileEvent
+from .saved_file_event import SavedFileEvent
 
 from .get_file_event import GetFileEvent
 from .get_swap_file_event import GetSwapFileEvent

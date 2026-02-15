@@ -55,7 +55,7 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         for file in os.listdir(path):
             _path = os.path.join(path, file)
             if os.path.isdir(_path):
-                self.collect_search_locations(_path, locations)
+                self._collect_search_locations(_path, locations)
 
     def _load_plugins(
         self,
@@ -70,7 +70,7 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
             try:
                 target = join(path, "plugin.py")
                 if not os.path.exists(target):
-                    raise InvalidPluginException("Invalid Plugin Structure: Plugin doesn't have 'plugin.py'. Aboarting load...")
+                    raise PluginsControllerException("Invalid Plugin Structure: Plugin doesn't have 'plugin.py'. Aboarting load...")
 
                 module = self._load_plugin_module(path, folder, target)
 

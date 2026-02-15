@@ -125,3 +125,13 @@ class KeyMapper:
         if is_alt:
             self.state = self.state | AltKeyState
 
+    def is_control(self, eve):
+        modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
+        return True if modifiers & Gdk.ModifierType.CONTROL_MASK else False
+
+    def is_shift(self, eve):
+        modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
+        return True if modifiers & Gdk.ModifierType.SHIFT_MASK else False
+
+    def get_raw_keyname(self, eve):
+        return Gdk.keyval_name(eve.keyval)

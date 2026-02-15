@@ -6,6 +6,10 @@
 
 
 
+class InvalidPluginException(Exception):
+    ...
+
+
 
 class PluginsControllerMixin:
 

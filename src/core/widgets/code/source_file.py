@@ -8,6 +8,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GtkSource', '4')
 
 from gi.repository import Gtk
+from gi.repository import GLib
 from gi.repository import GtkSource
 from gi.repository import Gio
 
@@ -37,6 +38,7 @@ class SourceFile(GtkSource.File):
             self._changed,
             self._mark_set,
             self._insert_text,
+            self._after_insert_text,
             self._modified_changed
         )
 
@@ -45,17 +47,38 @@ class SourceFile(GtkSource.File):
         event.file = self
         self.emit(event)
 
-    def _insert_text(self, buffer: SourceBuffer, location: Gtk.TextIter,
+    def _insert_text(
+        self,
+        buffer: SourceBuffer,
+        location: Gtk.TextIter,
+        text: str, length: int
+    ):
+        ...
+
+    def _after_insert_text(
+        self,
+        buffer: SourceBuffer,
+        location: Gtk.TextIter,
         text: str, length: int
     ):
         event = Event_Factory.create_event(
             "text_inserted",
-            file   = self,
-            buffer = buffer
+            file     = self,
+            buffer   = self.buffer,
+            location = location,
+            text     = text,
+            length   = length
         )
-        self.emit(event)
 
-    def _mark_set(self, buffer: SourceBuffer, location: Gtk.TextIter,
+        # Note: 'idle_add' needed b/c markers don't get thir positions
+        #       updated relative to the initial insert.
+        #       If not used, seg faults galor during multi insert.
+        GLib.idle_add(self.emit, event)
+
+    def _mark_set(
+        self,
+        buffer: SourceBuffer,
+        location: Gtk.TextIter,
         mark: Gtk.TextMark
     ):
         # event = Event_Factory.create_event(
@@ -108,6 +131,12 @@ class SourceFile(GtkSource.File):
         self.emit(event)
 
     def save(self):
+        event = Event_Factory.create_event(
+            "saved_file",
+            file = self, buffer = self.buffer
+        )
+
+        self.emit(event)
         self._write_file( self.get_location() )
 
     def save_as(self):

@@ -11,7 +11,7 @@ from .controllers.files_controller import FilesController
 from .controllers.tabs_controller import TabsController
 from .controllers.commands_controller import CommandsController
 from .controllers.completion_controller import CompletionController
-from .controllers.source_views_controller import SourceViewsController
+from .controllers.views.source_views_controller import SourceViewsController
 
 from .mini_view_widget import MiniViewWidget
 
@@ -50,7 +50,12 @@ class CodeBase:
         return self.miniview_widget
 
     def create_source_view(self):
-        return self.controller_manager["source_views"].create_source_view()
+        source_view = self.controller_manager["source_views"].create_source_view()
+        self.controller_manager["completion"].register_completer(
+            source_view.get_completion()
+        )
+
+        return source_view
 
     def first_map_load(self):
         self.controller_manager["source_views"].first_map_load()

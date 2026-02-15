@@ -39,11 +39,11 @@ class CommandSystem:
 
 
     def emit(self, event: Code_Event_Types.CodeEvent):
-        """ Monky patch 'emit' from command controller... """
+        """ Monkey patch 'emit' from command controller... """
         ...
 
     def emit_to(self, controller: str, event: Code_Event_Types.CodeEvent):
-        """ Monky patch 'emit' from command controller... """
+        """ Monkey patch 'emit_to' from command controller... """
         ...
 
 

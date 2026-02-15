@@ -11,93 +11,84 @@ from gi.repository import GtkSource
 from libs.controllers.controller_base import ControllerBase
 from libs.event_factory import Event_Factory, Code_Event_Types
 
-from ..completion_providers.example_completion_provider import ExampleCompletionProvider
-from ..completion_providers.lsp_completion_provider import LSPCompletionProvider
-
 
 
 class CompletionController(ControllerBase):
     def __init__(self):
         super(CompletionController, self).__init__()
 
-        self._completor: GtkSource.Completion     = None
-        self._timeout_id: int                     = None
-        self._lsp_provider: LSPCompletionProvider = LSPCompletionProvider()
+        self.words_provider = GtkSource.CompletionWords.new("words", None)
+        self.words_provider.props.activation = GtkSource.CompletionActivation.INTERACTIVE
 
+        self._completers: list[GtkSource.Completion]             = []
+        self._providers: dict[str, GtkSource.CompletionProvider] = {}
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.FocusedViewEvent):
-            self._completor = event.view.get_completion()
-
-            if not self._timeout_id: return
-
-            GLib.source_remove(self._timeout_id)
-            self._timeout_id = None
-        elif isinstance(event, Code_Event_Types.RequestCompletionEvent):
-            self.request_completion()
-        # elif isinstance(event, Code_Event_Types.TextInsertedEvent):
-        #     self.request_completion()
-
-    def _process_request_completion(self):
-        self._start_completion()
-
-        self._timeout_id = None
-        return False
-
-    def _do_completion(self):
-        if self._completor.get_providers():
-            self._match_completion()
-        else:
-            self._start_completion()
-
-    def _match_completion(self):
-        """
-            Note: Use IF providers were added to completion...
-        """
-        self._completion.match(
-            self._completion.create_context()
-        )
+        if isinstance(event, Code_Event_Types.RegisterProviderEvent):
+            self.register_provider(
+                event.provider_name,
+                event.provider,
+                event.language_ids
+            )
+        elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
+            self.provider_process_file_load(event)
+        elif isinstance(event, Code_Event_Types.RemovedFileEvent):
+            self.provider_process_file_close(event)
+        elif isinstance(event, Code_Event_Types.SavedFileEvent):
+            self.provider_process_file_save(event)
+        elif isinstance(event, Code_Event_Types.TextChangedEvent):
+            self.provider_process_file_change(event)
+        # elif isinstance(event, Code_Event_Types.RequestCompletionEvent):
+        #     self.request_unbound_completion( event.view.get_completion() )
 
 
-    def _start_completion(self):
-        """
-            Note: Use IF NO providers have been added to completion...
-        """
-        self._completor.start(
-            [
-                ExampleCompletionProvider(),
-                self._lsp_provider
-            ],
-            self._completor.create_context()
-        )
+    def register_completer(self, completer: GtkSource.Completion):
+        self._completers.append(completer)
 
-
-    def set_completer(self, completer):
-        self._completor = completer
-
-    def request_completion(self):
-        if self._timeout_id:
-            GLib.source_remove(self._timeout_id)
-
-        self._timeout_id = GLib.timeout_add(
-            800,
-            self._process_request_completion
-        )
+        completer.add_provider(self.words_provider)
+        for provider in self._providers.values():
+            completer.add_provider(provider)
 
     def register_provider(
         self,
         provider_name: str,
-        provider: GtkSource.CompletionProvider, 
-        priority: int = 0,
-        language_ids: list = None
+        provider: GtkSource.CompletionProvider,
+        language_ids: list = []
     ):
-        """Register completion providers with priority and language filtering"""
-        ...
+        self._providers[provider_name] = provider
+
+        for completer in self._completers:
+            completer.add_provider(provider)
 
     def unregister_provider(self, provider_name: str):
-        """Remove completion providers"""
-        ...
-        
-    def get_active_providers(self, language_id: str = None) -> list:
-        """Get providers filtered by language"""
-        ...
+        provider = self._providers[provider_name]
+        del self._providers[provider_name]
+
+        for completer in self._completers:
+            completer.remove_provider(provider)
+
+    def provider_process_file_load(self, event: Code_Event_Types.AddedNewFileEvent):
+        self.words_provider.register(event.file.buffer)
+
+        for provider in self._providers.values():
+            provider.response_cache.process_file_load(event)
+
+    def provider_process_file_close(self, event: Code_Event_Types.RemovedFileEvent):
+        self.words_provider.unregister(event.file.buffer)
+
+        for provider in self._providers.values():
+            provider.response_cache.process_file_close(event)
+
+    def provider_process_file_save(self, event: Code_Event_Types.SavedFileEvent):
+        for provider in self._providers.values():
+            provider.response_cache.process_file_save(event)
+
+    def provider_process_file_change(self, event: Code_Event_Types.TextChangedEvent):
+        for provider in self._providers.values():
+            provider.response_cache.process_file_change(event)
+
+    def request_unbound_completion(self, completer: GtkSource.Completion):
+        completer.start(
+            [ *self._providers.values() ],
+            completer.create_context()
+        )

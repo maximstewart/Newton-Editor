@@ -15,4 +15,14 @@ def execute(
     view: GtkSource.View  = None
 ):
     logger.debug("Command: Show Completion")
-    view.command.request_completion(view)
+    completer = view.get_completion()
+    providers = completer.get_providers()
+
+    if not providers:
+        view.command.request_completion(view)
+        return
+
+    completer.start(
+        providers,
+        completer.create_context()
+    )
