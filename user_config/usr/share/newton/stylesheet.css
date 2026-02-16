@@ -55,14 +55,6 @@ border {
     background: rgba(39, 43, 52, 0.84);
 }
 
-tab {
-    color: rgba(255, 255, 255, 1);
-}
-
-tab:checked {
-    border-bottom-color: rgba(125, 125, 125, 1);
-}
-
 
 .main-window,
 .base-container,
@@ -99,24 +91,6 @@ tab:checked {
     border-style: solid;
     border-color: white;
     border-width: 0.05em;
-}
-
-.tab-widget {
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-    margin-right: 0.8em;
-
-    border-top-style: solid;
-    border-top-color: rgba(255, 255, 255, 0.64);
-    border-top-width: 2px;
-
-    border-left-style: solid;
-    border-left-color: rgba(255, 255, 255, 0.64);
-    border-left-width: 2px;
-
-    border-right-style: solid;
-    border-right-color: rgba(255, 255, 255, 0.64);
-    border-right-width: 2px;
 }
 
 .tab-label {

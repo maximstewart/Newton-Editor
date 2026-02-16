@@ -33,8 +33,10 @@ class SourceViewsController(ControllerBase, list):
         if isinstance(event, Code_Event_Types.TextChangedEvent):
             if not self.signal_mapper.active_view: return
             self.signal_mapper.active_view.command.exec("update_info_bar")
-        elif isinstance(event, Code_Event_Types.TextChangedEvent):
-            self.signal_mapper.active_view.command.exec("update_info_bar")
+        elif isinstance(event, Code_Event_Types.SetActiveFileEvent):
+            self.signal_mapper.active_view.set_buffer(
+                event.buffer
+            )
         elif isinstance(event, Code_Event_Types.TextInsertedEvent):
             self.signal_mapper.insert_text(event.file, event.text)
 

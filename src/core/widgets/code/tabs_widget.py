@@ -6,16 +6,13 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
-from libs.event_factory import Code_Event_Types
-
-from .source_view import SourceView
-from .source_file import SourceFile
+from libs.event_factory import Event_Factory, Code_Event_Types
 
 from .tab_widget import TabWidget
 
 
 
-class TabsWidget(Gtk.ButtonBox):
+class TabsWidget(Gtk.Notebook):
     def __init__(self):
         super(TabsWidget, self).__init__()
 
@@ -26,10 +23,12 @@ class TabsWidget(Gtk.ButtonBox):
 
 
     def _setup_styling(self):
-        self.set_layout(Gtk.ButtonBoxStyle.CENTER)
+        ...
 
     def _setup_signals(self):
-        ...
+        self.connect("page-added", self._page_added)
+        self.switch_page_id = \
+            self.connect_after("switch-page", self._switch_page)
 
     def _subscribe_to_events(self):
         ...
@@ -37,51 +36,40 @@ class TabsWidget(Gtk.ButtonBox):
     def _load_widgets(self):
         ...
 
-    def add_tab(self, event: Code_Event_Types.CodeEvent):
-        """Add a tab widget for the given file event."""
-        if not hasattr(self, 'tabs'):
-            return
-            
-        tab      = TabWidget()
-        tab.file = event.file
+    def _page_added(self, notebook, page_widget, page_num):
+        tab = self.get_tab_label(page_widget)
+        tab.set_close_signal(self._close_tab)
 
-        tab.label.set_label(event.file.fname)
+        page_widget.show()
+        self.set_tab_detachable(page_widget, True)
+        self.set_tab_reorderable(page_widget, True)
 
-        def select_signal(widget, eve, file):
-            self.code_base.active_view.command.exec_with_args(
-                "set_buffer",
-                (self.code_base.active_view, file)
+    def _close_tab(self, tab, eve, file):
+        event = Event_Factory.create_event(
+            "remove_file",
+            buffer = tab.get_parent().file.buffer
+        )
+
+        self.message(event)
+
+    def _switch_page(self, notebook, page_widget, page_num):
+        tab   = self.get_tab_label(page_widget)
+        event = Event_Factory.create_event(
+            "set_active_file",
+            buffer = tab.file.buffer
+        )
+
+        self.message(event)
+
+    def view_changed(self, buffer):
+        for page_widget in self.get_children():
+            tab = self.get_tab_label(page_widget)
+            if not buffer == tab.file.buffer: continue
+
+            self.handler_block(self.switch_page_id)
+
+            self.set_current_page(
+                self.page_num(page_widget)
             )
 
-        def close_signal(widget, eve, file):
-            self.code_base.files_controller.remove_file(file.buffer)
-
-        tab.set_select_signal(select_signal)
-        tab.set_close_signal(close_signal)
-
-        self.tabs.add(tab)
-
-    def remove_tab(self, event: Code_Event_Types.CodeEvent):
-        """Remove a tab widget for the given file event."""
-        if not hasattr(self, 'tabs'):
-            return
-            
-        for child in self.tabs.get_children():
-            if not child.file == event.file: continue
-
-            self.tabs.remove(child)
-            child.clear_signals_and_data()
-            del child
-
-            return
-    
-    def update_tab_label(self, event: Code_Event_Types.CodeEvent):
-        """Update tab label for the given file event."""
-        if not hasattr(self, 'tabs'):
-            return
-            
-        for tab in self.tabs.get_children():
-            if not tab.file == event.file: continue
-            tab.label.set_label(event.file.fname)
-
-            return
+            self.handler_unblock(self.switch_page_id)

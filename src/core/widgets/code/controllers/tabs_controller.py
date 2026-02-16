@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import Gtk
 
 # Application imports
 from libs.controllers.controller_base import ControllerBase
@@ -19,11 +22,15 @@ class TabsController(ControllerBase):
 
         self.active_view: SourceView = None
         self.tabs_widget: TabsWidget = TabsWidget()
+        self.tabs_widget.message     = self.message
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.FocusedViewEvent):
             self.active_view = event.view
+            self.tabs_widget.view_changed(
+                event.view.get_buffer()
+            )
         elif isinstance(event, Code_Event_Types.FilePathSetEvent):
             self.update_tab_label(event)
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
@@ -37,48 +44,32 @@ class TabsController(ControllerBase):
         return self.tabs_widget
 
     def update_tab_label(self, event: Code_Event_Types.FilePathSetEvent):
-        for tab in self.tabs_widget.get_children():
+        for page_widget in self.tabs_widget.get_children():
+            tab = self.tabs_widget.get_tab_label(page_widget)
             if not event.file == tab.file: continue
+
             tab.label.set_label(event.file.fname)
+
             break
 
     def add_tab(self, event: Code_Event_Types.AddedNewFileEvent):
-        def set_active_tab(tab, eve, file):
-            event = Event_Factory.create_event(
-                "set_active_file",
-                buffer = tab.get_parent().file.buffer
-            )
-
-            self.active_view.set_buffer(
-                tab.get_parent().file.buffer
-            )
-
-            self.message(event)
-
-        def close_tab(tab, eve, file):
-            event = Event_Factory.create_event(
-                "remove_file",
-                buffer = tab.get_parent().file.buffer
-            )
-
-            self.message(event)
-
+        box = Gtk.Separator()
         tab = TabWidget()
+
         tab.file = event.file
         tab.label.set_label(event.file.fname)
-        tab.set_select_signal(set_active_tab)
-        tab.set_close_signal(close_tab)
 
-        self.tabs_widget.add(tab)
-        tab.show()
+        self.tabs_widget.append_page(box, tab)
+        tab.show_all()
 
     def remove_tab(self, event: Code_Event_Types.RemovedFileEvent):
-        for tab in self.tabs_widget.get_children():
+        for page_widget in self.tabs_widget.get_children():
+            tab = self.tabs_widget.get_tab_label(page_widget)
             if not event.file == tab.file: continue
 
             tab.clear_signals_and_data()
-            tab.run_dispose()
-            tab.destroy()
+            self.tabs_widget.remove_page(
+                self.tabs_widget.page_num(page_widget)
+            )
 
-            del tab
             break
