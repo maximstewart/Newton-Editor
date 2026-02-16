@@ -30,16 +30,16 @@ class ProviderResponseCache(ProviderResponseCacheBase):
     def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
         ...
 
-    def filter(self, word: str):
-        ...
+    def filter(self, word: str) -> list[dict]:
+        return []
 
-    def filter_with_context(self, context: GtkSource.CompletionContext):
+    def filter_with_context(self, context: GtkSource.CompletionContext)  -> list[dict]:
         proposals = [
-            self.create_completion_item(
-                "LSP Class",
-                "LSP Code",
-                "A test LSP completion item..."
-            )
+            {
+                "label": "LSP Class",
+                "text": "LSP Code",
+                "info": "A test LSP completion item..."
+            }
         ]
 
         return proposals

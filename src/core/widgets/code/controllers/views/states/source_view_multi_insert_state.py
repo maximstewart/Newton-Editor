@@ -32,8 +32,11 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
 
     def insert_text(self, file, text):
         if not self.insert_markers: return False
-        
+
         buffer = file.buffer
+        if buffer.is_processing_completion:
+            self.insert_completion_text(buffer, text)
+            return True
 
         # freeze buffer and insert to each mark (if any)
         buffer.block_insert_after_signal()
@@ -43,6 +46,32 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
             for mark in self.insert_markers:
                 itr = buffer.get_iter_at_mark(mark)
                 buffer.insert(itr, text, -1)
+
+        buffer.end_user_action()
+        buffer.unblock_insert_after_signal()
+
+        return True
+
+    def insert_completion_text(self, buffer, text):
+        buffer.is_processing_completion = False
+
+        # freeze buffer and insert to each mark (if any)
+        buffer.block_insert_after_signal()
+        buffer.begin_user_action()
+
+        with buffer.freeze_notify(): 
+            for mark in self.insert_markers:
+                end_itr = buffer.get_iter_at_mark(mark)
+                start_itr = end_itr.copy()
+
+                if not start_itr.starts_word():
+                    start_itr.backward_word_start()
+
+                if not end_itr.ends_word():
+                    end_itr.forward_word_end()
+
+                buffer.delete(start_itr, end_itr)
+                buffer.insert(end_itr, text, -1)
 
         buffer.end_user_action()
         buffer.unblock_insert_after_signal()

@@ -13,6 +13,8 @@ class SourceBuffer(GtkSource.Buffer):
     def __init__(self):
         super(SourceBuffer, self).__init__()
 
+        self.is_processing_completion: bool = False
+
         self._handler_ids = []
 
 

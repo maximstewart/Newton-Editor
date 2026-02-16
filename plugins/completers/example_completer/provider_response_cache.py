@@ -50,10 +50,10 @@ class ProviderResponseCache(ProviderResponseCacheBase):
     def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
         ...
 
-    def filter(self, word: str):
+    def filter(self, word: str) -> list[dict]:
         ...
 
-    def filter_with_context(self, context):
+    def filter_with_context(self, context) -> list[dict]:
         """
             In this instance, it will do 2 things:
                 1) always provide Hello World! (Not ideal but an option so its in the example)
@@ -64,12 +64,12 @@ class ProviderResponseCache(ProviderResponseCacheBase):
             PLEASE NOTE the GtkTextIter Logic and regex are really rough and should be adjusted and tuned
         """
 
-        proposals = [
-            self.create_completion_item(
-                self.matchers[ "hello" ]["label"],
-                self.matchers[ "hello" ]["text"],
-                self.matchers[ "hello" ]["info"]
-            )
+        proposals: list[dict] = [
+            {
+                "label": self.matchers[ "hello" ]["label"],
+                "text":  self.matchers[ "hello" ]["text"],
+                "info":  self.matchers[ "hello" ]["info"]
+            }
         ]
 
         # Gtk Versions differ on get_iter responses...
@@ -90,21 +90,20 @@ class ProviderResponseCache(ProviderResponseCacheBase):
         if re.match(r'.*\{\{\s*custom\.$', left_text):
             # optionally proposed based on left search via regex
             proposals.append(
-                self.create_completion_item(
-                    self.matchers[ "foo" ]["label"],
-                    self.matchers[ "foo" ]["text"]
-                )
+                {
+                    "label": self.matchers[ "foo" ]["label"],
+                    "text":  self.matchers[ "foo" ]["text"],
+                    "info":  ""
+                }
             )
 
             # optionally proposed based on left search via regex
             proposals.append(
-                self.create_completion_item(
-                    self.matchers[ "bar" ]["label"],
-                    self.matchers[ "bar" ]["text"]
-                )
+                {
+                    "label": self.matchers[ "bar" ]["label"],
+                    "text":  self.matchers[ "bar" ]["text"],
+                    "info":  ""
+                }
             )
 
         return proposals
-
-
-
