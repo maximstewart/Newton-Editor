@@ -37,6 +37,8 @@ class FooterContainer(Gtk.Box):
         ...
 
     def _load_widgets(self):
+        widget_registery.expose_object("footer-container", self)
+
         vte_widget = VteWidget()
 
         vte_widget.hide()

@@ -16,10 +16,10 @@ def execute(
 ):
     logger.debug("Command: Update Info Bar")
     file   = view.command.get_file(view)
-    buffer = file.buffer
 
     if not file: return
 
+    buffer = file.buffer
     iter   = buffer.get_iter_at_mark( buffer.get_insert() )
     line   = iter.get_line() + 1
     column = iter.get_line_offset()

@@ -20,14 +20,12 @@ class TabsController(ControllerBase):
     def __init__(self):
         super(TabsController, self).__init__()
 
-        self.active_view: SourceView = None
         self.tabs_widget: TabsWidget = TabsWidget()
         self.tabs_widget.message     = self.message
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.FocusedViewEvent):
-            self.active_view = event.view
             self.tabs_widget.view_changed(
                 event.view.get_buffer()
             )
@@ -53,13 +51,12 @@ class TabsController(ControllerBase):
             break
 
     def add_tab(self, event: Code_Event_Types.AddedNewFileEvent):
-        box = Gtk.Separator()
-        tab = TabWidget()
-
+        tab      = TabWidget()
         tab.file = event.file
+
         tab.label.set_label(event.file.fname)
 
-        self.tabs_widget.append_page(box, tab)
+        self.tabs_widget.append_page(Gtk.Separator(), tab)
         tab.show_all()
 
     def remove_tab(self, event: Code_Event_Types.RemovedFileEvent):

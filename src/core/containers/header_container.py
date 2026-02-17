@@ -34,6 +34,8 @@ class HeaderContainer(Gtk.Box):
         event_system.subscribe("tggl-top-main-menubar", self.tggl_top_main_menubar)
 
     def _load_widgets(self):
+        widget_registery.expose_object("header-container", self)
+
         self.add( TransparencyScale() )
 
     def tggl_top_main_menubar(self):

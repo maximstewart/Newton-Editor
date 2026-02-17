@@ -35,4 +35,5 @@ class LeftContainer(Gtk.Box):
         ...
 
     def _load_widgets(self):
-        ...
+        widget_registery.expose_object("left-container", self)
+

@@ -15,7 +15,11 @@ class TabWidget(Gtk.Box):
     def __init__(self):
         super(TabWidget, self).__init__()
 
-        self._close_tab = None
+        self.file            = None
+
+        self._close_tab      = None
+        self._handler_id     = None
+        self._eve_handler_id = None
 
         self._setup_styling()
         self._setup_signals()
@@ -33,13 +37,15 @@ class TabWidget(Gtk.Box):
         ...
 
     def _load_widgets(self):
-        self.label     = Gtk.Label()
-        self.close_btn = Gtk.Button()
-        icon           = Gtk.Image(stock = Gtk.STOCK_CLOSE)
+        self.event_box  = Gtk.EventBox()
+        self.label      = Gtk.Label()
+        self.close_bttn = Gtk.Button()
+        icon            = Gtk.Image(stock = Gtk.STOCK_CLOSE)
 
+        self.event_box.set_above_child(True)
         ctx = self.label.get_style_context()
         ctx.add_class("tab-label")
-        ctx = self.close_btn.get_style_context()
+        ctx = self.close_bttn.get_style_context()
         ctx.add_class("tab-close-bttn")
 
         self.label.set_xalign(0.0)
@@ -47,16 +53,18 @@ class TabWidget(Gtk.Box):
         self.label.set_margin_right(25)
         self.label.set_hexpand(True)
 
-        self.close_btn.add(icon)
-        self.add(self.label)
-        self.add(self.close_btn)
+        self.close_bttn.add(icon)
+        self.event_box.add(self.label)
+        self.add(self.event_box)
+        self.add(self.close_bttn)
 
         self.show_all()
 
     def clear_signals_and_data(self):
-        self.close_btn.disconnect(self._handler_id)
-        self._close_tab    = None
-        self._handler_id   = None
+        self.close_bttn.disconnect(self._handler_id)
+        self.event_box.disconnect(self._eve_handler_id)
+        self._close_tab  = None
+        self._handler_id = None
 
         for child in self.get_children():
             child.unparent()
@@ -64,8 +72,8 @@ class TabWidget(Gtk.Box):
             child.destroy()
 
     def set_close_signal(self, callback):
-        self._handler_id = self.close_btn.connect(
-            'button-release-event',
+        self._handler_id = self.close_bttn.connect(
+            'clicked',
             callback,
             self.file
         )

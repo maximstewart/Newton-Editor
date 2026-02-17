@@ -42,7 +42,7 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerMixin)
         self.base_container     = BaseContainer()
         self.plugins_controller = plugins_controller
 
-        widget_registery.expose_object("main_window", self.window)
+        widget_registery.expose_object("main-window", self.window)
         settings_manager.register_signals_to_builder([self, self.base_container])
 
         self._collect_files_dirs()

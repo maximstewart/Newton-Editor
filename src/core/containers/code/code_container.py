@@ -43,15 +43,6 @@ class CodeContainer(Gtk.Box):
         self.add( self._create_editor_widget(code_base) )
 
     def _create_tabs_widgets(self, code_base: CodeBase):
-        # scrolled_window = Gtk.ScrolledWindow()
-        # viewport        = Gtk.Viewport()
-
-        # scrolled_window.set_overlay_scrolling(False)
-
-        # viewport.add( code_base.get_tabs_widget() )
-        # scrolled_window.add( viewport )
-
-        # return scrolled_window
         return code_base.get_tabs_widget()
 
     def _create_editor_widget(self, code_base: CodeBase):

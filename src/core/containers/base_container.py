@@ -38,6 +38,8 @@ class BaseContainer(Gtk.Box):
         event_system.subscribe("remove-transparency", self._remove_transparency)
 
     def _load_widgets(self):
+        widget_registery.expose_object("base-container", self)
+
         self.add( HeaderContainer() )
         self.add( BodyContainer() )
         self.add( FooterContainer() )
