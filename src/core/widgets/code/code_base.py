@@ -24,8 +24,12 @@ class CodeBase:
         self.controller_manager: ControllerManager = ControllerManager()
         self.miniview_widget: MiniViewWidget       = MiniViewWidget()
 
+        self._subscribe_to_events()
         self._load_controllers()
 
+
+    def _subscribe_to_events(self):
+        event_system.subscribe("handle-file", self._load_ipc_file)
 
     def _load_controllers(self):
         files_controller        = FilesController()
@@ -59,3 +63,8 @@ class CodeBase:
 
     def first_map_load(self):
         self.controller_manager["source_views"].first_map_load()
+
+    def _load_ipc_file(self, fpath: str):
+        active_view = self.controller_manager["source_views"].signal_mapper.active_view
+        uris        = [ f"file://{fpath}" ]
+        active_view._on_uri_data_received(uris)

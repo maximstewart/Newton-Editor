@@ -146,6 +146,8 @@ class TabsWidget(Gtk.Notebook):
         self.close_right_items(menu_item, page_widget)
 
     def close_all_items(self, menu_item, page_widget):
+        children = self.get_children()
+
         for widget in children[ : ]:
             tab = self.get_tab_label(widget)
             tab.close_bttn.clicked()

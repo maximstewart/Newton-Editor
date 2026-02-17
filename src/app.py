@@ -43,7 +43,7 @@ class Application:
         if ipc_server.is_ipc_alive:
             return True
 
-        logger.warning(f"{app_name} IPC Server Exists: Have sent path(s) to it and closing...")
+        logger.warning(f"{APP_NAME} IPC Server Exists: Have sent path(s) to it and closing...")
         for arg in unknownargs + [args.new_tab,]:
             if os.path.isfile(arg):
                 message = f"FILE|{arg}"
