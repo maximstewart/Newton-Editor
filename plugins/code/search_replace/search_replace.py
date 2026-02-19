@@ -50,12 +50,13 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.connect("hide", self._handle_hide)
 
     def _load_widgets(self):
-        self.stateus_lbl      = Gtk.Label(label = "Find in Current Buffer")
+        self.status_lbl       = Gtk.Label(label = "Find in Current Buffer")
         self.find_options_lbl = Gtk.Label(label = "Finding with Options: Case Insensitive")
         self.mode_bttn_box    = ModeButtons()
 
         self.find_entry       = Gtk.SearchEntry()
         self.replace_entry    = Gtk.SearchEntry()
+
         find_bttn             = Gtk.Button(label = "Find")
         find_all_bttn         = Gtk.Button(label = "Find All")
         replace_bttn          = Gtk.Button(label = "Replace")
@@ -97,17 +98,18 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
             lambda button: self._replace_all_activate(self.replace_entry) 
         )
 
-        self.attach(child = self.stateus_lbl,      left = 0, top = 0, width = 2, height = 1)
-        self.attach(child = self.find_options_lbl, left = 2, top = 0, width = 2, height = 1)
-        self.attach(child = self.mode_bttn_box,    left = 4, top = 0, width = 2, height = 1)
+        self.attach(child = self.status_lbl,       left = 0, top = 0, width = 3, height = 1)
+        self.attach(child = self.find_options_lbl, left = 3, top = 0, width = 2, height = 1)
+        self.attach(child = self.mode_bttn_box,    left = 5, top = 0, width = 2, height = 1)
 
-        self.attach(child = self.find_entry,       left = 0, top = 1, width = 4, height = 1)
-        self.attach(child = find_bttn,             left = 4, top = 1, width = 1, height = 1)
-        self.attach(child = find_all_bttn,         left = 5, top = 1, width = 1, height = 1)
+        self.attach(child = self.find_entry,       left = 0, top = 1, width = 5, height = 1)
+        self.attach(child = find_bttn,             left = 5, top = 1, width = 1, height = 1)
+        self.attach(child = find_all_bttn,         left = 6, top = 1, width = 1, height = 1)
 
-        self.attach(child = self.replace_entry,    left = 0, top = 2, width = 4, height = 1)
-        self.attach(child = replace_bttn,          left = 4, top = 2, width = 1, height = 1)
-        self.attach(child = replace_all_bttn,      left = 5, top = 2, width = 1, height = 1)
+        self.attach(child = self.replace_entry,    left = 0, top = 2, width = 5, height = 1)
+        self.attach(child = replace_bttn,          left = 5, top = 2, width = 1, height = 1)
+        self.attach(child = replace_all_bttn,      left = 6, top = 2, width = 1, height = 1)
+
 
     def _handle_show(self, widget):
         self.find_entry.set_text("")
@@ -119,9 +121,6 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         buffer = self.active_view.get_buffer()
         self.clear_highlight(buffer)
         self.active_view.grab_focus()
-
-    def request_update(self):
-        self._find_entry_search_change(self.find_entry)
 
     def _find_entry_key_release_event(self, widget, event):
         modifiers  = Gdk.ModifierType(event.get_state() & ~Gdk.ModifierType.LOCK_MASK)
@@ -144,6 +143,48 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
             self.find_entry.grab_focus()
         elif is_control and keyname == "f":
             self.hide()
+
+    def _set_find_options_lbl(self):
+        find_options = "Finding with Options: "
+
+        if self.mode_bttn_box.use_regex:
+            find_options += "Regex"
+
+        find_options += ", " if self.mode_bttn_box.use_regex else ""
+        find_options += "Case Sensitive" if self.mode_bttn_box.match_case else "Case Inensitive"
+
+        if self.mode_bttn_box.in_selection:
+            find_options += ", Within Current Selection"
+
+        if self.mode_bttn_box.whole_word:
+            find_options += ", Whole Word"
+
+        self.find_options_lbl.set_label(find_options)
+
+    def update_style(self, state):
+        self.find_entry.get_style_context().remove_class("searching")
+        self.find_entry.get_style_context().remove_class("search-success")
+        self.find_entry.get_style_context().remove_class("search-fail")
+
+        if state == 0:
+            self.find_entry.get_style_context().add_class("searching")
+        elif state == 1:
+            self.find_entry.get_style_context().add_class("search-success")
+        elif state == 2:
+            self.find_entry.get_style_context().add_class("search-fail")
+
+    def _update_status_lbl(self, total_count: int = 0, query: str = None):
+        if not query: return
+
+        count  = total_count if total_count > 0 else "No"
+        plural = "s" if total_count > 1 else ""
+
+        self.update_style(2) if total_count == 0 else self.update_style(1)
+        self.status_lbl.set_label(f"{count} result{plural} found for:\n'{query}'")
+
+    def request_update(self):
+        self._set_find_options_lbl()
+        self._find_entry_search_change(self.find_entry)
 
     def clear_highlight(self, buffer):
         if not self.highlight_tag: return

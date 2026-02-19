@@ -32,6 +32,8 @@ class SearchMixin:
 
 
     def _find_all_matches(self, search_text, buffer):
+        self.update_style(0)
+
         self.matches.clear()
         self.current_index = -1
 

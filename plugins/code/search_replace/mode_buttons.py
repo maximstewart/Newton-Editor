@@ -40,6 +40,7 @@ class ModeButtons(Gtk.ButtonBox):
         match_case_bttn   = Gtk.ToggleButton(label = "Aa")
         in_selection_bttn = Gtk.ToggleButton()
         whole_word_bttn   = Gtk.ToggleButton()
+        hide_bttn         = Gtk.Button(label = "X")
 
         use_regex_bttn.set_sensitive(False)
 
@@ -53,6 +54,11 @@ class ModeButtons(Gtk.ButtonBox):
         in_selection_bttn.connect("toggled", self._toggled_button, "in_selection")
         whole_word_bttn.connect("toggled", self._toggled_button, "whole_word")
 
+        hide_bttn.connect(
+            "clicked",
+            lambda widget: self.get_parent().hide()
+        )
+
         in_selection_bttn.set_image(
             Gtk.Image.new_from_file("images/only-in-selection.png")
         )
@@ -64,6 +70,7 @@ class ModeButtons(Gtk.ButtonBox):
         self.add(match_case_bttn)
         self.add(in_selection_bttn)
         self.add(whole_word_bttn)
+        self.add(hide_bttn)
 
     def _toggled_button(self, toggle_button, mode: str):
         setattr(self, mode, not getattr(self, mode))

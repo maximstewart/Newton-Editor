@@ -37,11 +37,14 @@ class SearchReplaceMixin(SearchMixin, ReplaceMixin):
         self.highlight_tag = buffer.get_tag_table().lookup("search-highlight")
 
         if not search_text:
+            self.update_style(-1)
             self.clear_highlight(buffer)
+            self.status_lbl.set_label("Find in current buffer...")
             return
 
         self._find_all_matches(search_text, buffer)
         self._highlight_all_matches(buffer)
+        self._update_status_lbl(len(self.matches), search_text)
 
     def _find_entry_activate(self, entry):
         self._find_entry_next_match(entry)
