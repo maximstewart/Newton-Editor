@@ -43,9 +43,25 @@ class SourceFile(GtkSource.File):
         )
 
     def _changed(self, buffer: SourceBuffer):
+        self.check_file_on_disk()
+
         event = Event_Factory.create_event("text_changed", buffer = buffer)
         event.file = self
         self.emit(event)
+
+        if self.is_deleted():
+            print("deleted")
+            # event = Event_Factory.create_event("file_deleted", buffer = buffer)
+            # event.file = self
+            # self.emit(event)
+            return
+
+        if self.is_externally_modified():
+            print("is_externally_modified")
+            # event = Event_Factory.create_event("file_externally_modified", buffer = buffer)
+            # event.file = self
+            # self.emit(event)
+            return
 
     def _insert_text(
         self,

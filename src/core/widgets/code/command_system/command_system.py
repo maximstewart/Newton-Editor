@@ -37,6 +37,9 @@ class CommandSystem:
         method = getattr(commands, command)
         return method.execute(*args)
 
+    def add_command(self, command_name: str, command: callable):
+        setattr(commands, command_name, command)
+
 
     def emit(self, event: Code_Event_Types.CodeEvent):
         """ Monkey patch 'emit' from command controller... """

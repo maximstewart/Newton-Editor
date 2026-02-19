@@ -31,6 +31,9 @@ class PluginCode(PluginBase):
     def run(self):
         raise PluginCodeException("Plugin Code 'run' must be overriden by Plugin")
 
+    def requests_ui_element(self, element_id: str):
+        return self.plugin_context.requests_ui_element(element_id)
+
     def message(self, event: BaseEvent):
         return self.plugin_context.message(event)
 

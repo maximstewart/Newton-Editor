@@ -45,6 +45,7 @@ class VteWidget(Vte.Terminal):
         ctx.add_class("vte-widget")
 
         self.set_clear_background(False)
+        self.set_hexpand(True)
         self.set_enable_sixel(True)
         self.set_cursor_shape( Vte.CursorShape.IBEAM )
 

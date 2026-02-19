@@ -10,6 +10,7 @@ from ...key_mapper import KeyMapper
 from .states import *
 
 
+
 class SourceViewStateManager:
     def __init__(self):
         self.key_mapper: KeyMapper = KeyMapper()

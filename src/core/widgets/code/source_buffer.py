@@ -13,9 +13,14 @@ class SourceBuffer(GtkSource.Buffer):
     def __init__(self):
         super(SourceBuffer, self).__init__()
 
+        self._handler_ids = []
         self.is_processing_completion: bool = False
 
-        self._handler_ids = []
+        self.create_tag(
+            "search-highlight",
+            background = "yellow",
+            foreground = "black"
+        )
 
 
     def set_signals(

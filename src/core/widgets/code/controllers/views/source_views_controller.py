@@ -27,6 +27,8 @@ class SourceViewsController(ControllerBase, list):
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.RemovedFileEvent):
             self._remove_file(event)
+        elif isinstance(event, Code_Event_Types.RegisterCommandEvent):
+            self. _register_command(event)
 
         if not self.signal_mapper.active_view: return
 
@@ -40,8 +42,22 @@ class SourceViewsController(ControllerBase, list):
         elif isinstance(event, Code_Event_Types.TextInsertedEvent):
             self.signal_mapper.insert_text(event.file, event.text)
 
+    def _register_command(self, event: Code_Event_Types.RegisterCommandEvent):
+        self.state_manager.key_mapper.map_command(
+            event.command_name,
+            {
+                f"{event.binding_mode}": event.binding
+            }
+        )
+
+        for view in self:
+            view.command.add_command(
+                event.command_name,
+                event.command
+            )
+
     def _get_command_system(self):
-        event   = Event_Factory.create_event("get_command_system")
+        event   = Event_Factory.create_event("get_new_command_system")
         self.message_to("commands", event)
         command = event.response
 

@@ -5,8 +5,9 @@
 
 from .code_event import CodeEvent
 from .register_provider_event import RegisterProviderEvent
+from .register_command_event import RegisterCommandEvent
 
-from .get_command_system_event import GetCommandSystemEvent
+from .get_new_command_system_event import GetNewCommandSystemEvent
 from .request_completion_event import RequestCompletionEvent
 from .cursor_moved_event import CursorMovedEvent
 from .modified_changed_event import ModifiedChangedEvent

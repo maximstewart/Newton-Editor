@@ -17,10 +17,10 @@ class CommandsController(ControllerBase, list):
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.GetCommandSystemEvent):
-            event.response = self.get_command_system()
+        if isinstance(event, Code_Event_Types.GetNewCommandSystemEvent):
+            event.response = self.get_new_command_system()
 
-    def get_command_system(self):
+    def get_new_command_system(self):
         command_system         = CommandSystem()
         command_system.emit    = self.emit
         command_system.emit_to = self.emit_to

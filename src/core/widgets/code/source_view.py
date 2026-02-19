@@ -59,6 +59,7 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
 
     def _setup_signals(self):
         self.connect("drag-data-received", self._on_drag_data_received)
+        self.connect("populate-popup", self._on_populate_popup)
 
     def _subscribe_to_events(self):
         ...
@@ -75,6 +76,37 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
         )
 
         self._set_up_dnd()
+
+    def _on_populate_popup(self, view, menu):
+        buffer   = self.get_buffer()
+        language = buffer.get_language()
+
+        if language.get_id() == "json":
+            self._load_pretify_json(view, menu)
+
+        menu.show_all()
+
+    def _load_prettify_json(self, view, menu):
+        menu.append( Gtk.SeparatorMenuItem() )
+
+        def on_prettify_json(menuitem):
+            import json
+
+            buffer = self.get_buffer()
+            start_itr, \
+            end_itr = buffer.get_start_iter(), buffer.get_end_iter()
+            data    = buffer.get_text(start_itr, end_itr, False)
+            text    = json.dumps(json.loads(data), separators = (',', ':'), indent = 4)
+
+            buffer.begin_user_action()
+            buffer.delete(start_itr, end_itr)
+            buffer.insert(start_itr, text)
+            buffer.end_user_action()
+
+        item = Gtk.MenuItem(label = "Prettify JSON")
+        item.connect("activate", on_prettify_json)
+        menu.append(item)
+
 
     def clear_temp_cut_buffer_delayed(self):
         if self._cut_temp_timeout_id:

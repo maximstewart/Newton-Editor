@@ -27,7 +27,7 @@ class FooterContainer(Gtk.Box):
         self.ctx = self.get_style_context()
         self.ctx.add_class("footer-container")
 
-        self.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.set_orientation(Gtk.Orientation.VERTICAL)
         self.set_hexpand(True)
 
     def _setup_signals(self):

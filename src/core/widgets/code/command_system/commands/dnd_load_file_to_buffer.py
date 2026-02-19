@@ -18,12 +18,7 @@ def execute(
     uri: str
 ):
     logger.debug("Command: DnD Load File To Buffer")
-
-    file   = view.command.get_file(view)
-    buffer = file.buffer
-
-    if not file.ftype == "buffer":
-        file = view.command.new_file(view)
+    file = view.command.new_file(view)
 
     gfile  = Gio.File.new_for_uri(uri)
     view.command.exec_with_args(
@@ -31,4 +26,5 @@ def execute(
         (view, gfile, file)
     )
 
+    view.set_buffer(file.buffer)
     update_info_bar_if_focused(view.command, view)

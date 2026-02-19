@@ -70,28 +70,30 @@ class KeyMapper:
 
         with open(bindings_file, 'r') as f:
             data = json.load(f)["keybindings"]
-
             for command in data:
-                press_state = "held" if "held" in data[command] else "released"
-                keyname     = data[command][press_state]
-
-                state       = NoKeyState
-                if "<Control>" in keyname:
-                    state = state | CtrlKeyState
-                if "<Shift>" in keyname:
-                    state = state | ShiftKeyState
-                if "<Alt>" in keyname:
-                    state = state | AltKeyState
-
-                keyname = keyname.replace("<Control>", "") \
-                                 .replace("<Shift>",   "") \
-                                 .replace("<Alt>",     "") \
-                                 .lower()
-
-                getattr(self.states[state], press_state)[keyname] = command
+                self.map_command( command, data[command] )
 
     def re_map(self):
         self.states = copy.deepcopy(self._map)
+
+    def map_command(self, command, entry):
+        press_state = "held" if "held" in entry else "released"
+        keyname     = entry[press_state]
+
+        state       = NoKeyState
+        if "<Control>" in keyname:
+            state = state | CtrlKeyState
+        if "<Shift>" in keyname:
+            state = state | ShiftKeyState
+        if "<Alt>" in keyname:
+            state = state | AltKeyState
+
+        keyname = keyname.replace("<Control>", "") \
+                         .replace("<Shift>",   "") \
+                         .replace("<Alt>",     "") \
+                         .lower()
+
+        getattr(self.states[state], press_state)[keyname] = command
 
     def _key_press_event(self, eve):
         keyname = Gdk.keyval_name(eve.keyval).lower()

@@ -12,6 +12,7 @@ from libs.mixins.ipc_signals_mixin import IPCSignalsMixin
 from libs.mixins.keyboard_signals_mixin import KeyboardSignalsMixin
 
 from ..containers.base_container import BaseContainer
+from ..containers.code.code_container import CodeContainer
 
 from .base_controller_mixin import BaseControllerMixin
 from .bridge_controller import BridgeController
