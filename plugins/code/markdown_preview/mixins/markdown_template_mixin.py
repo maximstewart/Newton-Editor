@@ -7,7 +7,7 @@
 
 
 class MarkdownTemplateMixin:
-    def wrap_html_to_body(self, html):
+    def wrap_html_to_body(self, html: str):
         return f"""\
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -17,7 +17,8 @@ class MarkdownTemplateMixin:
     <style media="screen">
         html, body {{
             display: block;
-            background-color: #32383e00;
+            // background-color: #32383e64;
+            background-color: #32383e;
             color: #ffffff;
             text-wrap: wrap;
         }}

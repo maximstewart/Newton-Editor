@@ -6,6 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from ..widgets.separator_widget import Separator
 from ..widgets.vte_widget import VteWidget
 
 
@@ -43,3 +44,5 @@ class FooterContainer(Gtk.Box):
 
         vte_widget.hide()
         self.add( vte_widget )
+
+        self.add( Separator("separator-footer", 0) )

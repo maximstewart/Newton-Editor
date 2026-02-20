@@ -32,8 +32,23 @@ class Provider(GtkSource.CompletionWords):
         return 'Words Completion'
 
     def do_match(self, context):
+        # Note: If provider is in interactive activation then need to check
+        # view focus as otherwise non focus views start trying to grab it.
+        completion = context.get_property("completion")
+        if not completion.get_view().has_focus(): return
+
         word = self.response_cache.get_word(context)
         if not word or len(word) < 2: return False
+
+        iter = self.response_cache.get_iter_correctly(context)
+        iter.backward_char()
+        ch = iter.get_char()
+        # NOTE: Look to re-add or apply supprting logic to use spaces
+        # As is it slows down the editor in certain contexts...
+        # if not (ch in ('_', '.', ' ') or ch.isalnum()):
+        if not (ch in ('_', '.') or ch.isalnum()):
+            return False
+
         return True
 
     def do_get_priority(self):

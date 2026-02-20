@@ -6,6 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from ..widgets.separator_widget import Separator
 
 
 
@@ -25,7 +26,7 @@ class LeftContainer(Gtk.Box):
         self.ctx = self.get_style_context()
         self.ctx.add_class("left-container")
 
-        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.set_vexpand(True)
 
     def _setup_signals(self):
@@ -36,4 +37,5 @@ class LeftContainer(Gtk.Box):
 
     def _load_widgets(self):
         widget_registery.expose_object("left-container", self)
+        self.add( Separator("separator-left", 1) )
 

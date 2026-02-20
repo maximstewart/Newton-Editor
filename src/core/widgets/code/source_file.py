@@ -45,8 +45,11 @@ class SourceFile(GtkSource.File):
     def _changed(self, buffer: SourceBuffer):
         self.check_file_on_disk()
 
-        event = Event_Factory.create_event("text_changed", buffer = buffer)
-        event.file = self
+        event = Event_Factory.create_event(
+            "text_changed",
+            file   = self,
+            buffer = buffer
+        )
         self.emit(event)
 
         if self.is_deleted():

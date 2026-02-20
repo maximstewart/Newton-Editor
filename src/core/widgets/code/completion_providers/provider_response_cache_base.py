@@ -11,6 +11,7 @@ from gi.repository import Gtk
 from gi.repository import GtkSource
 
 # Application imports
+from libs.event_factory import Code_Event_Types
 
 
 
@@ -26,16 +27,16 @@ class ProviderResponseCacheBase:
         self._icon_theme = Gtk.IconTheme.get_default()
 
 
-    def process_file_load(self, buffer: GtkSource.Buffer):
+    def process_file_load(self, event: Code_Event_Types.AddedNewFileEvent):
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_load' not implemented...")
 
-    def process_file_close(self, buffer: GtkSource.Buffer):
+    def process_file_close(self, event: Code_Event_Types.RemovedFileEvent):
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_close' not implemented...")
 
-    def process_file_save(self, buffer: GtkSource.Buffer):
+    def process_file_save(self, event: Code_Event_Types.SavedFileEvent):
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_save' not implemented...")
 
-    def process_file_change(self, buffer: GtkSource.Buffer):
+    def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_change' not implemented...")
 
     def filter(self, word: str) -> list[dict]:

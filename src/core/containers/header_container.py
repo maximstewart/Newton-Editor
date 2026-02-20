@@ -6,6 +6,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from ..widgets.separator_widget import Separator
 from ..widgets.controls.transparency_scale import TransparencyScale
 
 
@@ -36,6 +37,7 @@ class HeaderContainer(Gtk.Box):
     def _load_widgets(self):
         widget_registery.expose_object("header-container", self)
 
+        self.add( Separator("separator-header", 0) )
         self.add( TransparencyScale() )
 
     def tggl_top_main_menubar(self):

@@ -19,7 +19,6 @@ class WebkitUI(WebKit2.WebView):
 
         self._setup_styling()
         self._subscribe_to_events()
-        self._load_view()
         self._setup_content_manager()
 
         self.show_all()
@@ -36,15 +35,6 @@ class WebkitUI(WebKit2.WebView):
     def _load_settings(self):
         self.set_settings( WebkitUISettings() )
 
-    def _load_view(self):
-        path = settings_manager.get_context_path()
-        data = None
-
-        with open(f"{path}/index.html", "r") as f:
-            data = f.read()
-
-        self.load_html(content = data, base_uri = f"file://{path}/")
-
     def _setup_content_manager(self):
         content_manager = self.get_user_content_manager()
         content_manager.connect("script-message-received", self._process_js_message)
@@ -59,6 +49,22 @@ class WebkitUI(WebKit2.WebView):
             event_system.emit("handle-bridge-event", (event,))
         except Exception as e:
             logger.info(e)
+
+    def load_url(self, url: str = ""):
+        if not url:
+            url = "https://duckduckgo.com/"
+
+        self.load_uri(url)
+
+    def load_context_base_path(self, path: str = ""):
+        if not path:
+            path = settings_manager.path_manager.get_context_path()
+
+        data = None
+        with open(f"{path}/index.html", "r") as f:
+            data = f.read()
+
+        self.load_html(content = data, base_uri = f"file://{path}")
 
     def ui_message(self, message, mtype):
         command = f"displayMessage('{message}', '{mtype}', '3')"

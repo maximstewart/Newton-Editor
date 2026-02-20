@@ -90,7 +90,8 @@ class ProviderResponseCache(ProviderResponseCacheBase):
         self.matchers[buffer] = set()
 
     def load_into_set(self, buffer, new_words):
-        self.matchers[buffer].update(new_words)
+        # self.matchers[buffer].update(new_words)
+        self.matchers[buffer] = new_words
 
     def load_as_new_set(self, buffer, data):
         self.matchers[buffer] = self.get_all_words(data)

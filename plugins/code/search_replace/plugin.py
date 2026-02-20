@@ -1,9 +1,6 @@
 # Python imports
 
 # Lib imports
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
@@ -62,4 +59,5 @@ class Handler:
         view: any
     ):
         logger.debug("Command: Search/Replace")
+
         search_replace.hide() if search_replace.is_visible() else search_replace.show()

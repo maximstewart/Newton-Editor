@@ -82,7 +82,7 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
         language = buffer.get_language()
 
         if language.get_id() == "json":
-            self._load_pretify_json(view, menu)
+            self._load_prettify_json(view, menu)
 
         menu.show_all()
 
