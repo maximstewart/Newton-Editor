@@ -68,6 +68,8 @@ class CompletionController(ControllerBase):
 
     def provider_process_file_load(self, event: Code_Event_Types.AddedNewFileEvent):
         for provider in self._providers.values():
+            # if provider.get_name() == "Words Completion":
+            #    provider.register(event.file.buffer)
             provider.response_cache.process_file_load(event)
 
     def provider_process_file_close(self, event: Code_Event_Types.RemovedFileEvent):

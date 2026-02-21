@@ -71,7 +71,7 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
                     end_itr.forward_word_end()
 
                 buffer.delete(start_itr, end_itr)
-                buffer.insert(end_itr, text, -1)
+                buffer.insert(start_itr, text, -1)
 
         buffer.end_user_action()
         buffer.unblock_insert_after_signal()

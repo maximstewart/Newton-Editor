@@ -4,7 +4,7 @@
 import gi
 gi.require_version('GtkSource', '4')
 from gi.repository.GtkSource import Map
-
+from gi.repository import Pango
 
 # Application imports
 
@@ -25,6 +25,7 @@ class MiniViewWidget(Map):
         ctx.add_class("mini-view")
 
         self.set_hexpand(False)
+        self._set_font_desc()
 
     def _setup_signals(self):
         ...
@@ -34,6 +35,14 @@ class MiniViewWidget(Map):
 
     def _load_widgets(self):
         ...
+
+    def _set_font_desc(self):
+        default_font = 'Monospace 1'
+        desc         = Pango.FontDescription(default_font)
+
+        desc.set_size(Pango.SCALE) # Set size to 1pt
+        desc.set_family('BuilderBlocks,' + desc.get_family())
+        self.set_property('font-desc', desc)
 
     def set_smini_view(self, source_view):
         self.set_view(source_view)

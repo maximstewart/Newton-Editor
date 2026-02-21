@@ -6,6 +6,7 @@ import gi
 gi.require_version('GtkSource', '4')
 
 from gi.repository import GtkSource
+from gi.repository import Pango
 
 # Application imports
 
@@ -18,6 +19,9 @@ def execute(
 
     ctx = view.get_style_context()
     if view.zoom_level < 99:
-        ctx.remove_class(f"px{view.zoom_level}")
         view.zoom_level += 1
-        ctx.add_class(f"px{view.zoom_level}")
+
+        font_desc        = \
+            Pango.FontDescription(f"Monospace {view.zoom_level}")
+
+        view.modify_font(font_desc)

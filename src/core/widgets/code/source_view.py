@@ -39,7 +39,6 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
         ctx             = self.get_style_context()
 
         ctx.add_class("source-view")
-        ctx.add_class(f"px{self.zoom_level}")
 
         self.set_vexpand(True)
         self.set_bottom_margin(800)
