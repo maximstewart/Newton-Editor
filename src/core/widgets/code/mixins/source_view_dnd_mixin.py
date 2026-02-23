@@ -26,8 +26,8 @@ class SourceViewDnDMixin:
         if info == 80:
             uris = data.get_uris()
 
-            if len(uris) == 0:
-                uris = data.get_text().split("\n")
+            if not uris: return
+            uris = data.get_text().split("\n")
 
             self._on_uri_data_received(uris)
 
@@ -35,6 +35,6 @@ class SourceViewDnDMixin:
             uri = uris.pop(0)
             self.command.exec_with_args("dnd_load_file_to_buffer", (self, uri))
 
-            if len(uris) == 0: return
+            if not uris: return
 
             self.command.exec_with_args("dnd_load_files", (self, uris))

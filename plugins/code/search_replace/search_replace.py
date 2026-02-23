@@ -38,7 +38,6 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.set_hexpand(True)
         self.set_column_spacing(15)
         self.set_row_spacing(15)
-        self.set_row_spacing(15)
 
         self.set_margin_start(15)
         self.set_margin_end(15)
@@ -151,7 +150,7 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
             find_options += "Regex"
 
         find_options += ", " if self.mode_bttn_box.use_regex else ""
-        find_options += "Case Sensitive" if self.mode_bttn_box.match_case else "Case Inensitive"
+        find_options += "Case Sensitive" if self.mode_bttn_box.match_case else "Case Insensitive"
 
         if self.mode_bttn_box.in_selection:
             find_options += ", Within Current Selection"

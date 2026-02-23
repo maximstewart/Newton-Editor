@@ -55,7 +55,7 @@ class DnDMixin:
             uris   = data.get_uris()
             files  = []
 
-            if len(uris) == 0:
+            if not uris:
                 uris = data.get_text().split("\n")
 
             for uri in uris:

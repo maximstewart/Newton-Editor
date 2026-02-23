@@ -111,13 +111,13 @@ class KeyMapper:
 
     def _set_key_state(self, eve):
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
-        is_control = True if modifiers & Gdk.ModifierType.CONTROL_MASK else False
-        is_shift   = True if modifiers & Gdk.ModifierType.SHIFT_MASK else False
+        is_control = modifiers & Gdk.ModifierType.CONTROL_MASK
+        is_shift   = modifiers & Gdk.ModifierType.SHIFT_MASK
 
         try:
-            is_alt = True if modifiers & Gdk.ModifierType.ALT_MASK else False
-        except Exception:
-            is_alt = True if modifiers & Gdk.ModifierType.MOD1_MASK else False
+            is_alt = modifiers & Gdk.ModifierType.ALT_MASK
+        except:
+            is_alt = modifiers & Gdk.ModifierType.MOD1_MASK
 
         self.state = NoKeyState
         if is_control:
@@ -129,11 +129,11 @@ class KeyMapper:
 
     def is_control(self, eve):
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
-        return True if modifiers & Gdk.ModifierType.CONTROL_MASK else False
+        return modifiers & Gdk.ModifierType.CONTROL_MASK
 
     def is_shift(self, eve):
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
-        return True if modifiers & Gdk.ModifierType.SHIFT_MASK else False
+        return modifiers & Gdk.ModifierType.SHIFT_MASK
 
     def get_raw_keyname(self, eve):
         return Gdk.keyval_name(eve.keyval)

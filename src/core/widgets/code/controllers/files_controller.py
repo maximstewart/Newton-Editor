@@ -101,7 +101,7 @@ class FilesController(ControllerBase, list):
 
         eve = Event_Factory.create_event(
             "popped_file",
-            view      = view,
+            view      = event.view,
             file      = popped_file,
             next_file = next_file
         )
@@ -137,9 +137,9 @@ class FilesController(ControllerBase, list):
     def next_index(self, i):
         size = len(self)
 
-        if (i == 0) & (size >= 2):
+        if (i == 0) and (size >= 2):
             j = i + 1
-        elif (i == (size - 1)) & (size >= 2):
+        elif (i == (size - 1)) and (size >= 2):
             j = i - 1
         elif (size - 1) == 0:
             j = -1

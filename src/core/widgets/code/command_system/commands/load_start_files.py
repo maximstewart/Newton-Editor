@@ -19,7 +19,7 @@ def execute(
 
     starting_files = settings_manager.get_starting_files()
 
-    if len(starting_files) == 0: return
+    if not starting_files: return
 
     file   = starting_files.pop()
     file   = file.replace("FILE|", "")
@@ -31,7 +31,7 @@ def execute(
         (view, gfile, file)
     )
 
-    if len(starting_files) == 0: return
+    if not starting_files: return
 
     for file in starting_files:
         file  = file.replace("FILE|", "")

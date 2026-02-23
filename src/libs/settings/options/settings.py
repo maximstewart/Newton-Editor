@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from dataclasses import asdict
 
-# Gtk imports
+# Lib imports
 
 # Application imports
 from .config import Config

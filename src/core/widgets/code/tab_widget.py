@@ -17,7 +17,6 @@ class TabWidget(Gtk.Box):
 
         self.file            = None
 
-        self._close_tab      = None
         self._handler_id     = None
         self._eve_handler_id = None
 
@@ -63,7 +62,6 @@ class TabWidget(Gtk.Box):
     def clear_signals_and_data(self):
         self.close_bttn.disconnect(self._handler_id)
         self.event_box.disconnect(self._eve_handler_id)
-        self._close_tab  = None
         self._handler_id = None
 
         for child in self.get_children():

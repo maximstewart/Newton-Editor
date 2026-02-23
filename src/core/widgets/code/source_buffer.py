@@ -71,6 +71,4 @@ class SourceBuffer(GtkSource.Buffer):
             self.disconnect(handle_id)
 
     def __del__(self):
-        for handle_id in self._handler_ids:
-            self.disconnect(handle_id)
-
+        self.clear_signals()

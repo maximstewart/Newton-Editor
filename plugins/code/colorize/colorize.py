@@ -132,12 +132,10 @@ class Colorize(ColorConverterMixin):
         if not start_itr:
             start_itr = buffer.get_start_iter()
 
-        results = self.search(start_itr, end_itr, "#")
-
-        return results
+        return self.search(start_itr, end_itr, "#")
 
     def search(self, start_itr = None, end_itr = None, query: str = None) -> list:
-        if not start_itr or not query: return None, None
+        if not start_itr or not query: return []
 
         results: list = []
         flags         = Gtk.TextSearchFlags.VISIBLE_ONLY | Gtk.TextSearchFlags.TEXT_ONLY
@@ -150,7 +148,7 @@ class Colorize(ColorConverterMixin):
 
         return results
 
-    def finalize_non_hex_matches(self, result_hits: [] = []) -> list:
+    def finalize_non_hex_matches(self, result_hits: list = []) -> list:
         results: list = []
 
         for start_itr, end_itr in result_hits:
@@ -165,7 +163,7 @@ class Colorize(ColorConverterMixin):
             end_itr.forward_chars(21) # Check if best case (255, 255, 255, 0.64)
             if end_itr.get_char() == ")":
                 end_itr.forward_char()
-                results.append([start, end_itr])
+                results.append([start_itr, end_itr])
                 continue
 
             # Break loop if we get back to rgb/rgba/hsl/hsv -> (
@@ -179,7 +177,7 @@ class Colorize(ColorConverterMixin):
 
         return results
 
-    def finalize_hex_matches(self, result_hits: [] = []) -> list:
+    def finalize_hex_matches(self, result_hits: list = []) -> list:
         results: list = []
 
         for start_itr, end_itr in result_hits:

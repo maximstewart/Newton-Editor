@@ -29,7 +29,7 @@ class BaseControllerMixin:
 
             logger.info(f"Not a File: {arg}")
 
-        if len(files) == 0: return
+        if not files: return
 
         settings_manager.set_is_starting_with_file(True)
         settings_manager.set_starting_files(files)

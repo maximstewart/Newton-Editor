@@ -14,8 +14,8 @@ class Config:
     blender_thumbnailer_path: str    = ""
     go_past_home: str                = "true"
     lock_folder: str                 = "false"
-    locked_folders: list               = field(default_factory=lambda: [ "venv", "flasks" ])
-    mplayer_options: str             = "-quiet -really-quiet -xy 1600 -geometry 50%:50%",
+    locked_folders: list             = field(default_factory=lambda: [ "venv", "flasks" ])
+    mplayer_options: str             = "-quiet -really-quiet -xy 1600 -geometry 50%:50%"
     music_app: str                   = "/opt/deadbeef/bin/deadbeef"
     media_app: str                   = "mpv"
     image_app: str                   = "mirage"
