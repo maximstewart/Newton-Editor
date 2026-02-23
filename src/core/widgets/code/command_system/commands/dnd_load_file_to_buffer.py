@@ -27,4 +27,5 @@ def execute(
     )
 
     view.set_buffer(file.buffer)
+
     update_info_bar_if_focused(view.command, view)

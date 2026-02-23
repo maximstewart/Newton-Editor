@@ -31,6 +31,8 @@ class TabsController(ControllerBase):
             self.update_tab_label(event)
         elif isinstance(event, Code_Event_Types.ModifiedChangedEvent):
             self.tabs_widget.modified_changed( event.buffer )
+        elif isinstance(event, Code_Event_Types.FileExternallyDeletedEvent):
+            self.tabs_widget.externally_deleted( event.buffer )
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
             self.add_tab(event)
         elif isinstance(event, Code_Event_Types.PoppedFileEvent):

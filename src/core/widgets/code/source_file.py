@@ -27,6 +27,7 @@ class SourceFile(GtkSource.File):
         self.fname: str           = "buffer"
         self.fpath: str           = "buffer"
         self.ftype: str           = "buffer"
+        self.was_deleted: bool    = False
         self.buffer: SourceBuffer = SourceBuffer()
 
         self._set_signals()
@@ -56,17 +57,22 @@ class SourceFile(GtkSource.File):
         self.emit(event)
 
         if self.is_deleted():
-            print("is_deleted")
-            # event = Event_Factory.create_event("file_deleted", buffer = buffer)
-            # event.file = self
-            # self.emit(event)
+            self.was_deleted = True
+            event = Event_Factory.create_event(
+                "file_externally_deleted",
+                file   = self,
+                buffer = buffer
+            )
+            self.emit(event)
             return
 
         if self.is_externally_modified():
-            print("is_externally_modified")
-            # event = Event_Factory.create_event("file_externally_modified", buffer = buffer)
-            # event.file = self
-            # self.emit(event)
+#            event = Event_Factory.create_event(
+#                "file_externally_modified",
+#                file   = self,
+#                buffer = buffer
+#            )
+#            self.emit(event)
             return
 
     def _insert_text(
@@ -128,6 +134,12 @@ class SourceFile(GtkSource.File):
 
             f.write(text)
 
+        if self.was_deleted:
+            self.was_deleted = False
+#            self.set_path(gfile)
+            self.set_location( None )
+            self.set_location( gfile )
+
         return gfile
 
 
@@ -135,11 +147,22 @@ class SourceFile(GtkSource.File):
         if not gfile: return
 
         self.set_path(gfile)
-        data         = gfile.load_bytes()[0].get_data().decode("UTF-8")
+        text         = gfile.load_bytes()[0].get_data().decode("UTF-8")
         undo_manager = self.buffer.get_undo_manager()
 
+        def move_insert_to_start():
+            start_itr = self.buffer.get_start_iter()
+            self.buffer.place_cursor(start_itr)
+
         undo_manager.begin_not_undoable_action()
-        self.buffer.insert_at_cursor(data)
+
+        with self.buffer.freeze_notify(): 
+            start_itr, end_itr = self.buffer.get_bounds()
+
+            self.buffer.delete(start_itr, end_itr)
+            self.buffer.insert(start_itr, text, -1)
+            GLib.idle_add(move_insert_to_start)
+
         undo_manager.end_not_undoable_action()
         self.buffer.set_modified(False)
 

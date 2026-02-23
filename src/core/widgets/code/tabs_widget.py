@@ -122,10 +122,18 @@ class TabsWidget(Gtk.Notebook):
             if not buffer == tab.file.buffer: continue
 
             ctx = tab.label.get_style_context()
+            ctx.remove_class("file-deleted")
             if buffer.get_modified():
                 ctx.add_class("file-changed")
             else:
                 ctx.remove_class("file-changed")
+
+    def externally_deleted(self, buffer):
+        for page_widget in self.get_children():
+            tab = self.get_tab_label(page_widget)
+            if not buffer == tab.file.buffer: continue
+            ctx = tab.label.get_style_context()
+            ctx.add_class("file-deleted")
 
     def close_item(self, menu_item, page_widget):
         tab = self.get_tab_label(page_widget)

@@ -95,7 +95,7 @@ class WebkitUISettings(WebKit2.Settings):
         self.set_property('javascript-can-open-windows-automatically', False)
 
         # Debugging
-        self.set_property('enable-developer-extras', False)
+        self.set_property('enable-developer-extras', True)
         self.set_property('enable-write-console-messages-to-stdout', False)
         self.set_property('draw-compositing-indicators', False)
         self.set_property('enable-mock-capture-devices', False)

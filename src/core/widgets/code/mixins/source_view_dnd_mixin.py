@@ -26,8 +26,8 @@ class SourceViewDnDMixin:
         if info == 80:
             uris = data.get_uris()
 
-            if not uris: return
-            uris = data.get_text().split("\n")
+            if not uris:
+                uris = data.get_text().split("\n")
 
             self._on_uri_data_received(uris)
 
