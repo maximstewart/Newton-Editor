@@ -26,11 +26,11 @@ class TabsController(ControllerBase):
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.FocusedViewEvent):
-            self.tabs_widget.view_changed(
-                event.view.get_buffer()
-            )
+            self.tabs_widget.view_changed( event.view.get_buffer() )
         elif isinstance(event, Code_Event_Types.FilePathSetEvent):
             self.update_tab_label(event)
+        elif isinstance(event, Code_Event_Types.ModifiedChangedEvent):
+            self.tabs_widget.modified_changed( event.buffer )
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
             self.add_tab(event)
         elif isinstance(event, Code_Event_Types.PoppedFileEvent):

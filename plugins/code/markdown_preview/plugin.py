@@ -42,7 +42,7 @@ class Plugin(PluginCode):
     def run(self):
         ...
 
- 
+
 class Handler:
     @staticmethod
     def execute(

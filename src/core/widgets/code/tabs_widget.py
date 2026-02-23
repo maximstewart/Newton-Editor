@@ -65,19 +65,6 @@ class TabsWidget(Gtk.Notebook):
 
         self.message(event)
 
-    def view_changed(self, buffer):
-        for page_widget in self.get_children():
-            tab = self.get_tab_label(page_widget)
-            if not buffer == tab.file.buffer: continue
-
-            self.handler_block(self.switch_page_id)
-
-            self.set_current_page(
-                self.page_num(page_widget)
-            )
-
-            self.handler_unblock(self.switch_page_id)
-
     def _bind_tab_menu(self, tab, page_widget):
         def do_context_menu(tab, eve, page_widget):
             if eve.type == Gdk.EventType.BUTTON_RELEASE and eve.button == 3: # r-click
@@ -116,6 +103,29 @@ class TabsWidget(Gtk.Notebook):
 
         return context_menu
 
+    def view_changed(self, buffer):
+        for page_widget in self.get_children():
+            tab = self.get_tab_label(page_widget)
+            if not buffer == tab.file.buffer: continue
+
+            self.handler_block(self.switch_page_id)
+
+            self.set_current_page(
+                self.page_num(page_widget)
+            )
+
+            self.handler_unblock(self.switch_page_id)
+
+    def modified_changed(self, buffer):
+        for page_widget in self.get_children():
+            tab = self.get_tab_label(page_widget)
+            if not buffer == tab.file.buffer: continue
+
+            ctx = tab.label.get_style_context()
+            if buffer.get_modified():
+                ctx.add_class("file-changed")
+            else:
+                ctx.remove_class("file-changed")
 
     def close_item(self, menu_item, page_widget):
         tab = self.get_tab_label(page_widget)

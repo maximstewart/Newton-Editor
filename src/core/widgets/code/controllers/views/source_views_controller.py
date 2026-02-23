@@ -28,17 +28,14 @@ class SourceViewsController(ControllerBase, list):
         if isinstance(event, Code_Event_Types.RemovedFileEvent):
             self._remove_file(event)
         elif isinstance(event, Code_Event_Types.RegisterCommandEvent):
-            self. _register_command(event)
+            self._register_command(event)
 
         if not self.signal_mapper.active_view: return
 
         if isinstance(event, Code_Event_Types.TextChangedEvent):
-            if not self.signal_mapper.active_view: return
             self.signal_mapper.active_view.command.exec("update_info_bar")
         elif isinstance(event, Code_Event_Types.SetActiveFileEvent):
-            self.signal_mapper.active_view.set_buffer(
-                event.buffer
-            )
+            self.signal_mapper.set_buffer_to_active_view(event.buffer)
         elif isinstance(event, Code_Event_Types.TextInsertedEvent):
             self.signal_mapper.insert_text(event.file, event.text)
 

@@ -26,6 +26,7 @@ class SourceBuffer(GtkSource.Buffer):
     def set_signals(
         self,
         _changed,
+        _after_changed,
         _mark_set,
         _insert_text,
         _after_insert_text,
@@ -34,6 +35,7 @@ class SourceBuffer(GtkSource.Buffer):
 
         self._handler_ids = [
             self.connect("changed",           _changed),
+            self.connect_after("changed",     _after_changed),
             self.connect("mark-set",          _mark_set),
             self.connect("insert-text",       _insert_text),
             self.connect_after("insert-text", _after_insert_text),
@@ -43,20 +45,26 @@ class SourceBuffer(GtkSource.Buffer):
     def block_changed_signal(self):
         self.handler_block(self._handler_ids[0])
 
+    def block_changed_after_signal(self):
+        self.handler_block(self._handler_ids[1])
+
     def block_insert_after_signal(self):
-        self.handler_block(self._handler_ids[3])
+        self.handler_block(self._handler_ids[4])
 
     def block_modified_changed_signal(self):
-        self.handler_block(self._handler_ids[4])
+        self.handler_block(self._handler_ids[5])
 
     def unblock_changed_signal(self):
         self.handler_unblock(self._handler_ids[0])
 
+    def unblock_changed_after_signal(self):
+        self.handler_unblock(self._handler_ids[1])
+
     def unblock_insert_after_signal(self):
-        self.handler_unblock(self._handler_ids[3])
+        self.handler_unblock(self._handler_ids[4])
 
     def unblock_modified_changed_signal(self):
-        self.handler_unblock(self._handler_ids[4])
+        self.handler_unblock(self._handler_ids[5])
 
     def clear_signals(self):
         for handle_id in self._handler_ids:

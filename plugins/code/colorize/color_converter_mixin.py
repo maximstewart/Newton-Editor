@@ -6,11 +6,17 @@ import colorsys
 # Application imports
 
 
+
+class ColorConverterMixinException(Exception):
+    ...
+
+
+
 class ColorConverterMixin:
     # NOTE: HSV HSL, and Hex Alpha parsing are available in Gtk 4.0- not lower.
     #       So, for compatability we're gunna convert to rgba string ourselves...
-    def get_color_text(self, buffer, start, end):
-        text = buffer.get_text(start, end, include_hidden_chars = False)
+    def get_color_text(self, buffer, start_itr, end_itr):
+        text = buffer.get_text(start_itr, end_itr, include_hidden_chars = False)
 
         try:
             if "hsl" in text:
@@ -24,14 +30,14 @@ class ColorConverterMixin:
                 size = len(hex)
                 if size in [4, 8, 16]:
                     rgba = self.hex_to_rgba(hex, size)
-                    print(rgba)
+                    logger.debug(f"Colorize Plugin: RGBA = {rgba}")
 
-        except Exception as e:
+        except ColorConverterMixinException as e:
             ...
 
         return text
 
-    def hex_to_rgba(self, hex, size):
+    def hex_to_rgba(self, hex: str, size: int) -> str:
         rgba  = []
         slots = None
         step  = 2
@@ -60,12 +66,10 @@ class ColorConverterMixin:
         rgb_sub = ','.join(map(str, tuple(rgba)))
 
         return f"rgba({rgb_sub})"
-
         # return tuple(rgba)
 
 
-
-    def hsl_to_rgb(self, text):
+    def hsl_to_rgb(self, text: str) -> str:
         _h, _s , _l = text.replace("hsl", "") \
                         .replace("deg", "") \
                         .replace("(", "") \
@@ -80,13 +84,13 @@ class ColorConverterMixin:
 
         h, s , l = int(_h) / 360, float(_s) / 100, float(_l) / 100
 
-        rgb  = tuple(round(i * 255) for i in colorsys.hls_to_rgb(h, l, s))
+        rgb     = tuple(round(i * 255) for i in colorsys.hls_to_rgb(h, l, s))
         rgb_sub = ','.join(map(str, rgb))
 
         return f"rgb({rgb_sub})"
 
 
-    def hsv_to_rgb(self, text):
+    def hsv_to_rgb(self, text: str) -> str:
         _h, _s , _v = text.replace("hsv", "") \
                         .replace("deg", "") \
                         .replace("(", "") \
@@ -101,7 +105,7 @@ class ColorConverterMixin:
 
         h, s , v = int(_h) / 360, float(_s) / 100, float(_v) / 100
 
-        rgb  = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
+        rgb     = tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
         rgb_sub = ','.join(map(str, rgb))
 
         return f"rgb({rgb_sub})"

@@ -20,6 +20,7 @@ class ProviderResponseCache(ProviderResponseCacheBase):
         super(ProviderResponseCache, self).__init__()
 
         self.matchers: dict = {}
+        self._temp_timeout_id: int = None
 
 
     def process_file_load(self, event: Code_Event_Types.AddedNewFileEvent):
@@ -36,8 +37,21 @@ class ProviderResponseCache(ProviderResponseCacheBase):
 
     def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
         buffer = event.file.buffer
-        with ThreadPoolExecutor(max_workers = 1) as executor:
-            executor.submit(self._handle_change, buffer)
+        self._clear_temp_delay()
+        self._set_temp_delay(buffer)
+
+    def _clear_temp_delay(self):
+        if self._temp_timeout_id:
+            GLib.source_remove(self._temp_timeout_id)
+
+    def _set_temp_delay(self, buffer):
+        def run_refresh_update(buffer):
+            with ThreadPoolExecutor(max_workers = 1) as executor:
+                executor.submit(self._handle_change, buffer)
+
+            return False
+
+        self._temp_timeout_id = GLib.timeout_add(1500, run_refresh_update, buffer)
 
     def _handle_change(self, buffer):
         start_itr = buffer.get_start_iter()

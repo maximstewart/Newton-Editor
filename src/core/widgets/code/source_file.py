@@ -27,7 +27,6 @@ class SourceFile(GtkSource.File):
         self.fname: str           = "buffer"
         self.fpath: str           = "buffer"
         self.ftype: str           = "buffer"
-
         self.buffer: SourceBuffer = SourceBuffer()
 
         self._set_signals()
@@ -36,6 +35,7 @@ class SourceFile(GtkSource.File):
     def _set_signals(self):
         self.buffer.set_signals(
             self._changed,
+            self._after_changed,
             self._mark_set,
             self._insert_text,
             self._after_insert_text,
@@ -43,6 +43,9 @@ class SourceFile(GtkSource.File):
         )
 
     def _changed(self, buffer: SourceBuffer):
+        ...
+
+    def _after_changed(self, buffer: SourceBuffer):
         self.check_file_on_disk()
 
         event = Event_Factory.create_event(
@@ -53,7 +56,7 @@ class SourceFile(GtkSource.File):
         self.emit(event)
 
         if self.is_deleted():
-            print("deleted")
+            print("is_deleted")
             # event = Event_Factory.create_event("file_deleted", buffer = buffer)
             # event.file = self
             # self.emit(event)
@@ -138,6 +141,7 @@ class SourceFile(GtkSource.File):
         undo_manager.begin_not_undoable_action()
         self.buffer.insert_at_cursor(data)
         undo_manager.end_not_undoable_action()
+        self.buffer.set_modified(False)
 
     def set_path(self, gfile: Gio.File):
         if not gfile: return
@@ -150,13 +154,15 @@ class SourceFile(GtkSource.File):
         self.emit(event)
 
     def save(self):
+        self._write_file( self.get_location() )
+
+        self.buffer.set_modified(False)
         event = Event_Factory.create_event(
             "saved_file",
             file = self, buffer = self.buffer
         )
 
         self.emit(event)
-        self._write_file( self.get_location() )
 
     def save_as(self):
         file = event_system.emit_and_await("save-file-dialog")

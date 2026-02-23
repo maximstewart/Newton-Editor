@@ -3,7 +3,5 @@
     "author": "ITDominator",
     "version": "0.0.1",
     "support": "",
-    "requests": {
-        "pass_events": true
-    }
+    "requests": {}
 }
