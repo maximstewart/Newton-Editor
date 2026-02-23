@@ -1,4 +1,5 @@
 # Python imports
+from pathlib import Path
 
 # Lib imports
 
@@ -19,11 +20,11 @@ class MarkdownPreviewMixin(MarkdownTemplateMixin):
             return
 
         data = self.get_rendered_markdown(buffer)
-        self._load_html(data)
+        self._load_html(data, f"file://{self.fpath}")
 
-    def _load_html(self, data: str):
+    def _load_html(self, data: str, base_path: str = ""):
         self._markdown_view.load_html(
-            content = data, base_uri = None
+            content = data, base_uri = base_path
         )
 
     def get_rendered_markdown(self, buffer) -> str:

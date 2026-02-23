@@ -20,6 +20,7 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
         super(MarkdownPreview, self).__init__()
 
         self.can_hide: bool          = True
+        self.fpath: str              = ""
         self.is_preview_paused: bool = True # True by default b/c started hidden
 
         self._setup_styling()
@@ -52,10 +53,10 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
         bttn_box        = Gtk.ButtonBox()
         scrolled_win    = Gtk.ScrolledWindow()
         viewport        = Gtk.Viewport()
-        self._markdown_view       = WebkitUI()
 
+        self._markdown_view  = WebkitUI()
         self.start_stop_bttn = Gtk.ToggleButton()
-        settings_bttn   = Gtk.Button()
+        settings_bttn        = Gtk.Button()
 
         self.start_stop_bttn.set_label("gtk-media-pause")
         self.start_stop_bttn.set_use_stock(True)

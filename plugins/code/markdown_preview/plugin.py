@@ -20,10 +20,21 @@ class Plugin(PluginCode):
         super(Plugin, self).__init__()
 
 
+    def _set_file(self, buffer):
+        event = Event_Factory.create_event(
+            "get_file", buffer = buffer
+        )
+        self.message_to("files", event)
+        if not event.response.get_location(): return
+
+        markdown_preview.fpath = event.response.get_location().get_path()
+
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.FocusedViewEvent):
+            self._set_file(event.view.get_buffer())
             markdown_preview._do_markdown_translate(event.view.get_buffer())
         elif isinstance(event, Code_Event_Types.TextChangedEvent):
+            self._set_file(event.buffer)
             markdown_preview._do_markdown_translate(event.buffer)
 
     def load(self):
