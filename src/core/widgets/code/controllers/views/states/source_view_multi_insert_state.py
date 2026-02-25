@@ -11,9 +11,11 @@ from libs.dto.states import SourceViewStates, MoveDirection, CursorAction
 
 from ....mixins.source_mark_events_mixin import MarkEventsMixin
 
+from .source_view_base_state import SourceViewsBaseState
 
 
-class SourceViewsMultiInsertState(MarkEventsMixin):
+
+class SourceViewsMultiInsertState(SourceViewsBaseState, MarkEventsMixin):
     def __init__(self):
         super(SourceViewsMultiInsertState, self).__init__()
 
@@ -21,14 +23,6 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
         self.move_direction: MoveDirection  = 0
         self.insert_markers: list           = []
 
-
-    def focus_in_event(self, source_view, eve, emit):
-        source_view.command.exec("set_miniview")
-        source_view.command.exec("set_focus_border")
-        source_view.command.exec("update_info_bar")
-
-        event = Event_Factory.create_event("focused_view", view = source_view)
-        emit(event)
 
     def insert_text(self, file, text):
         if not self.insert_markers: return False
@@ -86,7 +80,7 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
         source_view.command.exec("update_info_bar")
 
     def button_press_event(self, source_view, eve):
-        source_view.command.exec("update_info_bar")
+        super().button_press_event(source_view, eve)
         return True
 
     def button_release_event(self, source_view, eve):
@@ -129,20 +123,13 @@ class SourceViewsMultiInsertState(MarkEventsMixin):
         command = key_mapper._key_press_event(eve)
         if not command: return False
 
-        source_view.command.exec(command)
+        char_str       = key_mapper.get_char(eve)
+        modkeys_states = key_mapper.get_modkeys_states(eve)
+        response = source_view.command.exec_with_args(
+            command, source_view, char_str, modkeys_states
+        )
 
-        return True
-
-    def key_release_event(self, source_view, eve, key_mapper):
-        command = key_mapper._key_release_event(eve)
-        is_past = key_mapper._key_press_event(eve)
-
-        if is_past: return True
-        if not command: return False
-
-        source_view.command.exec(command)
-
-        return True
+        return True if not response else response
 
     def _signal_cursor_moved(self, source_view, emit):
         buffer = source_view.get_buffer()

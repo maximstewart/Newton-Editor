@@ -18,10 +18,14 @@ def execute(
     **kwargs
 ):
     logger.debug("Command: Open File(s)")
-    gfiles = event_system.emit_and_await("open-files")
+    file       = view.command.get_file(view)
+    start_path = None 
+    if not file.ftype == "buffer":
+        start_path = file.get_location()
+
+    gfiles = event_system.emit_and_await("open-files", (None, None, start_path))
     if not gfiles: return
 
-    file = view.command.get_file(view)
     if file.ftype == "buffer":
         gfile = gfiles.pop()
         view.command.exec_with_args("load_file", view, gfile, file)

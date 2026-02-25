@@ -7,9 +7,11 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 from libs.dto.states import SourceViewStates
 
+from .source_view_base_state import SourceViewsBaseState
 
 
-class SourceViewsCommandState:
+
+class SourceViewsCommandState(SourceViewsBaseState):
     def __init__(self):
         super(SourceViewsCommandState, self).__init__()
 
@@ -17,10 +19,10 @@ class SourceViewsCommandState:
     def focus_in_event(self, source_view, eve, emit):
         return True
 
-    def move_cursor(self, source_view, step, count, extend_selection, emit):
+    def insert_text(self, file, text):
         return True
 
-    def insert_text(self, file, text):
+    def move_cursor(self, source_view, step, count, extend_selection, emit):
         return True
 
     def button_press_event(self, source_view, eve):

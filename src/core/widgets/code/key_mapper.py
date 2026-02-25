@@ -119,14 +119,9 @@ class KeyMapper:
             return self.states[self.state].released[char_str]
 
     def _set_key_state(self, eve):
-        modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
-        is_control = modifiers & Gdk.ModifierType.CONTROL_MASK
-        is_shift   = modifiers & Gdk.ModifierType.SHIFT_MASK
-
-        try:
-            is_alt = modifiers & Gdk.ModifierType.ALT_MASK
-        except:
-            is_alt = modifiers & Gdk.ModifierType.MOD1_MASK
+        is_control, \
+        is_shift,   \
+        is_alt      = self.get_modkeys_states(eve)
 
         self.state = NoKeyState
         if is_control:
@@ -144,11 +139,23 @@ class KeyMapper:
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
         return modifiers & Gdk.ModifierType.SHIFT_MASK
 
-    def get_raw_keyname(self, eve):
+    def get_raw_keyname(self, eve) -> str:
         return Gdk.keyval_name(eve.keyval)
 
-    def get_keyname(self, eve):
+    def get_modkeys_states(self, eve) -> tuple:
+        modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
+        is_control = modifiers & Gdk.ModifierType.CONTROL_MASK
+        is_shift   = modifiers & Gdk.ModifierType.SHIFT_MASK
+
+        try:
+            is_alt = modifiers & Gdk.ModifierType.ALT_MASK
+        except:
+            is_alt = modifiers & Gdk.ModifierType.MOD1_MASK
+        
+        return is_control, is_shift, is_alt
+
+    def get_keyname(self, eve) -> str:
         return Gdk.keyval_name(eve.keyval).lower()
 
-    def get_char(self, eve):
+    def get_char(self, eve) -> str:
         return chr( Gdk.keyval_to_unicode(eve.keyval) )
