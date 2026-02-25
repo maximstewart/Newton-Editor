@@ -13,7 +13,9 @@ from gi.repository import GtkSource
 
 def execute(
     view: GtkSource.View,
-    language: str
+    language: str,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Set Buffer Language")
 

@@ -96,18 +96,27 @@ class KeyMapper:
         getattr(self.states[state], press_state)[keyname] = command
 
     def _key_press_event(self, eve):
-        keyname = Gdk.keyval_name(eve.keyval).lower()
+        keyname  = self.get_keyname(eve)
+        char_str = self.get_char(eve)
 
         self._set_key_state(eve)
         if keyname in self.states[self.state].held:
             return self.states[self.state].held[keyname]
 
+        if char_str in self.states[self.state].held:
+            return self.states[self.state].held[char_str]
+
+
     def _key_release_event(self, eve):
-        keyname = Gdk.keyval_name(eve.keyval).lower()
+        keyname  = self.get_keyname(eve)
+        char_str = self.get_char(eve)
 
         self._set_key_state(eve)
         if keyname in self.states[self.state].released:
             return self.states[self.state].released[keyname]
+
+        if char_str in self.states[self.state].released:
+            return self.states[self.state].released[char_str]
 
     def _set_key_state(self, eve):
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
@@ -137,3 +146,9 @@ class KeyMapper:
 
     def get_raw_keyname(self, eve):
         return Gdk.keyval_name(eve.keyval)
+
+    def get_keyname(self, eve):
+        return Gdk.keyval_name(eve.keyval).lower()
+
+    def get_char(self, eve):
+        return chr( Gdk.keyval_to_unicode(eve.keyval) )

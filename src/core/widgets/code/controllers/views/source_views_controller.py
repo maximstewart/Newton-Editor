@@ -40,12 +40,16 @@ class SourceViewsController(ControllerBase, list):
             self.signal_mapper.insert_text(event.file, event.text)
 
     def _register_command(self, event: Code_Event_Types.RegisterCommandEvent):
-        self.state_manager.key_mapper.map_command(
-            event.command_name,
-            {
-                f"{event.binding_mode}": event.binding
-            }
-        )
+        if not isinstance(event.binding, list):
+            event.binding = [ event.binding ]
+
+        for binding in event.binding:
+            self.state_manager.key_mapper.map_command(
+                event.command_name,
+                {
+                    f"{event.binding_mode}": binding
+                }
+            )
 
         for view in self:
             view.command.add_command(

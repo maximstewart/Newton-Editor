@@ -31,6 +31,8 @@ class TabWidget(Gtk.Box):
 
         self.set_orientation(0)
         self.set_hexpand(False)
+        self.set_vexpand(False)
+        self.set_size_request(-1, 12)
 
     def _setup_signals(self):
         ...

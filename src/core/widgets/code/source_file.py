@@ -99,8 +99,8 @@ class SourceFile(GtkSource.File):
         )
 
         # Note: 'idle_add' needed b/c markers don't get thir positions
-        #       updated relative to the initial insert.
-        #       If not used, seg faults galor during multi insert.
+        #      updated relative to the initial insert.
+        #      If not used, seg faults galor during multi insert.
         GLib.idle_add(self.emit, event)
 
     def _mark_set(
@@ -136,7 +136,6 @@ class SourceFile(GtkSource.File):
 
         if self.was_deleted:
             self.was_deleted = False
-#            self.set_path(gfile)
             self.set_location( None )
             self.set_location( gfile )
 
@@ -148,6 +147,11 @@ class SourceFile(GtkSource.File):
 
         self.set_path(gfile)
         text         = gfile.load_bytes()[0].get_data().decode("UTF-8")
+        info         = gfile.query_info('standard::content-type', Gio.FileQueryInfoFlags.NONE, None)
+        content_type = info.get_content_type()
+        self.ftype   = Gio.content_type_get_mime_type(content_type)
+        logger.debug(f"File content type: {self.ftype}")
+
         undo_manager = self.buffer.get_undo_manager()
 
         def move_insert_to_start():

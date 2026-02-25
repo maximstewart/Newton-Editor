@@ -14,7 +14,7 @@ from ..base_event import BaseEvent
 
 @dataclass
 class RegisterCommandEvent(BaseEvent):
-    command_name: str = ""
-    command: callable = None
-    binding_mode: str = ""
-    binding: str      = ""
+    command_name: str    = ""
+    command: callable    = None
+    binding_mode: str    = ""
+    binding: str or list = ""

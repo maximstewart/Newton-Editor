@@ -14,7 +14,9 @@ from ..command_helpers import set_language_and_style, update_info_bar_if_focused
 
 
 def execute(
-    view: GtkSource.View  = None
+    view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: New File")
 

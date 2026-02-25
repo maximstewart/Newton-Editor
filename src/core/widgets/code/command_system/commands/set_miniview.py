@@ -13,6 +13,8 @@ from gi.repository import GtkSource
 
 def execute(
     view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Set MiniView")
     event_system.emit("set-mini-view", (view,))

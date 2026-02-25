@@ -111,6 +111,7 @@ scrollbar slider:active {
 .tab-label {
     margin-left: 2em;
     margin-right: 2em;
+    font-size: 12px;
 }
 
 .tab-close-bttn {

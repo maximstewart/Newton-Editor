@@ -13,7 +13,9 @@ from ..command_helpers import update_info_bar_if_focused
 
 
 def execute(
-    view: GtkSource.View  = None
+    view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Open File(s)")
     gfiles = event_system.emit_and_await("open-files")
@@ -22,9 +24,9 @@ def execute(
     file = view.command.get_file(view)
     if file.ftype == "buffer":
         gfile = gfiles.pop()
-        view.command.exec_with_args("load_file", (view, gfile, file))
+        view.command.exec_with_args("load_file", view, gfile, file)
         view.set_buffer(file.buffer)
         update_info_bar_if_focused(view.command, view)
 
     for i, gfile in enumerate(gfiles):
-        view.command.exec_with_args("load_file", (view, gfile))
+        view.command.exec_with_args("load_file", view, gfile)

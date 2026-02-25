@@ -14,6 +14,8 @@ from gi.repository import Gio
 
 def execute(
     view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Load Start File(s)")
 
@@ -28,7 +30,7 @@ def execute(
 
     view.command.exec_with_args(
         "load_file",
-        (view, gfile, file)
+        view, gfile, file
     )
 
     if not starting_files: return
@@ -37,4 +39,4 @@ def execute(
         file  = file.replace("FILE|", "")
         gfile = Gio.File.new_for_path(file)
 
-        view.command.exec_with_args("load_file", (view, gfile))
+        view.command.exec_with_args("load_file", view, gfile)

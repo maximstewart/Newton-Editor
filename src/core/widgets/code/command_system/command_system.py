@@ -26,16 +26,13 @@ class CommandSystem:
         method = getattr(commands, command)
 
         args, kwargs = self.data
-        if kwargs:
-            return method.execute(*args, kwargs)
-        else:
-            return method.execute(*args)
+        return method.execute(*args, **kwargs)
 
-    def exec_with_args(self, command: str, args: list) -> any:
+    def exec_with_args(self, command: str, *args, **kwargs) -> any:
         if not hasattr(commands, command): return
 
         method = getattr(commands, command)
-        return method.execute(*args)
+        return method.execute(*args, **kwargs)
 
     def add_command(self, command_name: str, command: callable):
         setattr(commands, command_name, command)

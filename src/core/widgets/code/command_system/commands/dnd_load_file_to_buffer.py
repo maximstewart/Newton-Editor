@@ -15,7 +15,9 @@ from ..command_helpers import update_info_bar_if_focused
 
 def execute(
     view: GtkSource.View,
-    uri: str
+    uri: str,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: DnD Load File To Buffer")
     file = view.command.new_file(view)
@@ -23,7 +25,7 @@ def execute(
     gfile  = Gio.File.new_for_uri(uri)
     view.command.exec_with_args(
         "load_file",
-        (view, gfile, file)
+        view, gfile, file
     )
 
     view.set_buffer(file.buffer)

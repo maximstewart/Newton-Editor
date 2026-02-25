@@ -14,7 +14,9 @@ from gi.repository import Gio
 
 def execute(
     view: GtkSource.View,
-    uris: list = []
+    uris: list = [],
+    *args,
+    **kwargs
 ):
     logger.debug("Command: DnD Load Files")
     for uri in uris:
@@ -23,4 +25,4 @@ def execute(
         except Exception as e:
             gfile = Gio.File.new_for_path(uri)
 
-        view.command.exec_with_args("load_file", (view, gfile))
+        view.command.exec_with_args("load_file", view, gfile)

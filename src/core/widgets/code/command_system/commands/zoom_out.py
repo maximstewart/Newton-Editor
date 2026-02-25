@@ -13,7 +13,9 @@ from gi.repository import Pango
 
 
 def execute(
-    view: GtkSource.View  = None
+    view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Zoom Out")
 

@@ -33,7 +33,9 @@ class ControllerManager(Singleton, dict):
             raise ControllerManagerException("Must pass in a 'name' and 'controller'...")
 
         if name in self.keys():
-            raise ControllerManagerException(f"Can't bind controller to registered name of '{name}'...")
+            raise ControllerManagerException(
+                f"Can't bind controller to existing registered name of '{name}'..."
+            )
 
         controller.set_controller_context( self._crete_controller_context() )
 

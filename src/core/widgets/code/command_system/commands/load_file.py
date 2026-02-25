@@ -18,6 +18,8 @@ def execute(
     view: GtkSource.View,
     gfile: Gio.File,
     file: SourceFile = None,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Load File")
     if not file:

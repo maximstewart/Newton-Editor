@@ -13,6 +13,8 @@ from gi.repository import GtkSource
 
 def execute(
     view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Update Info Bar")
     file   = view.command.get_file(view)

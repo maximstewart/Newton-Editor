@@ -12,7 +12,9 @@ from gi.repository import GtkSource
 
 
 def execute(
-    view: GtkSource.View  = None
+    view: GtkSource.View,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Set Focus Border")
     ctx = view.get_parent().get_style_context()

@@ -3,6 +3,7 @@ import os
 import sys
 import importlib
 import traceback
+import asyncio
 from os.path import join
 from os.path import isdir
 
@@ -75,9 +76,14 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
                 module = self._load_plugin_module(path, folder, target)
 
                 if is_pre_launch:
-                    self.execute_plugin(module, manifest_meta)
+                    asyncio.run(
+                        self.execute_plugin(module, manifest_meta)
+                    )
                 else:
-                    GLib.idle_add(self.execute_plugin, module, manifest_meta)
+                    GLib.idle_add(
+                        asyncio.run,
+                        self.execute_plugin(module, manifest_meta)
+                    )
             except Exception as e:
                 logger.info(f"Malformed Plugin: Not loading -->: '{folder}' !")
                 logger.debug(f"Trace: {traceback.print_exc()}")
@@ -119,7 +125,7 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         manifest_metas: list = self._manifest_manager.get_post_launch_plugins()
         self._load_plugins(manifest_metas)
 
-    def execute_plugin(self, module: type, manifest_meta: ManifestMeta):
+    async def execute_plugin(self, module: type, manifest_meta: ManifestMeta):
         plugin                               = module.Plugin()
         plugin.plugin_context: PluginContext = self.create_plugin_context()
 

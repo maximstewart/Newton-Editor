@@ -16,7 +16,9 @@ from ..command_helpers import update_info_bar_if_focused
 
 def execute(
     view: GtkSource.View,
-    file: SourceFile
+    file: SourceFile,
+    *args,
+    **kwargs
 ):
     logger.debug("Command: Set Buffer")
 

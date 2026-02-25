@@ -9,7 +9,6 @@ from gi.repository import GtkSource
 
 def set_language_and_style(view, file):
     language   = view.language_manager.guess_language(file.fname, None)
-    file.ftype = "buffer" if not language else language
     file.buffer.set_language(language)
     file.buffer.set_style_scheme(view.syntax_theme)
 

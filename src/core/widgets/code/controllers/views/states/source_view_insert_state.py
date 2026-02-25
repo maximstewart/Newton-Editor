@@ -22,7 +22,8 @@ class SourceViewsInsertState:
         event = Event_Factory.create_event("focused_view", view = source_view)
         emit(event)
 
-    def insert_text(self, file, text):
+    def insert_text(self, file, text: str):
+
         return True
 
     def move_cursor(self, source_view, step, count, extend_selection, emit):
@@ -51,21 +52,23 @@ class SourceViewsInsertState:
     def key_press_event(self, source_view, eve, key_mapper):
         command   = key_mapper._key_press_event(eve)
         is_future = key_mapper._key_release_event(eve)
+        char_str  = key_mapper.get_char(eve)
 
-        if is_future: return True
+        if is_future:   return True
         if not command: return False
 
-        source_view.command.exec(command)
+        source_view.command.exec_with_args(command, source_view, char_str)
 
         return True
 
     def key_release_event(self, source_view, eve, key_mapper):
-        command = key_mapper._key_release_event(eve)
-        is_past = key_mapper._key_press_event(eve)
+        command  = key_mapper._key_release_event(eve)
+        is_past  = key_mapper._key_press_event(eve)
+        char_str = key_mapper.get_char(eve)
 
         if is_past: return True
         if not command: return False
 
-        source_view.command.exec(command)
+        source_view.command.exec_with_args(command, source_view, char_str)
 
         return True
