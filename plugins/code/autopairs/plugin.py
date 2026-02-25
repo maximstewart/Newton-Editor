@@ -47,7 +47,9 @@ class Handler:
     @staticmethod
     def execute(
         view: any,
-        char_str: str
+        char_str: str,
+        *args,
+        **kwargs
     ):
         logger.debug("Command: Autopairs")
         autopairs.handle_word_wrap(view.get_buffer(), char_str)

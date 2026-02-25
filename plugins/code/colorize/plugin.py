@@ -43,7 +43,9 @@ class Plugin(PluginCode):
 class Handler:
     @staticmethod
     def execute(
-        view: any
+        view: any,
+        *args,
+        **kwargs
     ):
         logger.debug("Command: Toggle Colorize")
 
