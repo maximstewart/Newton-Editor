@@ -23,6 +23,7 @@ def execute(
     popped_file, next_file = view.command.get_swap_file(view)
 
     view.sibling_left.set_buffer(buffer)
+    view.sibling_left.get_parent().show()
     view.sibling_left.grab_focus()
 
     if next_file:

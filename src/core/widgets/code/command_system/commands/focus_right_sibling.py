@@ -18,4 +18,5 @@ def execute(
 ):
     logger.debug("Command: Focus Right Sibling")
     if not view.sibling_right: return
+    view.sibling_right.get_parent().show()
     view.sibling_right.grab_focus()

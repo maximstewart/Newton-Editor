@@ -87,6 +87,8 @@ class SourceViewsController(ControllerBase, list):
     def first_map_load(self):
         for source_view in self:
             source_view.command.exec("new_file")
+            if not source_view.sibling_left: continue
+            source_view.get_parent().hide()
 
         source_view = self[0]
         source_view.grab_focus()
