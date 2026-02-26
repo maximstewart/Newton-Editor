@@ -21,6 +21,12 @@ class IPCSignalsMixin:
             self.broadcast_message, "handle-file", (fpath,)
         )
 
+    def handle_files_from_ipc(self, uris: list) -> None:
+        logger.debug(f"Files From IPC: {uris}")
+        GLib.idle_add(
+            self.broadcast_message, "handle-files", (uris,)
+        )
+
     def handle_dir_from_ipc(self, fpath: str) -> None:
         logger.debug(f"Dir From IPC: {fpath}")
         GLib.idle_add(

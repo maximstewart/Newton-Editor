@@ -33,6 +33,7 @@ class SourceViewDnDMixin:
 
     def _on_uri_data_received(self, uris: []):
             uri = uris.pop(0)
+
             self.command.exec_with_args("dnd_load_file_to_buffer", self, uri)
 
             if not uris: return

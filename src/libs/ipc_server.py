@@ -87,6 +87,16 @@ class IPCServer(Singleton):
                 conn.close()
                 break
 
+            if "FILES|" in msg:
+                import json
+                data  = msg.split("FILES|")[1].strip()
+                files = json.loads(data)
+                if files:
+                    event_system.emit("handle-files-from-ipc", (files,))
+
+                conn.close()
+                break
+
             if "DIR|" in msg:
                 file = msg.split("DIR|")[1].strip()
                 if file:

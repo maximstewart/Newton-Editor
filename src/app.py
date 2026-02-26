@@ -2,6 +2,7 @@
 from contextlib import suppress
 import signal
 import os
+import json
 
 # Lib imports
 
@@ -44,14 +45,18 @@ class Application:
             return True
 
         logger.warning(f"{APP_NAME} IPC Server Exists: Have sent path(s) to it and closing...")
+        files: list = []
         for arg in unknownargs + [args.new_tab,]:
             if os.path.isfile(arg):
-                message = f"FILE|{arg}"
-                ipc_server.send_ipc_message(message)
+                files.append(f"file://{arg}")
 
             if os.path.isdir(arg):
                 message = f"DIR|{arg}"
                 ipc_server.send_ipc_message(message)
+
+        if files:
+            message = f"FILES|{json.dumps(files)}"
+            ipc_server.send_ipc_message(message)
 
         return False
 

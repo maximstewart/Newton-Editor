@@ -26,12 +26,12 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerMixin)
 
         self._setup_controller_data()
 
-        self._load_plugins_and_files(is_pre = True)
+        self._load_plugins(is_pre = True)
         self._setup_styling()
         self._setup_signals()
         self._subscribe_to_events()
         self._load_controllers()
-        self._load_plugins_and_files(is_pre = False)
+        self._load_plugins(is_pre = False)
 
         logger.info(f"Made it past {self.__class__} loading...")
         settings_manager.set_end_load_time()
@@ -60,13 +60,14 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerMixin)
     def _subscribe_to_events(self):
         event_system.subscribe("shutting-down", lambda: print("Shutting down..."))
         event_system.subscribe("handle-file-from-ipc", self.handle_file_from_ipc)
+        event_system.subscribe("handle-files-from-ipc", self.handle_files_from_ipc)
         event_system.subscribe("handle-dir-from-ipc", self.handle_dir_from_ipc)
         event_system.subscribe("tggl-top-main-menubar", self._tggl_top_main_menubar)
 
     def _load_controllers(self):
         BridgeController()
 
-    def _load_plugins_and_files(self, is_pre: bool):
+    def _load_plugins(self, is_pre: bool):
         args, unknownargs = settings_manager.get_starting_args()
         if args.no_plugins == "true": return
 
@@ -77,10 +78,6 @@ class BaseController(IPCSignalsMixin, KeyboardSignalsMixin, BaseControllerMixin)
         if not is_pre:
             self.plugins_controller.post_launch_plugins()
             return
-
-    def _load_files(self):
-        for file in settings_manager.get_starting_files():
-            event_system.emit("post-file-to-ipc", file)
 
     def _tggl_top_main_menubar(self):
         logger.debug("_tggl_top_main_menubar > stub...")
