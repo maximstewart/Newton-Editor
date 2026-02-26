@@ -7,7 +7,6 @@ from gi.repository import Gtk
 
 # Application imports
 from ..widgets.separator_widget import Separator
-from ..widgets.controls.transparency_scale import TransparencyScale
 
 
 
@@ -19,6 +18,8 @@ class HeaderContainer(Gtk.Box):
         self._setup_signals()
         self._subscribe_to_events()
         self._load_widgets()
+
+        self.show()
 
 
     def _setup_styling(self):
@@ -32,13 +33,9 @@ class HeaderContainer(Gtk.Box):
         ...
 
     def _subscribe_to_events(self):
-        event_system.subscribe("tggl-top-main-menubar", self.tggl_top_main_menubar)
+        ...
 
     def _load_widgets(self):
         widget_registery.expose_object("header-container", self)
 
         self.add( Separator("separator-header", 0) )
-        self.add( TransparencyScale() )
-
-    def tggl_top_main_menubar(self):
-        self.hide() if self.is_visible() else self.show_all()

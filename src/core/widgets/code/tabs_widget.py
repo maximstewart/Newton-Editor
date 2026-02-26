@@ -116,6 +116,8 @@ class TabsWidget(Gtk.Notebook):
 
             self.handler_unblock(self.switch_page_id)
 
+            break
+
     def modified_changed(self, buffer):
         for page_widget in self.get_children():
             tab = self.get_tab_label(page_widget)
@@ -128,12 +130,16 @@ class TabsWidget(Gtk.Notebook):
             else:
                 ctx.remove_class("file-changed")
 
+            break
+
     def externally_deleted(self, buffer):
         for page_widget in self.get_children():
             tab = self.get_tab_label(page_widget)
             if not buffer == tab.file.buffer: continue
             ctx = tab.label.get_style_context()
             ctx.add_class("file-deleted")
+            break
+
 
     def close_item(self, menu_item, page_widget):
         tab = self.get_tab_label(page_widget)

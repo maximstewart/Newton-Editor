@@ -37,4 +37,4 @@ class SourceViewDnDMixin:
 
             if not uris: return
 
-            self.command.exec_with_args("dnd_load_files", (self, uris))
+            self.command.exec_with_args("dnd_load_files", self, uris)

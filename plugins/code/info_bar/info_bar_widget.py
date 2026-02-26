@@ -33,11 +33,7 @@ class InfoBarWidget(Gtk.Box):
         ...
 
     def _subscribe_to_events(self):
-        event_system.subscribe("set-info-labels", self._set_info_labels)
-        event_system.subscribe("set-path-label", self._set_path_label)
-        event_system.subscribe("set-encoding-label", self._set_encoding_label)
-        event_system.subscribe("set-line-char-label", self._set_line_char_label)
-        event_system.subscribe("set-file-type-label", self._set_file_type_label)
+        ...
 
 
     def _load_widgets(self):
@@ -63,9 +59,9 @@ class InfoBarWidget(Gtk.Box):
     def _set_info_labels(
         self,
         path: Gio.File or str = None,
-        line_char: str = None,
-        file_type: str = None,
-        encoding_type: str = None
+        line_char: str        = None,
+        file_type: str        = None,
+        encoding_type: str    = None
     ):
         self._set_path_label(path)
         self._set_line_char_label(line_char)

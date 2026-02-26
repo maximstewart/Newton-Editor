@@ -47,6 +47,14 @@ class CommandSystem:
         ...
 
 
+    def set_info_labels(self, data: tuple[str]):
+        event = Event_Factory.create_event(
+            "set_info_labels",
+            info = data
+        )
+
+        self.emit_to("plugins", event)
+
     def get_file(self, view: SourceView):
         event = Event_Factory.create_event(
             "get_file",

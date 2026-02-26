@@ -9,7 +9,6 @@ from gi.repository import Gtk
 from ...widgets.code.code_base import CodeBase
 
 from ...widgets.separator_widget import Separator
-from ...widgets.code.mini_view_widget import MiniViewWidget
 
 from .editors_container import EditorsContainer
 
@@ -48,9 +47,11 @@ class CodeContainer(Gtk.Box):
     def _create_editor_widget(self, code_base: CodeBase):
         editors_container = Gtk.Box()
 
+        widget_registery.expose_object("code-container", self)
+        widget_registery.expose_object("editors-container", editors_container)
+
         editors_container.add( Separator("separator_left") )
         editors_container.add( EditorsContainer(code_base) )
         editors_container.add( Separator("separator_right") )
-        editors_container.add( code_base.get_mini_view_widget() )
 
         return editors_container

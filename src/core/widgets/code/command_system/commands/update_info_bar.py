@@ -27,7 +27,6 @@ def execute(
     column = iter.get_line_offset()
     ftype  = file.ftype.get_id() if hasattr(file.ftype, "get_id") else file.ftype
 
-    event_system.emit(
-        "set-info-labels",
+    view.command.set_info_labels(
         (file.fpath, f"{line}:{column}", ftype, file.encoding)
     )

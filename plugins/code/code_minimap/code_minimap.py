@@ -10,14 +10,16 @@ from gi.repository import Pango
 
 
 
-class MiniViewWidget(Map):
+class CodeMiniMap(Map):
     def __init__(self):
-        super(MiniViewWidget, self).__init__()
+        super(CodeMiniMap, self).__init__()
 
         self._setup_styling()
         self._setup_signals()
         self._subscribe_to_events()
         self._load_widgets()
+
+        self.show()
 
 
     def _setup_styling(self):

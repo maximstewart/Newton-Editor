@@ -13,8 +13,6 @@ from .controllers.commands_controller import CommandsController
 from .controllers.completion_controller import CompletionController
 from .controllers.views.source_views_controller import SourceViewsController
 
-from .mini_view_widget import MiniViewWidget
-
 
 
 class CodeBase:
@@ -22,7 +20,6 @@ class CodeBase:
         super(CodeBase, self).__init__()
 
         self.controller_manager: ControllerManager = ControllerManager()
-        self.miniview_widget: MiniViewWidget       = MiniViewWidget()
 
         self._subscribe_to_events()
         self._load_controllers()
@@ -49,9 +46,6 @@ class CodeBase:
 
     def get_tabs_widget(self):
         return self.controller_manager["tabs"].get_tabs_widget()
-
-    def get_mini_view_widget(self):
-        return self.miniview_widget
 
     def create_source_view(self):
         source_view = self.controller_manager["source_views"].create_source_view()

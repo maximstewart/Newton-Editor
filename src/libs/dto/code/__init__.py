@@ -6,8 +6,9 @@
 from .code_event import CodeEvent
 from .register_provider_event import RegisterProviderEvent
 from .register_command_event import RegisterCommandEvent
-from .file_externally_modified_event  import FileExternallyModifiedEvent
-from .file_externally_deleted_event  import FileExternallyDeletedEvent
+from .file_externally_modified_event import FileExternallyModifiedEvent
+from .file_externally_deleted_event import FileExternallyDeletedEvent
+from .set_info_labels_event import SetInfoLabelsEvent
 
 from .get_new_command_system_event import GetNewCommandSystemEvent
 from .request_completion_event import RequestCompletionEvent

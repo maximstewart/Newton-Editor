@@ -29,6 +29,7 @@ class BaseContainer(Gtk.Box):
         self.ctx.add_class("base-container")
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
+        self._update_transparency()
 
     def _setup_signals(self):
         ...
