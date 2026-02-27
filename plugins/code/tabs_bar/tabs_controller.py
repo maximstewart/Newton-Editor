@@ -9,10 +9,11 @@ from gi.repository import Gtk
 from libs.controllers.controller_base import ControllerBase
 from libs.event_factory import Event_Factory, Code_Event_Types
 
-from ..tabs_widget import TabsWidget
-from ..tab_widget import TabWidget
+from core.widgets.code.source_view import SourceView
 
-from ..source_view import SourceView
+from .tabs_widget import TabsWidget
+from .tab_widget import TabWidget
+
 
 
 

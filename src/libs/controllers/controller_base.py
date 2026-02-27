@@ -39,3 +39,6 @@ class ControllerBase(Singleton, EmitDispatcher):
     def message_to_selected(self, names: list[str], event: BaseEvent):
         for name in names:
             self.controller_context.message_to_selected(name, event)
+
+    def register_controller(self, name: str, controller):
+        self.controller_context.register_controller(name, controller)

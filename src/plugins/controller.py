@@ -67,30 +67,25 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         parent_path = os.getcwd()
 
         for manifest_meta in manifest_metas:
-            path, folder, manifest = manifest_meta.path, manifest_meta.folder, manifest_meta.manifest
-
             try:
-                target = join(path, "plugin.py")
+                path,    \
+                folder,  \
+                manifest = manifest_meta.path, manifest_meta.folder, manifest_meta.manifest
+                target   = join(path, "plugin.py")
+
                 if not os.path.exists(target):
-                    raise PluginsControllerException("Invalid Plugin Structure: Plugin doesn't have 'plugin.py'. Aboarting load...")
+                    raise PluginsControllerException(
+                        "Invalid Plugin Structure: Plugin doesn't have 'plugin.py'. Aboarting load..."
+                    )
 
                 module = self._load_plugin_module(path, folder, target)
 
-                if is_pre_launch:
-                    self._run_with_pool(module, manifest_meta)
-                else:
-                    GLib.idle_add(
-                        self._run_with_pool, module, manifest_meta
-                    )
-            except Exception as e:
-                logger.info(f"Malformed Plugin: Not loading -->: '{folder}' !")
+                self._handle_plugin_execute(is_pre_launch, module, manifest_meta)
+            except PluginsControllerException as e:
+                logger.info(f"Malformed Plugin: Not loading -->: '{manifest_meta.folder}' !")
                 logger.debug(f"Trace: {traceback.print_exc()}")
 
         os.chdir(parent_path)
-
-    def _run_with_pool(self, module: type, manifest_meta: ManifestMeta):
-        with ThreadPoolExecutor(max_workers = 1) as executor:
-            executor.submit(self.execute_plugin, module, manifest_meta)
 
     def _load_plugin_module(self, path, folder, target):
         os.chdir(path)
@@ -105,17 +100,27 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
 
         return module
 
-    def create_plugin_context(self):
-        plugin_context: PluginContext                = PluginContext()
+    def _handle_plugin_execute(
+        self, is_pre_launch: bool, module, manifest_meta
+    ):
+        if not is_pre_launch:
+            GLib.idle_add(
+                self._run_with_pool, module, manifest_meta
+            )
+            return
 
-        plugin_context.requests_ui_element: callable = self.requests_ui_element
-        plugin_context.message: callable             = self.message
-        plugin_context.message_to: callable          = self.message_to
-        plugin_context.message_to_selected: callable = self.message_to_selected
-        plugin_context.emit: callable                = event_system.emit
-        plugin_context.emit_and_await: callable      = event_system.emit_and_await
+        self._run_with_pool(module, manifest_meta)
 
-        return plugin_context
+    def _run_with_pool(self, module: type, manifest_meta: ManifestMeta):
+        with ThreadPoolExecutor(max_workers = 1) as executor:
+            future = executor.submit(self.execute_plugin, module, manifest_meta)
+            future.add_done_callback(self._handle_future_exception)
+
+    def _handle_future_exception(self, future):
+        try:
+            future.result()
+        except Exception:
+            logger.exception("Plugin crashed during execution...")
 
     def pre_launch_plugins(self) -> None:
         logger.info(f"Loading pre-launch plugins...")
@@ -142,6 +147,18 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
 
         self._plugin_collection.append(manifest_meta)
 
+    def create_plugin_context(self):
+        plugin_context: PluginContext                = PluginContext()
+
+        plugin_context.requests_ui_element: callable = self.requests_ui_element
+        plugin_context.message: callable             = self.message
+        plugin_context.message_to: callable          = self.message_to
+        plugin_context.message_to_selected: callable = self.message_to_selected
+        plugin_context.emit: callable                = event_system.emit
+        plugin_context.emit_and_await: callable      = event_system.emit_and_await
+        plugin_context.register_controller: callable = self.register_controller
+
+        return plugin_context
 
 
 plugins_controller = PluginsController()

@@ -23,6 +23,8 @@ class TabsWidget(Gtk.Notebook):
         self._subscribe_to_events()
         self._load_widgets()
 
+        self.show()
+
 
     def _setup_styling(self):
         self.set_scrollable(True)

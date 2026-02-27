@@ -25,3 +25,6 @@ class ControllerContext:
 
     def message_to_selected(self, name: list, event: BaseEvent):
         raise ControllerContextException("Controller Context 'message_to_selected' must be overriden by Controller Manager...")
+
+    def register_controller(self, name: str, controller):
+        raise ControllerContextException("Controller Context 'register_controller' must be overriden by Controller Manager...")

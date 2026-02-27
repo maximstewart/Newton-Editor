@@ -8,7 +8,6 @@ from plugins import plugins_controller
 from libs.controllers.controller_manager import ControllerManager
 
 from .controllers.files_controller import FilesController
-from .controllers.tabs_controller import TabsController
 from .controllers.commands_controller import CommandsController
 from .controllers.completion_controller import CompletionController
 from .controllers.views.source_views_controller import SourceViewsController
@@ -31,22 +30,17 @@ class CodeBase:
 
     def _load_controllers(self):
         files_controller        = FilesController()
-        tabs_controller         = TabsController()
         commands_controller     = CommandsController()
         completion_controller   = CompletionController()
         source_views_controller = SourceViewsController()
 
         # self.controller_manager.register_controller("base", self)
         self.controller_manager.register_controller("files", files_controller)
-        self.controller_manager.register_controller("tabs", tabs_controller)
         self.controller_manager.register_controller("commands", commands_controller)
         self.controller_manager.register_controller("completion", completion_controller)
         self.controller_manager.register_controller("source_views", source_views_controller)
         self.controller_manager.register_controller("plugins", plugins_controller)
         self.controller_manager.register_controller("widgets", widget_registery)
-
-    def get_tabs_widget(self):
-        return self.controller_manager["tabs"].get_tabs_widget()
 
     def create_source_view(self):
         source_view = self.controller_manager["source_views"].create_source_view()

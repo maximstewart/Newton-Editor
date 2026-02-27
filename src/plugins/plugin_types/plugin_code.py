@@ -42,3 +42,6 @@ class PluginCode(PluginBase):
 
     def message_to_selected(self, names: list[str], event: BaseEvent):
         return self.plugin_context.message_to_selected(names, event)
+
+    def register_controller(self, name: str, controller):
+        return self.plugin_context.register_controller(name, controller)

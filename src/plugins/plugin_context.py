@@ -38,3 +38,7 @@ class PluginContext:
 
     def emit_and_await(self, event_type: str, data: tuple = ()):
         raise PluginContextException("Plugin Context 'emit_and_await' must be overridden...")
+
+    def register_controller(self, name: str, controller):
+        raise PluginContextException("Plugin Context 'register_controller' must be overridden...")
+

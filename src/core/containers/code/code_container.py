@@ -36,18 +36,15 @@ class CodeContainer(Gtk.Box):
         ...
 
     def _load_widgets(self):
+        widget_registery.expose_object("code-container", self)
+
         code_base = CodeBase()
 
-        self.add( self._create_tabs_widgets(code_base) )
         self.add( self._create_editor_widget(code_base) )
-
-    def _create_tabs_widgets(self, code_base: CodeBase):
-        return code_base.get_tabs_widget()
 
     def _create_editor_widget(self, code_base: CodeBase):
         editors_container = Gtk.Box()
 
-        widget_registery.expose_object("code-container", self)
         widget_registery.expose_object("editors-container", editors_container)
 
         editors_container.add( Separator("separator_left") )

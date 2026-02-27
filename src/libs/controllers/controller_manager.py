@@ -22,9 +22,10 @@ class ControllerManager(Singleton, dict):
 
 
     def _crete_controller_context(self) -> ControllerContext:
-        controller_context             = ControllerContext()
-        controller_context.message_to  = self.message_to
-        controller_context.message     = self.message
+        controller_context                     = ControllerContext()
+        controller_context.message_to          = self.message_to
+        controller_context.message             = self.message
+        controller_context.register_controller = self.register_controller
 
         return controller_context
 
