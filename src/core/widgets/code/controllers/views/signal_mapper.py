@@ -42,7 +42,8 @@ class SourceViewSignalMapper:
             "key-press-event":      self._key_press_event,
             "key-release-event":    self._key_release_event,
             "button-press-event":   self._button_press_event,
-            "button-release-event": self._button_release_event
+            "button-release-event": self._button_release_event,
+            "populate-popup":       self._populate_popup
         }
 
     def _focus_in_event(self, source_view: SourceView, eve):
@@ -54,14 +55,17 @@ class SourceViewSignalMapper:
             source_view, step, count, extend_selection, self.emit
         )
 
+    def _key_press_event(self, source_view: SourceView, eve):
+        return self.state_manager.handle_key_press_event(source_view, eve)
+
+    def _key_release_event(self, source_view: SourceView, eve):
+        return self.state_manager.handle_key_release_event(source_view, eve)
+
     def _button_press_event(self, source_view: SourceView, eve):
         return self.state_manager.handle_button_press_event(source_view, eve)
 
     def _button_release_event(self, source_view: SourceView, eve):
         return self.state_manager.handle_button_release_event(source_view, eve)
 
-    def _key_press_event(self, source_view: SourceView, eve):
-        return self.state_manager.handle_key_press_event(source_view, eve)
-
-    def _key_release_event(self, source_view: SourceView, eve):
-        return self.state_manager.handle_key_release_event(source_view, eve)
+    def _populate_popup(self, source_view, menu):
+        return self.state_manager.handle_populate_popup(source_view, menu, self.emit)

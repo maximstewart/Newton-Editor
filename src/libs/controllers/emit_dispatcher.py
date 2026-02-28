@@ -8,6 +8,13 @@ from ..dto.base_event import BaseEvent
 
 
 class EmitDispatcher:
+    """
+        EmitDispatcher is used for allowing controllers to pass/hook in
+        their message system to children that need to signal events.
+        Note how we are not handling return info from the 'message' methods
+        whereas a controller would or could do so.
+    """
+
     def __init__(self):
         super(EmitDispatcher, self).__init__()
 

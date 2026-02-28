@@ -187,6 +187,6 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
 
     def clear_highlight(self, buffer):
         if not self.highlight_tag: return
-        start, end = buffer.get_bounds()
-        buffer.remove_tag(self.highlight_tag, start, end)
+        start_itr, end_itr = buffer.get_bounds()
+        buffer.remove_tag(self.highlight_tag, start_itr, end_itr)
 

@@ -20,8 +20,6 @@ class FilesController(ControllerBase, list):
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.AddNewFileEvent):
             self.new_file(event)
-        elif isinstance(event, Code_Event_Types.SwapFileEvent):
-            self.swap_file(event)
         elif isinstance(event, Code_Event_Types.PopFileEvent):
             self.pop_file(event)
         elif isinstance(event, Code_Event_Types.RemoveFileEvent):
@@ -31,29 +29,6 @@ class FilesController(ControllerBase, list):
         elif isinstance(event, Code_Event_Types.GetSwapFileEvent):
             self.get_swap_file(event)
 
-    def get_file(self, event: Code_Event_Types.GetFileEvent):
-        if not event.buffer: return
-
-        for file in self:
-            if not event.buffer == file.buffer: continue
-
-            event.response = file
-
-            return file
-
-    def get_swap_file(self, event: Code_Event_Types.GetSwapFileEvent):
-        if not event.buffer: return
-
-        for i, file in enumerate(self):
-            if not event.buffer == file.buffer: continue
-
-            j              = self.next_index(i)
-            next_file      = self[j]
-            swapped_file   = self[j] if not j == -1 else None
-
-            event.response = [swapped_file, next_file]
-
-            return swapped_file, next_file
 
     def new_file(self, event: Code_Event_Types.AddNewFileEvent):
         file           = SourceFile()
@@ -72,20 +47,6 @@ class FilesController(ControllerBase, list):
         self.append(file)
 
         return file
-
-    def swap_file(self, event: Code_Event_Types.GetSwapFileEvent):
-        if not event.buffer: return
-
-        for i, file in enumerate(self):
-            if not event.buffer == file.buffer: continue
-
-            j              = self.next_index(i)
-            next_file      = self[j]
-            swapped_file   = self[j] if not j == -1 else None
-
-            event.response = [swapped_file, next_file]
-
-            return swapped_file, next_file
 
     def pop_file(self, event: Code_Event_Types.PopFileEvent):
         if not event.buffer: return
@@ -133,6 +94,30 @@ class FilesController(ControllerBase, list):
             file.close()
 
             return next_file
+
+    def get_file(self, event: Code_Event_Types.GetFileEvent):
+        if not event.buffer: return
+
+        for file in self:
+            if not event.buffer == file.buffer: continue
+
+            event.response = file
+
+            return file
+
+    def get_swap_file(self, event: Code_Event_Types.GetSwapFileEvent):
+        if not event.buffer: return
+
+        for i, file in enumerate(self):
+            if not event.buffer == file.buffer: continue
+
+            j              = self.next_index(i)
+            next_file      = self[j]
+            swapped_file   = self[j] if not j == -1 else None
+
+            event.response = [swapped_file, next_file]
+
+            return swapped_file, next_file
 
     def next_index(self, i):
         size = len(self)

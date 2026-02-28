@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 
 @dataclass(slots = True)
 class BaseEvent:
-    topic: str = None
-    content: any = None
-    raw_content: any = None
+    topic: str        = None
+    content: any      = None
+    raw_content: any  = None
+    success: callable = None
+    fail: callable    = None

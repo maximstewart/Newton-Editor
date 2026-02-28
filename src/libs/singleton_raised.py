@@ -15,15 +15,15 @@ class SingletonError(Exception):
 T = TypeVar('T', bound='SingletonRaised')
 
 class SingletonRaised:
-    _instance = None
+    __instance = None
 
     def __new__(cls: Type[T], *args: Any, **kwargs: Any) -> T:
-        if cls._instance is not None:
+        if cls.__instance is not None:
             raise SingletonError(f"'{cls.__name__}' is a Singleton. Cannot create a new instance...")
 
-        cls._instance = super(SingletonRaised, cls).__new__(cls)
-        return cls._instance
+        cls.__instance = super(SingletonRaised, cls).__new__(cls)
+        return cls.__instance
 
     def __init__(self) -> None:
-        if self._instance is not None:
+        if self.__instance is not None:
             return

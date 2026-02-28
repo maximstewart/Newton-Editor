@@ -78,3 +78,15 @@ class SourceViewsBaseState:
         )
 
         return True if not response else response
+
+    def populate_popup(self, source_view, menu, emit):
+        buffer = source_view.get_buffer()
+        event  = Event_Factory.create_event(
+            "populate_source_view_popup",
+            buffer = buffer,
+            menu   = menu
+        )
+
+        emit(event)
+
+        menu.show_all()

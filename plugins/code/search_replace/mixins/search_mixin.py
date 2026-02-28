@@ -20,10 +20,6 @@ class SearchMixin:
             if self.is_word_char(prev_char):
                 return False
 
-        # if end_itr.forward_char():
-        #     next_char = end_itr.get_char()
-        #     if self.is_word_char(next_char):
-        #         return False
         next_char = end_itr.get_char()
         if self.is_word_char(next_char):
             return False

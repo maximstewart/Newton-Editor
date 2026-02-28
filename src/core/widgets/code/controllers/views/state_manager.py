@@ -34,15 +34,6 @@ class SourceViewStateManager:
             source_view, step, count, extend_selection, emit
         )
 
-    def handle_button_press_event(self, source_view, eve):
-        return self.states[source_view.state].button_press_event(source_view, eve)
-
-    def handle_button_release_event(self, source_view, eve):
-        # Handle state transitions (multi-insert toggling)
-        self._handle_multi_insert_toggle(source_view, eve)
-
-        return self.states[source_view.state].button_release_event(source_view, eve)
-
     def handle_key_press_event(self, source_view, eve):
         return self.states[source_view.state].key_press_event(
             source_view, eve, self.key_mapper
@@ -53,6 +44,17 @@ class SourceViewStateManager:
             source_view, eve, self.key_mapper
         )
 
+    def handle_button_press_event(self, source_view, eve):
+        self._handle_multi_insert_toggle(source_view, eve)
+
+        return self.states[source_view.state].button_press_event(source_view, eve)
+
+    def handle_button_release_event(self, source_view, eve):
+        return self.states[source_view.state].button_release_event(source_view, eve)
+
+    def handle_populate_popup(self, source_view, menu, emit):
+        return self.states[source_view.state].populate_popup(source_view, menu, emit)
+
     def _handle_multi_insert_toggle(self, source_view, eve):
         is_control = self.key_mapper.is_control(eve)
         if is_control and not source_view.state == SourceViewStates.MULTIINSERT:
@@ -61,6 +63,7 @@ class SourceViewStateManager:
 
         if not is_control and source_view.state == SourceViewStates.MULTIINSERT:
             logger.debug("Entered Regular Insert Mode...")
-            self.states[source_view.state].clear_markers(source_view)
+            self.states[source_view.state].marker_manager.clear_mark_sets(source_view)
 
             source_view.state = SourceViewStates.INSERT
+

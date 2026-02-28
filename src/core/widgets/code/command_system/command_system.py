@@ -86,7 +86,7 @@ class CommandSystem:
 
     def remove_file(self, view: SourceView):
         event = Event_Factory.create_event(
-            "removed_file",
+            "remove_file",
             view   = view,
             buffer = view.get_buffer()
         )

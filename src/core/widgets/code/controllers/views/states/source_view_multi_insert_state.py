@@ -2,140 +2,108 @@
 
 # Lib imports
 import gi
-gi.require_version('Gtk', '3.0')
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 # Application imports
-from libs.event_factory import Event_Factory, Code_Event_Types
-from libs.dto.states import SourceViewStates, MoveDirection, CursorAction
+from libs.event_factory import Event_Factory
+from libs.dto.states import CursorAction
 
-from ....mixins.source_mark_events_mixin import MarkEventsMixin
+from ..marker_manager import MarkerManager
 
 from .source_view_base_state import SourceViewsBaseState
 
 
 
-class SourceViewsMultiInsertState(SourceViewsBaseState, MarkEventsMixin):
+class SourceViewsMultiInsertState(SourceViewsBaseState):
     def __init__(self):
         super(SourceViewsMultiInsertState, self).__init__()
 
-        self.cursor_action: CursorAction    = 0
-        self.move_direction: MoveDirection  = 0
-        self.insert_markers: list           = []
+        self.cursor_action: CursorAction   = None
+        self.marker_manager: MarkerManager = MarkerManager()
 
 
-    def insert_text(self, file, text):
-        if not self.insert_markers: return False
+    def insert_text(self, file, text: str) -> bool:
+        if not self.marker_manager.buffer_markers: return False
 
         buffer = file.buffer
+
         if buffer.is_processing_completion:
-            self.insert_completion_text(buffer, text)
-            return True
+            return self._insert_completion_text(buffer, text)
 
-        # freeze buffer and insert to each mark (if any)
-        buffer.block_insert_after_signal()
-        buffer.begin_user_action()
+        def insert_text(start_itr, end_itr = None):
+            if not end_itr:
+                buffer.insert(start_itr, text, -1)
+                return
 
-        with buffer.freeze_notify(): 
-            for mark in self.insert_markers:
-                itr = buffer.get_iter_at_mark(mark)
-                buffer.insert(itr, text, -1)
+            buffer.delete(start_itr, end_itr)
+            buffer.insert(start_itr, text, -1)
 
-        buffer.end_user_action()
-        buffer.unblock_insert_after_signal()
-
+        self.marker_manager.apply_to_marks(buffer, insert_text)
         return True
 
-    def insert_completion_text(self, buffer, text):
+    def _insert_completion_text(self, buffer, text: str) -> bool:
         buffer.is_processing_completion = False
 
-        # freeze buffer and insert to each mark (if any)
-        buffer.block_insert_after_signal()
-        buffer.begin_user_action()
+        def replace_word(start_itr, end_itr = None):
+            if not end_itr:
+                end_itr = start_itr.copy()
 
-        with buffer.freeze_notify(): 
-            for mark in self.insert_markers:
-                end_itr = buffer.get_iter_at_mark(mark)
-                start_itr = end_itr.copy()
+            if not start_itr.starts_word():
+                start_itr.backward_word_start()
 
-                if not start_itr.starts_word():
-                    start_itr.backward_word_start()
+            if not end_itr.ends_word():
+                end_itr.forward_word_end()
 
-                if not end_itr.ends_word():
-                    end_itr.forward_word_end()
+            buffer.delete(start_itr, end_itr)
+            buffer.insert(start_itr, text, -1)
 
-                buffer.delete(start_itr, end_itr)
-                buffer.insert(start_itr, text, -1)
-
-        buffer.end_user_action()
-        buffer.unblock_insert_after_signal()
-
+        self.marker_manager.apply_to_marks(buffer, replace_word)
         return True
 
-    def move_cursor(self, source_view, step, count, extend_selection, emit):
-        buffer = source_view.get_buffer()
 
-        self._process_move_direction(buffer)
+    def move_cursor(self, source_view, step, count, is_selection, emit):
+        is_forward = count > 0
+        buffer     = source_view.get_buffer()
+
+        if step in [
+            Gtk.MovementStep.LOGICAL_POSITIONS,
+            Gtk.MovementStep.VISUAL_POSITIONS
+        ]:
+            self.marker_manager.move_by_char(buffer, is_forward, is_selection)
+        elif step == Gtk.MovementStep.WORDS:
+            self.marker_manager.move_by_word(buffer, is_forward, is_selection)
+        elif step == Gtk.MovementStep.DISPLAY_LINES:
+            self.marker_manager.move_by_line(buffer, is_forward, is_selection)
+
         self._signal_cursor_moved(source_view, emit)
-        source_view.command.exec("update_info_bar")
 
-    def button_press_event(self, source_view, eve):
-        super().button_press_event(source_view, eve)
+    def key_press_event(self, source_view, event, key_mapper):
+        char = key_mapper.get_raw_keyname(event).upper()
+        self.is_control = key_mapper.is_control(event)
+        self.is_shift   = key_mapper.is_shift(event)
+
+        if char.upper() in ["BACKSPACE", "DELETE", "ENTER"]:
+            self.marker_manager.process_cursor_action(
+                source_view.get_buffer(),
+                char.upper()
+            )
+            return False
+
+        return super().key_press_event(source_view, event, key_mapper)
+
+    def button_press_event(self, source_view, event):
         return True
 
-    def button_release_event(self, source_view, eve):
-        buffer      = source_view.get_buffer()
-        insert_iter = buffer.get_iter_at_mark( buffer.get_insert() )
-        data        = source_view.window_to_buffer_coords(
-            Gtk.TextWindowType.TEXT,
-            eve.x,
-            eve.y
-        )
-        is_over_text, \
-        target_iter,  \
-        is_trailing   = source_view.get_iter_at_position(data.buffer_x, data.buffer_y)
-
-        if not is_over_text:
-            # NOTE: Trying to put at very end of line if not over text (aka, clicking right of text)
-            target_iter.forward_visible_line()
-            target_iter.backward_char()
-
-        self._insert_mark(insert_iter, target_iter, buffer)
-
-    def key_press_event(self, source_view, eve, key_mapper):
-        char = key_mapper.get_raw_keyname(eve)
-
-        for action in CursorAction:
-            if not action.name == char.upper(): continue
-            self.cursor_action = action.value
-            self._process_cursor_action(source_view.get_buffer())
-
-            return False
-
-        for direction in MoveDirection:
-            if not direction.name == char.upper(): continue
-            self.move_direction = direction.value
-            return False
-
-        is_future = key_mapper._key_release_event(eve)
-        if is_future: return True
-
-        command = key_mapper._key_press_event(eve)
-        if not command: return False
-
-        char_str       = key_mapper.get_char(eve)
-        modkeys_states = key_mapper.get_modkeys_states(eve)
-        response = source_view.command.exec_with_args(
-            command, source_view, char_str, modkeys_states
-        )
-
-        return True if not response else response
+    def button_release_event(self, source_view, event):
+        self.marker_manager.button_release_event(source_view, event)
 
     def _signal_cursor_moved(self, source_view, emit):
         buffer = source_view.get_buffer()
-        itr   = buffer.get_iter_at_mark( buffer.get_insert() )
+        itr    = buffer.get_iter_at_mark( buffer.get_insert() )
         line   = itr.get_line()
         char   = itr.get_line_offset()
+
         event  = Event_Factory.create_event(
             "cursor_moved",
             view   = source_view,
@@ -145,3 +113,4 @@ class SourceViewsMultiInsertState(SourceViewsBaseState, MarkEventsMixin):
         )
 
         emit(event)
+
