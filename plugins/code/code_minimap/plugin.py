@@ -25,7 +25,7 @@ class Plugin(PluginCode):
             code_minimap.set_smini_view(event.view)
 
     def load(self):
-        editors_container = self.requests_ui_element("editors-container")
+        editors_container = self.request_ui_element("editors-container")
         editors_container.add( code_minimap )
 
     def run(self):

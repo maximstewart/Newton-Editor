@@ -22,7 +22,7 @@ class TabsController(ControllerBase):
         super(TabsController, self).__init__()
 
         self.tabs_widget: TabsWidget = TabsWidget()
-        self.tabs_widget.message     = self.message
+        self.tabs_widget.emit        = self.emit
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):

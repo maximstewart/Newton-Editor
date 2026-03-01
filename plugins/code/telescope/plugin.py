@@ -7,11 +7,11 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 from plugins.plugin_types import PluginCode
 
-from .colorize import Colorize
+from .telescope import Telescope
 
 
 
-colorize = Colorize()
+telescope = Telescope()
 
 
 
@@ -21,24 +21,25 @@ class Plugin(PluginCode):
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.AddedNewFileEvent):
-            colorize.handle_colorize(event.file.buffer)
-        elif isinstance(event, Code_Event_Types.TextChangedEvent):
-            colorize.handle_colorize(event.buffer)
+        if isinstance(event, Code_Event_Types.FocusedViewEvent):
+            ...
 
     def load(self):
+        window = self.request_ui_element("main-window")
+        telescope.set_transient_for(window)
+
         event = Event_Factory.create_event("register_command",
-            command_name = "tggle_colorize",
+            command_name = "telescope",
             command      = Handler,
             binding_mode = "released",
-            binding      = "<Shift><Control>c"
+            binding      = "<Control>b"
         )
 
         self.emit_to("source_views", event)
 
     def run(self):
         ...
-
+ 
 
 class Handler:
     @staticmethod
@@ -47,12 +48,6 @@ class Handler:
         *args,
         **kwargs
     ):
-        logger.debug("Command: Toggle Colorize")
+        logger.debug("Command: Telescope")
 
-        colorize.is_colorize_paused = not colorize.is_colorize_paused
-        if colorize.is_colorize_paused:
-            colorize.clear_color_tags( view.get_buffer() )
-            return
-
-        colorize.handle_colorize( view.get_buffer() )
-
+        telescope.hide() if telescope.is_visible() else telescope.show()

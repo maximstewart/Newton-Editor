@@ -56,8 +56,8 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         locations.append(path)
         for file in os.listdir(path):
             _path = os.path.join(path, file)
-            if os.path.isdir(_path):
-                self._collect_search_locations(_path, locations)
+            if not os.path.isdir(_path): continue
+            self._collect_search_locations(_path, locations)
 
     def _load_plugins(
         self,
@@ -150,12 +150,10 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
     def create_plugin_context(self):
         plugin_context: PluginContext                = PluginContext()
 
-        plugin_context.requests_ui_element: callable = self.requests_ui_element
-        plugin_context.message: callable             = self.message
-        plugin_context.message_to: callable          = self.message_to
-        plugin_context.message_to_selected: callable = self.message_to_selected
-        plugin_context.emit: callable                = event_system.emit
-        plugin_context.emit_and_await: callable      = event_system.emit_and_await
+        plugin_context.request_ui_element: callable  = self.request_ui_element
+        plugin_context.emit: callable                = self.emit
+        plugin_context.emit_to: callable             = self.emit_to
+        plugin_context.emit_to_selected: callable    = self.emit_to_selected
         plugin_context.register_controller: callable = self.register_controller
 
         return plugin_context

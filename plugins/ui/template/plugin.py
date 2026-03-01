@@ -21,7 +21,7 @@ class Plugin(PluginUI):
         ...
 
     def load(self):
-        ui_element = self.requests_ui_element("header-container")
+        ui_element = self.request_ui_element("header-container")
         ui_element.add( self.generate_plugin_element() )
 
     def run(self):

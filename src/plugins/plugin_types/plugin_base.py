@@ -30,20 +30,14 @@ class PluginBase:
     def run(self):
         raise PluginBaseException("Plugin Base 'run' must be overriden by Plugin")
 
-    def requests_ui_element(self, element_id: str):
-        raise PluginBaseException("Plugin Base 'requests_ui_element' must be overriden by Plugin")
+    def request_ui_element(self, element_id: str):
+        raise PluginBaseException("Plugin Base 'request_ui_element' must be overriden by Plugin")
 
-    def message(self, event: BaseEvent):
-        raise PluginBaseException("Plugin Base 'message' must be overriden by Plugin")
-
-    def message_to(self, name: str, event: BaseEvent):
-        raise PluginBaseException("Plugin Base 'message_to' must be overriden by Plugin")
-
-    def message_to_selected(self, names: list[str], event: BaseEvent):
-        raise PluginBaseException("Plugin Base 'message_to_selected' must be overriden by Plugin")
-
-    def emit(self, event_type: str, data: tuple = ()):
+    def emit(self, event: BaseEvent):
         raise PluginBaseException("Plugin Base 'emit' must be overriden by Plugin")
 
-    def emit_and_await(self, event_type: str, data: tuple = ()):
-        raise PluginBaseException("Plugin Base 'emit_and_await' must be overriden by Plugin")
+    def emit_to(self, name: str, event: BaseEvent):
+        raise PluginBaseException("Plugin Base 'emit_to' must be overriden by Plugin")
+
+    def emit_to_selected(self, names: list[str], event: BaseEvent):
+        raise PluginBaseException("Plugin Base 'emit_to_selected' must be overriden by Plugin")

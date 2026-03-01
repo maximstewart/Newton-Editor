@@ -19,9 +19,10 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
     def __init__(self):
         super(SearchReplace, self).__init__()
 
-        self.active_view          = None
-        self.highlight_tag        = None
-        self.matches: list[tuple] = []
+        self.active_view                = None
+        self.highlight_tag: Gtk.TextTag = None
+        self.matches: list[tuple]       = []
+        self.last_key: str              = None
 
         self._setup_styling()
         self._setup_signals()
@@ -112,7 +113,13 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
 
     def _handle_show(self, widget):
         self.find_entry.set_text("")
-        self.find_entry.grab_focus()
+        if not self.last_key == "r":
+            self.find_entry.grab_focus()
+            return
+
+        self.replace_entry.grab_focus()
+        # Fake focus call to prompt search
+        self._find_entry_focus_in_event(self.find_entry, None) 
 
     def _handle_hide(self, widget):
         if not self.active_view: return

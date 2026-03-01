@@ -31,20 +31,14 @@ class PluginUI(PluginBase):
     def run(self):
         raise PluginCodeException("Plugin UI 'run' must be overriden by Plugin")
 
-    def requests_ui_element(self, element_id: str):
-        return self.plugin_context.requests_ui_element(element_id)
+    def request_ui_element(self, element_id: str):
+        return self.plugin_context.request_ui_element(element_id)
 
-    def message(self, event: BaseEvent):
-        return self.plugin_context.message(event)
+    def emit(self, event: BaseEvent):
+        return self.plugin_context.emit(event)
 
-    def message_to(self, name: str, event: BaseEvent):
-        return self.plugin_context.message_to(name, event)
+    def emit_to(self, name: str, event: BaseEvent):
+        return self.plugin_context.emit_to(name, event)
 
-    def message_to_selected(self, names: list[str], event: BaseEvent):
-        return self.plugin_context.message_to_selected(names, event)
-
-    def emit(self, event_type: str, data: tuple = ()):
-        self.plugin_context.emit(event_type, data)
-
-    def emit_and_await(self, event_type: str, data: tuple = ()):
-        self.plugin_context.emit_and_await(event_type, data)
+    def emit_to_selected(self, names: list[str], event: BaseEvent):
+        return self.plugin_context.emit_to_selected(names, event)

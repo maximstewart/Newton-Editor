@@ -33,7 +33,7 @@ class Plugin(PluginCode):
             provider      = self.provider,
             language_ids  = []
         )
-        self.message_to("completion", event)
+        self.emit_to("completion", event)
 
     def run(self):
         ...

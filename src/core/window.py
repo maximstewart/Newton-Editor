@@ -76,6 +76,8 @@ class Window(Gtk.ApplicationWindow):
         event_system.subscribe("load-interactive-debug", self._load_interactive_debug)
 
     def _load_widgets(self):
+        widget_registery.expose_object("main-window", self)
+
         if settings_manager.is_debug():
             self.set_interactive_debugging(True)
 

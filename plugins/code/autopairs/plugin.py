@@ -37,7 +37,7 @@ class Plugin(PluginCode):
             ]
         )
 
-        self.message_to("source_views", event)
+        self.emit_to("source_views", event)
 
     def run(self):
         ...

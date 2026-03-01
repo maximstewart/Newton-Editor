@@ -24,3 +24,6 @@ class EmitDispatcher:
 
     def emit_to(self, controller: str, event: BaseEvent):
         self.message_to(controller, event)
+
+    def emit_to_selected(self, names: list[str], event: BaseEvent):
+        self.message_to_selected(names, event)

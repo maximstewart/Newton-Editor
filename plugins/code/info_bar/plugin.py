@@ -25,7 +25,7 @@ class Plugin(PluginCode):
             info_bar_widget._set_info_labels(*event.info)
 
     def load(self):
-        header = self.requests_ui_element("header-container")
+        header = self.request_ui_element("header-container")
         header.add( info_bar_widget )
 
     def run(self):

@@ -24,7 +24,7 @@ class Plugin(PluginCode):
             binding      = "<Shift><Control>h"
         )
 
-        self.message_to("source_views", event)
+        self.emit_to("source_views", event)
 
     def run(self):
         ...

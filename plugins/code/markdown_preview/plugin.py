@@ -24,7 +24,8 @@ class Plugin(PluginCode):
         event = Event_Factory.create_event(
             "get_file", buffer = buffer
         )
-        self.message_to("files", event)
+        self.emit_to("files", event)
+
         if not event.response.get_location(): return
 
         markdown_preview.fpath = event.response.get_location().get_path()
@@ -38,7 +39,7 @@ class Plugin(PluginCode):
             markdown_preview._do_markdown_translate(event.buffer)
 
     def load(self):
-        separator_right  = self.requests_ui_element("separator-right")
+        separator_right  = self.request_ui_element("separator-right")
         markdown_preview.set_relative_to(separator_right)
 
         event = Event_Factory.create_event("register_command",
@@ -48,7 +49,7 @@ class Plugin(PluginCode):
             binding      = "<Shift><Control>m"
         )
 
-        self.message_to("source_views", event)
+        self.emit_to("source_views", event)
 
     def run(self):
         ...

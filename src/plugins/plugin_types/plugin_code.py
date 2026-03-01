@@ -31,17 +31,17 @@ class PluginCode(PluginBase):
     def run(self):
         raise PluginCodeException("Plugin Code 'run' must be overriden by Plugin")
 
-    def requests_ui_element(self, element_id: str):
-        return self.plugin_context.requests_ui_element(element_id)
-
-    def message(self, event: BaseEvent):
-        return self.plugin_context.message(event)
-
-    def message_to(self, name: str, event: BaseEvent):
-        return self.plugin_context.message_to(name, event)
-
-    def message_to_selected(self, names: list[str], event: BaseEvent):
-        return self.plugin_context.message_to_selected(names, event)
-
     def register_controller(self, name: str, controller):
         return self.plugin_context.register_controller(name, controller)
+
+    def request_ui_element(self, element_id: str):
+        return self.plugin_context.request_ui_element(element_id)
+
+    def emit(self, event: BaseEvent):
+        return self.plugin_context.emit(event)
+
+    def emit_to(self, name: str, event: BaseEvent):
+        return self.plugin_context.emit_to(name, event)
+
+    def emit_to_selected(self, names: list[str], event: BaseEvent):
+        return self.plugin_context.emit_to_selected(names, event)

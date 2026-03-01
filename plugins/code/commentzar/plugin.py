@@ -34,7 +34,7 @@ class Plugin(PluginCode):
             binding      = "<Control>slash"
         )
 
-        self.message_to("source_views", event)
+        self.emit_to("source_views", event)
 
     def run(self):
         ...

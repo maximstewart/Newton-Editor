@@ -56,7 +56,7 @@ class TabsWidget(Gtk.Notebook):
             buffer = file.buffer
         )
 
-        self.message(event)
+        self.emit(event)
 
     def _switch_page(self, notebook, page_widget, page_num):
         tab   = self.get_tab_label(page_widget)
@@ -65,7 +65,7 @@ class TabsWidget(Gtk.Notebook):
             buffer = tab.file.buffer
         )
 
-        self.message(event)
+        self.emit(event)
 
     def _bind_tab_menu(self, tab, page_widget):
         def do_context_menu(tab, eve, page_widget):

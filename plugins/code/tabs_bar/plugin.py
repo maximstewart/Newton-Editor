@@ -21,7 +21,7 @@ class Plugin(PluginCode):
 
     def load(self):
         tabs_controller = TabsController()
-        code_container  = self.requests_ui_element("code-container")
+        code_container  = self.request_ui_element("code-container")
 
         self.register_controller("tabs", tabs_controller)
 

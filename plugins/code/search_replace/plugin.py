@@ -37,17 +37,17 @@ class Plugin(PluginCode):
             )
 
     def load(self):
-        footer = self.requests_ui_element("footer-container")
+        footer = self.request_ui_element("footer-container")
         footer.add( search_replace )
 
         event = Event_Factory.create_event("register_command",
             command_name = "search_replace",
             command      = Handler,
             binding_mode = "released",
-            binding      = "<Control>f"
+            binding      = ["<Control>f", "<Control>r"]
         )
 
-        self.message_to("source_views", event)
+        self.emit_to("source_views", event)
 
     def run(self):
         ...
@@ -62,4 +62,5 @@ class Handler:
     ):
         logger.debug("Command: Search/Replace")
 
+        search_replace.last_key = args[0]
         search_replace.hide() if search_replace.is_visible() else search_replace.show()
