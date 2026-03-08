@@ -6,7 +6,6 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GtkSource', '4')
 
 from gi.repository import Gtk
-from gi.repository import GLib
 from gi.repository import GtkSource
 
 # Application imports
@@ -21,9 +20,6 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
         super(SourceView, self).__init__()
 
         self.state                = state
-
-        self._cut_temp_timeout_id = None
-        self._cut_buffer          = ""
 
         self.sibling_right        = None
         self.sibling_left         = None
@@ -74,15 +70,3 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
         )
 
         self._set_up_dnd()
-
-    def clear_temp_cut_buffer_delayed(self):
-        if self._cut_temp_timeout_id:
-            GLib.source_remove(self._cut_temp_timeout_id)
-
-    def set_temp_cut_buffer_delayed(self):
-        def clear_temp_buffer():
-            self._cut_buffer          = ""
-            self._cut_temp_timeout_id = None
-            return False
-
-        self._cut_temp_timeout_id = GLib.timeout_add(15000, clear_temp_buffer)

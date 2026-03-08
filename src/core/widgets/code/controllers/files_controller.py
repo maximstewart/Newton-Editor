@@ -33,7 +33,8 @@ class FilesController(ControllerBase, list):
 
 
     def filter_loaded(self, event: Code_Event_Types.FilterOutLoadedFilesEvent):
-        loaded_paths = {file.fpath for file in self}
+        loaded_paths = {file.fpath for file in self if not file.fpath == "buffer"}
+
         files = [
             uri for uri in event.uris if not any(path in uri for path in loaded_paths)
         ]
