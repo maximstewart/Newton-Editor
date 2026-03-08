@@ -119,3 +119,11 @@ class LSPControllerEvents:
         params["position"]["character"]      = data["column"]
 
         GLib.idle_add( self.send_request, method, params )
+
+    def _lsp_java_class_file_contents(self, uri: str):
+        method = "java/classFileContents"
+        params = {
+            "uri": uri
+        }
+
+        GLib.idle_add( self.send_request, method, params )

@@ -66,6 +66,9 @@ class ProviderResponseCache(LSPClientEventsMixin, LSPServerEventsMixin, Provider
 
         return True
 
+    # TODO: Need to map 'lang_id' to a given language response class and 
+    #       pass the controller to a 'server_response' method there.
+    #       It would allow clean separation of each language's idiosyncracies 
     def server_response(self, lsp_response: LSPResponseTypes):
         logger.debug(f"LSP Response: { lsp_response }")
 
@@ -81,7 +84,16 @@ class ProviderResponseCache(LSPClientEventsMixin, LSPServerEventsMixin, Provider
                 case "textDocument/completion":
                     self._handle_completion_response(lsp_response.result)
                 case "textDocument/definition":
-                    self._handle_definition_response(lsp_response.result)
+                    result = lsp_response.result
+                    if not result: return
+                    uri    = result[0]["uri"]
+                    if "jdt://" in uri:
+                        controller._lsp_java_class_file_contents(uri)
+                        return
+
+                    self._handle_definition_response(uri, result[0]["range"])
+                case "java/classFileContents":
+                    self._handle_java_class_file_contents(lsp_response.result)
                 case _:
                     ...
         elif isinstance(lsp_response, LSPResponseNotification):

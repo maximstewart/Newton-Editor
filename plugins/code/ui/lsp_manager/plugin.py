@@ -55,11 +55,9 @@ class Plugin(PluginCode):
         lsp_manager.load_lsp_servers_config()
         lsp_manager.set_source_view(source_view)
         lsp_manager.load_lsp_servers_config_placeholders()
-        lsp_manager.provider.response_cache._prompt_completion_request = \
-            self._prompt_completion_request
-
-        lsp_manager.provider.response_cache._prompt_goto_request = \
-            self._prompt_goto_request
+        lsp_manager.provider.response_cache.emit = self.emit
+        lsp_manager.provider.response_cache.emit_to = self.emit_to
+        lsp_manager.provider.response_cache._prompt_completion_request = self._prompt_completion_request
 
     def run(self):
         ...
@@ -80,15 +78,6 @@ class Plugin(PluginCode):
             provider = lsp_manager.provider
         )
         self.emit_to("completion", event)
-
-
-    def _prompt_goto_request(self, uri: str):
-        event  = Event_Factory.create_event(
-            "get_active_view",
-        )
-        self.emit_to("source_views", event)
-        view = event.response
-        view._on_uri_data_received( [uri] )
 
 
 class Handler:

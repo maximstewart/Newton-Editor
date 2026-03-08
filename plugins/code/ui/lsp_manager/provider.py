@@ -60,9 +60,8 @@ class Provider(GObject.GObject, GtkSource.CompletionProvider):
     def do_get_activation(self):
         """ The context for when a provider will show results """
 #        return GtkSource.CompletionActivation.NONE
-#        return GtkSource.CompletionActivation.USER_REQUESTED
+        return GtkSource.CompletionActivation.USER_REQUESTED
 #        return GtkSource.CompletionActivation.INTERACTIVE
-        return GtkSource.CompletionActivation.INTERACTIVE | GtkSource.CompletionActivation.USER_REQUESTED
 
     def do_populate(self, context):
         results   = self.response_cache.filter_with_context(context)
