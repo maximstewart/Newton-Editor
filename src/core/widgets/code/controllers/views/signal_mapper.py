@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import GLib
 
 # Application imports
 from ...source_view import SourceView
@@ -19,8 +22,9 @@ class SourceViewSignalMapper:
         self.state_manager = state_manager
 
     def set_buffer_to_active_view(self, buffer):
-            self.active_view.set_buffer(buffer)
-            self.active_view.command.exec("update_info_bar")
+        self.active_view.set_buffer(buffer)
+        self.active_view.command.exec("update_info_bar")
+        GLib.idle_add(self._scroll_to_iter)
 
     def connect_signals(self, source_view: SourceView):
         signal_mappings = self._get_signal_mappings()
@@ -34,6 +38,12 @@ class SourceViewSignalMapper:
 
     def insert_text(self, file, string: str):
         return self.state_manager.handle_insert_text(self.active_view, file, string)
+
+    def _scroll_to_iter(self):
+        buffer = self.active_view.get_buffer()
+        itr    = buffer.get_iter_at_mark( buffer.get_insert() )
+
+        self.active_view.scroll_to_iter(itr, 0.2, False, 0, 0)
 
     def _get_signal_mappings(self):
         return {

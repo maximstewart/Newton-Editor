@@ -47,6 +47,16 @@ class CommandSystem:
         ...
 
 
+    def filter_out_loaded_files(self, uris: list[str]):
+        event = Event_Factory.create_event(
+            "filter_out_loaded_files",
+            uris = uris
+        )
+
+        self.emit_to("files", event)
+
+        return event.response
+
     def set_info_labels(self, data: tuple[str]):
         event = Event_Factory.create_event(
             "set_info_labels",

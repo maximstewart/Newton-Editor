@@ -27,14 +27,18 @@ class SourceViewsController(ControllerBase, list):
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.RemovedFileEvent):
+        if isinstance(event, Code_Event_Types.CreateSourceViewEvent):
+            event.response = self.create_source_view(event.state)
+        elif isinstance(event, Code_Event_Types.RemovedFileEvent):
             self._remove_file(event)
         elif isinstance(event, Code_Event_Types.RegisterCommandEvent):
             self._register_command(event)
 
         if not self.signal_mapper.active_view: return
 
-        if isinstance(event, Code_Event_Types.TextChangedEvent):
+        if isinstance(event, Code_Event_Types.GetActiveViewEvent):
+            event.response = self.signal_mapper.active_view
+        elif isinstance(event, Code_Event_Types.TextChangedEvent):
             self.signal_mapper.active_view.command.exec("update_info_bar")
         elif isinstance(event, Code_Event_Types.SetActiveFileEvent):
             self.signal_mapper.set_buffer_to_active_view(event.buffer)
@@ -71,6 +75,7 @@ class SourceViewsController(ControllerBase, list):
         for source_view in self:
             if not event.file.buffer == source_view.get_buffer(): continue
             if not event.next_file:
+                if source_view.state in [SourceViewStates.INDEPENDENT, SourceViewStates.READONLY]: continue
                 source_view.command.exec("new_file")
                 continue
 
@@ -88,6 +93,7 @@ class SourceViewsController(ControllerBase, list):
 
     def first_map_load(self):
         for source_view in self:
+            if source_view.state in [SourceViewStates.INDEPENDENT, SourceViewStates.READONLY]: continue
             source_view.command.exec("new_file")
             if not source_view.sibling_left: continue
             source_view.get_parent().hide()

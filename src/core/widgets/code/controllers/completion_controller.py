@@ -21,13 +21,21 @@ class CompletionController(ControllerBase):
         self._providers: dict[str, GtkSource.CompletionProvider] = {}
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.RegisterProviderEvent):
+        if isinstance(event, Code_Event_Types.RegisterCompleterEvent):
+            self.register_completer(event.completer)
+        elif isinstance(event, Code_Event_Types.UnregisterCompleterEvent):
+            self.unregister_completer(event.completer)
+        elif isinstance(event, Code_Event_Types.UnregisterProviderEvent):
+            self.unregister_provider(event.provider_name)
+        elif isinstance(event, Code_Event_Types.RegisterProviderEvent):
             self.register_provider(
                 event.provider_name,
                 event.provider,
                 event.language_ids
             )
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
+            ...
+        elif isinstance(event, Code_Event_Types.LoadedNewFileEvent):
             self.provider_process_file_load(event)
         elif isinstance(event, Code_Event_Types.RemovedFileEvent):
             self.provider_process_file_close(event)
@@ -35,8 +43,8 @@ class CompletionController(ControllerBase):
             self.provider_process_file_save(event)
         elif isinstance(event, Code_Event_Types.TextChangedEvent):
             self.provider_process_file_change(event)
-        # elif isinstance(event, Code_Event_Types.RequestCompletionEvent):
-        #     self.request_unbound_completion( event.view.get_completion() )
+        elif isinstance(event, Code_Event_Types.RequestCompletionEvent):
+            self.request_unbound_completion(event)
 
 
     def register_completer(self, completer: GtkSource.Completion):
@@ -84,8 +92,17 @@ class CompletionController(ControllerBase):
         for provider in self._providers.values():
             provider.response_cache.process_file_change(event)
 
-    def request_unbound_completion(self, completer: GtkSource.Completion):
+    def request_unbound_completion(self, event: Code_Event_Types.RequestCompletionEvent):
+        completer = event.view.get_completion()
+        providers = [ *self._providers.values() ]
+
+        if event.provider:
+            if not isinstance(event.provider, list):
+                providers = [ event.provider ]
+            else:
+                providers = event.provider
+
         completer.start(
-            [ *self._providers.values() ],
+            providers,
             completer.create_context()
         )

@@ -109,8 +109,8 @@ class ProviderResponseCacheBase:
         if not start_iter.starts_word():
             start_iter.backward_word_start()
 
-        if not end_iter.ends_word():
-            end_iter.forward_word_end()
+        if not end_iter.ends_line() and not end_iter.ends_word():
+                end_iter.forward_word_end()
 
         buffer = start_iter.get_buffer()
 

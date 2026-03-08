@@ -31,7 +31,10 @@ class SourceViewDnDMixin:
 
             self._on_uri_data_received(uris)
 
-    def _on_uri_data_received(self, uris: []):
+    def _on_uri_data_received(self, uris: list[str]):
+            uris = self.command.filter_out_loaded_files(uris)
+            if not uris: return
+
             uri = uris.pop(0)
 
             self.command.exec_with_args("dnd_load_file_to_buffer", self, uri)

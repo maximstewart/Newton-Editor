@@ -19,7 +19,8 @@ class SourceViewStateManager:
             SourceViewStates.INSERT:      SourceViewsInsertState(),
             SourceViewStates.MULTIINSERT: SourceViewsMultiInsertState(),
             SourceViewStates.COMMAND:     SourceViewsCommandState(),
-            SourceViewStates.READONLY:    SourceViewsReadOnlyState()
+            SourceViewStates.READONLY:    SourceViewsReadOnlyState(),
+            SourceViewStates.INDEPENDENT: SourceViewsIndependentState()
         }
 
 

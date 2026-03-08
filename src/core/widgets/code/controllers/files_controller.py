@@ -22,6 +22,8 @@ class FilesController(ControllerBase, list):
             self.new_file(event)
         elif isinstance(event, Code_Event_Types.PopFileEvent):
             self.pop_file(event)
+        elif isinstance(event, Code_Event_Types.FilterOutLoadedFilesEvent):
+            self.filter_loaded(event)
         elif isinstance(event, Code_Event_Types.RemoveFileEvent):
             self.remove_file(event)
         elif isinstance(event, Code_Event_Types.GetFileEvent):
@@ -29,6 +31,13 @@ class FilesController(ControllerBase, list):
         elif isinstance(event, Code_Event_Types.GetSwapFileEvent):
             self.get_swap_file(event)
 
+
+    def filter_loaded(self, event: Code_Event_Types.FilterOutLoadedFilesEvent):
+        loaded_paths = {file.fpath for file in self}
+        files = [
+            uri for uri in event.uris if not any(path in uri for path in loaded_paths)
+        ]
+        event.response = files
 
     def new_file(self, event: Code_Event_Types.AddNewFileEvent):
         file           = SourceFile()

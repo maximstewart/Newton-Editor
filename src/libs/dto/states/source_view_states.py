@@ -12,3 +12,4 @@ class SourceViewStates(Enum):
     MULTIINSERT = 1
     COMMAND     = 2
     READONLY    = 3
+    INDEPENDENT = 4

@@ -47,33 +47,12 @@ class SourceFile(GtkSource.File):
         ...
 
     def _after_changed(self, buffer: SourceBuffer):
-        self.check_file_on_disk()
-
         event = Event_Factory.create_event(
             "text_changed",
             file   = self,
             buffer = buffer
         )
         self.emit(event)
-
-        if self.is_deleted():
-            self.was_deleted = True
-            event = Event_Factory.create_event(
-                "file_externally_deleted",
-                file   = self,
-                buffer = buffer
-            )
-            self.emit(event)
-            return
-
-        if self.is_externally_modified():
-#            event = Event_Factory.create_event(
-#                "file_externally_modified",
-#                file   = self,
-#                buffer = buffer
-#            )
-#            self.emit(event)
-            return
 
     def _insert_text(
         self,
@@ -145,19 +124,26 @@ class SourceFile(GtkSource.File):
     def load_path(self, gfile: Gio.File):
         if not gfile: return
 
-        self.set_path(gfile)
         text         = gfile.load_bytes()[0].get_data().decode("UTF-8")
         info         = gfile.query_info('standard::content-type', Gio.FileQueryInfoFlags.NONE, None)
         content_type = info.get_content_type()
-        self.ftype   = Gio.content_type_get_mime_type(content_type)
+        self.ftype   = Gio.content_type_get_mime_type(content_type) \
+                        .replace("application/", "") \
+                        .replace("text/", "") \
+                        .replace("x-", "")
+
+        self.set_path(gfile)
         logger.debug(f"File content type: {self.ftype}")
 
         undo_manager = self.buffer.get_undo_manager()
 
+        self.buffer.block_changed_signal()
+        self.buffer.block_changed_after_signal()
+        self.buffer.block_modified_changed_signal()
+
         def move_insert_to_start():
             start_itr = self.buffer.get_start_iter()
             self.buffer.place_cursor(start_itr)
-
         undo_manager.begin_not_undoable_action()
 
         with self.buffer.freeze_notify(): 
@@ -169,6 +155,17 @@ class SourceFile(GtkSource.File):
 
         undo_manager.end_not_undoable_action()
         self.buffer.set_modified(False)
+
+        eve = Event_Factory.create_event(
+            "loaded_new_file",
+            file = self
+        )
+        self.emit(eve)
+
+        self.buffer.unblock_changed_signal()
+        self.buffer.unblock_changed_after_signal()
+        self.buffer.unblock_modified_changed_signal()
+
 
     def set_path(self, gfile: Gio.File):
         if not gfile: return

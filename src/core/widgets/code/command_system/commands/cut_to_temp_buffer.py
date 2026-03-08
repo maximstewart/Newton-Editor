@@ -27,9 +27,12 @@ def execute(
     start_line = itr.get_line() + 1
     start_char = itr.get_line_offset()
 
-    start_itr.backward_visible_line()
-    start_itr.forward_line()
-    end_itr.forward_line()
+    if not start_itr.starts_line():
+        start_itr.backward_visible_line()
+        start_itr.forward_line()
+
+    if not end_itr.ends_line():
+        end_itr.forward_line()
 
     line_str   = buffer.get_slice(start_itr, end_itr, True)
     view._cut_buffer += f"{line_str}"

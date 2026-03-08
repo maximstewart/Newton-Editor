@@ -9,7 +9,7 @@ import re
 from .singleton import Singleton
 
 from .dto.base_event import BaseEvent
-from .dto import code
+from .dto.code import events as code
 
 
 

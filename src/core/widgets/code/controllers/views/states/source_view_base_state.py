@@ -44,7 +44,7 @@ class SourceViewsBaseState:
         source_view.command.exec("update_info_bar")
 
     def button_press_event(self, source_view, eve):
-        source_view.command.exec("update_info_bar")
+        ...
 
     def button_release_event(self, source_view, eve):
         source_view.command.exec("update_info_bar")
