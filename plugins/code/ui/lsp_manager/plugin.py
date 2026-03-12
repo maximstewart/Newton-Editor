@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import GLib
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
@@ -8,11 +11,11 @@ from libs.dto.states import SourceViewStates
 
 from plugins.plugin_types import PluginCode
 
-from .lsp_manager import LSPManager
+from .lsp_controller import LSPController
 
 
 
-lsp_manager = LSPManager()
+lsp_controller = LSPController()
 
 
 
@@ -27,7 +30,7 @@ class Plugin(PluginCode):
     def load(self):
         window = self.request_ui_element("main-window")
 
-        lsp_manager.map_parent_resize_event(window)
+        lsp_controller.lsp_manager_ui.map_parent_resize_event(window)
 
         event  = Event_Factory.create_event("register_command",
             command_name = "LSP Manager",
@@ -37,10 +40,10 @@ class Plugin(PluginCode):
         )
         self.emit_to("source_views", event)
 
-        event = Event_Factory.create_event(
+        event  = Event_Factory.create_event(
             "register_provider",
             provider_name = "LSP Completer",
-            provider      = lsp_manager.provider,
+            provider      = lsp_controller.provider,
             language_ids  = []
         )
         self.emit_to("completion", event)
@@ -52,18 +55,38 @@ class Plugin(PluginCode):
         self.emit_to("source_views", event)
 
         source_view = event.response
-        lsp_manager.load_lsp_servers_config()
-        lsp_manager.set_source_view(source_view)
-        lsp_manager.load_lsp_servers_config_placeholders()
-        lsp_manager.provider.response_cache.emit = self.emit
-        lsp_manager.provider.response_cache.emit_to = self.emit_to
-        lsp_manager.provider.response_cache._prompt_completion_request = self._prompt_completion_request
+        lsp_controller.lsp_manager_ui.load_lsp_servers_config()
+        lsp_controller.lsp_manager_ui.set_source_view(source_view)
+        lsp_controller.lsp_manager_ui.load_lsp_servers_config_placeholders()
+
+        lsp_controller.handler_registry.emit                       = self.emit
+        lsp_controller.handler_registry.emit_to                    = self.emit_to
+        lsp_controller.handler_registry._prompt_goto_request       = self._prompt_goto_request
+        lsp_controller.handler_registry._prompt_completion_request = self._prompt_completion_request
 
     def run(self):
         ...
 
     def generate_plugin_element(self):
         ...
+
+    def _prompt_goto_request(self, uri: str, pointer_pos: dict):
+        event  = Event_Factory.create_event(
+            "get_active_view",
+        )
+        self.emit_to("source_views", event)
+        view = event.response
+        view._on_uri_data_received( [uri] )
+
+        buffer = view.get_buffer()
+
+        def move_cursor(buffer, pointer_pos):
+            itr = buffer.get_iter_at_line( pointer_pos["end"]["line"] )
+            itr.forward_chars( pointer_pos["end"]["character"] )
+            buffer.place_cursor(itr)
+            view.scroll_to_iter(itr, 0.2, False, 0, 0)
+
+        GLib.idle_add( move_cursor, buffer, pointer_pos )
 
     def _prompt_completion_request(self):
         event  = Event_Factory.create_event(
@@ -75,7 +98,7 @@ class Plugin(PluginCode):
         event  = Event_Factory.create_event(
             "request_completion",
             view     = view,
-            provider = lsp_manager.provider
+            provider = lsp_controller.provider
         )
         self.emit_to("completion", event)
 
@@ -98,7 +121,7 @@ class Handler:
             column = iter.get_line_offset()
 
             if char_str == "g":
-                lsp_manager.provider.response_cache.process_goto_definition(
+                lsp_controller.lsp_client_controller.process_goto_definition(
                     file.ftype, file.fpath, line, column
                 )
 
@@ -107,4 +130,4 @@ class Handler:
             if char_str == "i":
                 return
 
-        lsp_manager.hide() if lsp_manager.is_visible() else lsp_manager.show()
+        lsp_controller.lsp_manager_ui.hide() if lsp_controller.lsp_manager_ui.is_visible() else lsp_controller.lsp_manager_ui.show()

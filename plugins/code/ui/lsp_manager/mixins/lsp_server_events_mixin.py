@@ -29,22 +29,25 @@ class LSPServerEventsMixin:
 
         self.matchers.clear()
         for item in items:
-            label = item.get("label", "")
-            if not label: continue
+            label = item.get("label")
+            if not label: return None
 
-            text = item.get("insertText")
-            if not text and "textEdit" in item:
-                text = item["textEdit"].get("newText", "")
+            text = (
+                item.get("insertText")
+                or item.get("textEdit", {}).get("newText")
+                or item.get("textEditText", "")
+                or label
+            )
 
-            info = ""
-            if "detail" in item:
-                info = item["detail"]
-            elif "documentation" in item:
-                doc = item["documentation"]
-                if isinstance(doc, dict):
-                    info = doc.get("value", "")
-                else:
-                    info = str(doc)
+            detail = item.get("detail")
+            doc    = item.get("documentation")
+
+            if detail:
+                info = detail
+            elif isinstance(doc, dict):
+                info = doc.get("value", "")
+            else:
+                info = str(doc) if doc else ""
 
             self.matchers[label] = {
                 "label": label,

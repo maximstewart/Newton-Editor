@@ -1,5 +1,7 @@
 # Python imports
 import threading
+from os import path
+import json
 
 # Lib imports
 import gi
@@ -20,17 +22,15 @@ class LSPController(LSPControllerWebsocket):
         # initialize-params-slim.json was created off of jedi_language_server one
         # self._init_params   = settings_manager.get_lsp_init_data()
 
-        self._language: str            = ""
-        self._init_params: dict        = {}
-        self._event_history: dict[str] = {}
+        self._language: str                 = ""
+        self._init_params: dict             = {}
+        self._event_history: dict[int, str] = {}
 
         try:
-            from os import path
-            import json
-
             _USER_HOME  = path.expanduser('~')
             _SCRIPT_PTH = path.dirname( path.realpath(__file__) )
             _LSP_INIT_CONFIG = f"{_SCRIPT_PTH}/../configs/initialize-params-slim.json"
+
             with open(_LSP_INIT_CONFIG) as file:
                 data = file.read().replace("{user.home}", _USER_HOME)
                 self._init_params = json.loads(data)
@@ -42,7 +42,7 @@ class LSPController(LSPControllerWebsocket):
         self.read_lock        = threading.Lock()
         self.write_lock       = threading.Lock()
 
-    def set_language(self, language):
+    def set_language(self, language: str):
         self._language = language
 
     def set_socket(self, socket: str):
@@ -51,15 +51,15 @@ class LSPController(LSPControllerWebsocket):
     def unset_socket(self):
         self._socket = None
 
-    def send_notification(self, method: str, params: {} = {}):
+    def send_notification(self, method: str, params: dict = {}):
         self._send_message( ClientNotification(method, params) )
 
-    def send_request(self, method: str, params: {} = {}):
+    def send_request(self, method: str, params: dict = {}):
         self._message_id += 1
         self._event_history[self._message_id] = method
         self._send_message( ClientRequest(self._message_id, method, params) )
 
-    def get_event_by_id(self, message_id: int):
+    def get_event_by_id(self, message_id: int) -> str:
         if not message_id in self._event_history: return
         return self._event_history[message_id]
 

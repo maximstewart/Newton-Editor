@@ -1,15 +1,14 @@
 # Python imports
-import traceback
-import subprocess
 
 # Lib imports
 from gi.repository import GLib
 
 # Application imports
 # from libs import websockets
-from libs.dto.code.lsp.lsp_messages import LEN_HEADER, TYPE_HEADER, get_message_str, get_message_obj
-from libs.dto.code.lsp.lsp_message_structs import \
-    LSPResponseTypes, ClientRequest, ClientNotification, LSPResponseRequest, LSPResponseNotification, LSPIDResponseNotification
+from libs.dto.code.lsp.lsp_messages import get_message_str, get_message_obj
+from libs.dto.code.lsp.lsp_message_structs import        \
+    LSPResponseTypes, ClientRequest, ClientNotification, \
+    LSPResponseRequest, LSPResponseNotification, LSPIDResponseNotification
 
 from .lsp_controller_base import LSPControllerBase
 from .websocket_client import WebsocketClient
@@ -17,7 +16,7 @@ from .websocket_client import WebsocketClient
 
 
 class LSPControllerWebsocket(LSPControllerBase):
-    def _send_message(self, data: ClientRequest or ClientNotification):
+    def _send_message(self, data: ClientRequest | ClientNotification):
         if not data: return
 
         message_str  = get_message_str(data)
@@ -39,7 +38,7 @@ class LSPControllerWebsocket(LSPControllerBase):
         if not hasattr(self, "ws_client"): return
         self.ws_client.close_client()
 
-    def _monitor_lsp_response(self, data: None or {}):
+    def _monitor_lsp_response(self, data: dict | None):
         if not data: return
 
         message      = get_message_obj(data)

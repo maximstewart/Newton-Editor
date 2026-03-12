@@ -38,7 +38,7 @@ class Provider(GObject.GObject, GtkSource.CompletionProvider):
         iter.backward_char()
 
         ch = iter.get_char()
-        # NOTE: Look to re-add or apply supprting logic to use spaces
+        # NOTE: Look to re-add or apply supporting logic to use spaces
          # As is it slows down the editor in certain contexts...
         # if not (ch in ('_', '.', ' ') or ch.isalnum()):
         if not (ch in ('_', '.') or ch.isalnum()):

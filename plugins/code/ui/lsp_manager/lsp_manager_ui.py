@@ -12,20 +12,18 @@ from gi.repository import GLib
 from gi.repository import GtkSource
 
 # Application imports
-from .provider import Provider
 
 
 
-class LSPManager(Gtk.Dialog):
+class LSPManagerUI(Gtk.Dialog):
     def __init__(self):
-        super(LSPManager, self).__init__()
+        super(LSPManagerUI, self).__init__()
 
         self._SCRIPT_PTH: str          = path.dirname( path.realpath(__file__) )
         self._USER_HOME: str           = path.expanduser('~')
         self._LSP_SERVERS_CONFIG: str  = ""
         self.servers_config: dict      = {}
 
-        self.provider: Provider        = Provider()
         self.parent                    = None
         self.source_view               = None
 
@@ -69,8 +67,8 @@ class LSPManager(Gtk.Dialog):
         self.path_bttn.connect("file-set", self._file_set)
         self.path_bttn.set_halign(Gtk.Align.FILL)
         self.hide_bttn.connect("clicked", lambda widget: self.hide())
-        create_client_bttn.connect("clicked", self.create_client, close_client_bttn)
-        close_client_bttn.connect("clicked", self.close_client, create_client_bttn)
+        create_client_bttn.connect("clicked", self._create_client, close_client_bttn)
+        close_client_bttn.connect("clicked", self._close_client, create_client_bttn)
 
         self.main_box.set_column_spacing(15)
         self.main_box.set_row_spacing(15)
@@ -110,8 +108,7 @@ class LSPManager(Gtk.Dialog):
         widget.move(x, y)
 
     def _path_changed(self, widget, buttons_widget):
-        fpath = widget.get_text()
-        if not fpath:
+        if not widget.get_text():
             buttons_widget.hide()
             return
 
@@ -145,10 +142,16 @@ class LSPManager(Gtk.Dialog):
         scrolled_win.show_all()
 
     def load_lsp_servers_config(self):
-        with open(f"{self._SCRIPT_PTH}/configs/lsp-servers-config.json") as file:
-            self._LSP_SERVERS_CONFIG = file.read()
+        try:
+            with open(f"{self._SCRIPT_PTH}/configs/lsp-servers-config.json") as file:
+                self._LSP_SERVERS_CONFIG = file.read()
+        except FileNotFoundError:
+            logger.error(f"Config file not found: {self._SCRIPT_PTH}/configs/lsp-servers-config.json")
 
     def load_lsp_servers_config_placeholders(self):
+        if not self._LSP_SERVERS_CONFIG: return
+        if not self.source_view: return
+
         data = self._LSP_SERVERS_CONFIG \
                 .replace("{user.home}", self._USER_HOME) \
                 .replace("{workspace.folder}", self.path_entry.get_text())
@@ -162,24 +165,36 @@ class LSPManager(Gtk.Dialog):
         buffer.delete(start_itr, end_itr)
         buffer.insert(start_itr, data, -1)
 
-        self.set_language_combo_box( self.servers_config.keys() )
+        self.set_language_combo_box( list(self.servers_config.keys()) )
 
     def set_language_combo_box(self, lang_ids: list[str]):
+        self.combo_box.remove_all()
+
         for lang_id in lang_ids:
             self.combo_box.append_text(lang_id)
 
-    def create_client(self, widget, sibling):
+    def _create_client(self, widget, sibling):
+        if not self.source_view: return
+
         buffer  = self.source_view.get_buffer()
         lang_id = self.combo_box.get_active_text()
 
         if not lang_id: return
         if not lang_id in self.servers_config: return
 
-        self.servers_config = json.loads( buffer.get_text( *buffer.get_bounds() ) )
-        init_opts           = self.servers_config[lang_id]["initialization-options"]
-        workspace_dir       = self.path_entry.get_text()
+        try:
+            self.servers_config = json.loads(
+                buffer.get_text( *buffer.get_bounds() )
+            )
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {e}")
+            return
 
-        result = self.provider.response_cache.create_client(
+        init_opts     = self.servers_config[lang_id]["initialization-options"]
+        workspace_dir = self.path_entry.get_text()
+        result        = None
+
+        result = self.create_client(
             lang_id, workspace_dir, init_opts
         )
 
@@ -188,11 +203,11 @@ class LSPManager(Gtk.Dialog):
         widget.hide()
         sibling.show()
 
-    def close_client(self, widget, sibling):
+    def _close_client(self, widget, sibling):
         lang_id = self.combo_box.get_active_text()
 
         if not lang_id: return
-        result = self.provider.response_cache.close_client(lang_id)
+        result = self.close_client(lang_id)
         if not result: return
 
         widget.hide()

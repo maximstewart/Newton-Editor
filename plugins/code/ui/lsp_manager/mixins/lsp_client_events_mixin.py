@@ -23,7 +23,7 @@ class LSPClientEventsMixin:
         uri        = f"file://{fpath}" if not fpath.startswith("file://") else fpath
         buffer     = event.file.buffer
         text       = buffer.get_text(*buffer.get_bounds())
-        self._last_active_language_id = lang_id
+        self.active_language_id = lang_id
 
         controller._lsp_did_open({
             "uri": uri,
@@ -54,7 +54,7 @@ class LSPClientEventsMixin:
         uri        = f"file://{fpath}" if not fpath.startswith("file://") else fpath
         buffer     = event.file.buffer
         text       = buffer.get_text(*buffer.get_bounds())
-        self._last_active_language_id = lang_id
+        self.active_language_id = lang_id
 
         controller._lsp_did_save({"uri": uri, "text": text})
 
@@ -71,7 +71,7 @@ class LSPClientEventsMixin:
         uri        = f"file://{fpath}" if not fpath.startswith("file://") else fpath
         buffer     = event.file.buffer
         text       = buffer.get_text(*buffer.get_bounds())
-        self._last_active_language_id = lang_id
+        self.active_language_id = lang_id
 
         controller._lsp_did_change({
             "uri": uri,
@@ -97,7 +97,7 @@ class LSPClientEventsMixin:
 
         controller = self.clients[lang_id]
         uri        = f"file://{fpath}" if not fpath.startswith("file://") else fpath
-        self._last_active_language_id = lang_id
+        self.active_language_id = lang_id
 
         controller._lsp_definition({
             "uri": uri,
@@ -116,7 +116,7 @@ class LSPClientEventsMixin:
 
         controller = self.clients[lang_id]
         uri        = f"file://{fpath}" if not fpath.startswith("file://") else fpath
-        self._last_active_language_id = lang_id
+        self.active_language_id = lang_id
 
         controller._lsp_completion({
             "uri": uri,
