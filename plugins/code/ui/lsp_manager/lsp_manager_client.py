@@ -5,13 +5,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 # Application imports
 from .mixins.lsp_client_events_mixin import LSPClientEventsMixin
-from .controllers.lsp_controller import LSPController
+from .client.lsp_client import LSPClient
 
 
 
-class LSPClientController(LSPClientEventsMixin):
+class LSPManagerClient(LSPClientEventsMixin):
     def __init__(self):
-        super(LSPClientController, self).__init__()
+        super(LSPManagerClient, self).__init__()
 
         self._cache_refresh_timeout_id: int = None
 
@@ -25,13 +25,13 @@ class LSPClientController(LSPClientEventsMixin):
         lang_id: str = "python",
         workspace_uri: str = "",
         init_opts: dict = {}
-    ) -> LSPController:
+    ) -> LSPClient:
         if lang_id in self.clients: return None
 
         address = "127.0.0.1"
         port    = 9999
         uri     = f"ws://{address}:{port}/{lang_id}"
-        client  = LSPController()
+        client  = LSPClient()
 
         client.set_language(lang_id)
         client.set_socket(uri)
@@ -53,5 +53,5 @@ class LSPClientController(LSPClientEventsMixin):
 
         return True
 
-    def get_active_client(self) -> LSPController:
+    def get_active_client(self) -> LSPClient:
         return self.clients[self.active_language_id]

@@ -17,7 +17,7 @@ from libs.dto.code.lsp.lsp_messages import symbols_request
 
 
 
-class LSPControllerEvents:
+class LSPClientEvents:
     def send_initialize_message(self, init_ops: dict, workspace_file: str, workspace_uri: str):
         folder_name = os.path.basename(workspace_file)
 

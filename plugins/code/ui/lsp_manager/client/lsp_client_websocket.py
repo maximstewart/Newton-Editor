@@ -10,12 +10,12 @@ from libs.dto.code.lsp.lsp_message_structs import        \
     LSPResponseTypes, ClientRequest, ClientNotification, \
     LSPResponseRequest, LSPResponseNotification, LSPIDResponseNotification
 
-from .lsp_controller_base import LSPControllerBase
+from .lsp_client_base import LSPClientBase
 from .websocket_client import WebsocketClient
 
 
 
-class LSPControllerWebsocket(LSPControllerBase):
+class LSPClientWebsocket(LSPClientBase):
     def _send_message(self, data: ClientRequest | ClientNotification):
         if not data: return
 

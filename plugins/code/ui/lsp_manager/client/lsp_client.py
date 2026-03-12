@@ -10,13 +10,13 @@ from gi.repository import GLib
 # Application imports
 from libs.dto.code.lsp.lsp_messages import get_message_str
 from libs.dto.code.lsp.lsp_message_structs import LSPResponseTypes, ClientRequest, ClientNotification
-from .lsp_controller_websocket import LSPControllerWebsocket
+from .lsp_client_websocket import LSPClientWebsocket
 
 
 
-class LSPController(LSPControllerWebsocket):
+class LSPClient(LSPClientWebsocket):
     def __init__(self):
-        super(LSPController, self).__init__()
+        super(LSPClient, self).__init__()
 
         # https://github.com/microsoft/multilspy/tree/main/src/multilspy/language_servers
         # initialize-params-slim.json was created off of jedi_language_server one

@@ -11,11 +11,11 @@ from libs.dto.states import SourceViewStates
 
 from plugins.plugin_types import PluginCode
 
-from .lsp_controller import LSPController
+from .lsp_manager import LSPManager
 
 
 
-lsp_controller = LSPController()
+lsp_manager = LSPManager()
 
 
 
@@ -30,7 +30,7 @@ class Plugin(PluginCode):
     def load(self):
         window = self.request_ui_element("main-window")
 
-        lsp_controller.lsp_manager_ui.map_parent_resize_event(window)
+        lsp_manager.lsp_manager_ui.map_parent_resize_event(window)
 
         event  = Event_Factory.create_event("register_command",
             command_name = "LSP Manager",
@@ -43,7 +43,7 @@ class Plugin(PluginCode):
         event  = Event_Factory.create_event(
             "register_provider",
             provider_name = "LSP Completer",
-            provider      = lsp_controller.provider,
+            provider      = lsp_manager.provider,
             language_ids  = []
         )
         self.emit_to("completion", event)
@@ -55,14 +55,14 @@ class Plugin(PluginCode):
         self.emit_to("source_views", event)
 
         source_view = event.response
-        lsp_controller.lsp_manager_ui.load_lsp_servers_config()
-        lsp_controller.lsp_manager_ui.set_source_view(source_view)
-        lsp_controller.lsp_manager_ui.load_lsp_servers_config_placeholders()
+        lsp_manager.lsp_manager_ui.load_lsp_servers_config()
+        lsp_manager.lsp_manager_ui.set_source_view(source_view)
+        lsp_manager.lsp_manager_ui.load_lsp_servers_config_placeholders()
 
-        lsp_controller.handler_registry.emit                       = self.emit
-        lsp_controller.handler_registry.emit_to                    = self.emit_to
-        lsp_controller.handler_registry._prompt_goto_request       = self._prompt_goto_request
-        lsp_controller.handler_registry._prompt_completion_request = self._prompt_completion_request
+        lsp_manager.handler_registry.emit                       = self.emit
+        lsp_manager.handler_registry.emit_to                    = self.emit_to
+        lsp_manager.handler_registry._prompt_goto_request       = self._prompt_goto_request
+        lsp_manager.handler_registry._prompt_completion_request = self._prompt_completion_request
 
     def run(self):
         ...
@@ -98,7 +98,7 @@ class Plugin(PluginCode):
         event  = Event_Factory.create_event(
             "request_completion",
             view     = view,
-            provider = lsp_controller.provider
+            provider = lsp_manager.provider
         )
         self.emit_to("completion", event)
 
@@ -121,7 +121,7 @@ class Handler:
             column = iter.get_line_offset()
 
             if char_str == "g":
-                lsp_controller.lsp_client_controller.process_goto_definition(
+                lsp_manager.lsp_manager_client.process_goto_definition(
                     file.ftype, file.fpath, line, column
                 )
 
@@ -130,4 +130,4 @@ class Handler:
             if char_str == "i":
                 return
 
-        lsp_controller.lsp_manager_ui.hide() if lsp_controller.lsp_manager_ui.is_visible() else lsp_controller.lsp_manager_ui.show()
+        lsp_manager.lsp_manager_ui.hide() if lsp_manager.lsp_manager_ui.is_visible() else lsp_manager.lsp_manager_ui.show()

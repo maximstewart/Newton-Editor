@@ -3,12 +3,12 @@
 # Lib imports
 
 # Application imports
-from .lsp_controller_events import LSPControllerEvents
+from .lsp_client_events import LSPClientEvents
 from libs.dto.code.lsp.lsp_message_structs import ClientRequest, ClientNotification
 
 
 
-class LSPControllerBase(LSPControllerEvents):
+class LSPClientBase(LSPClientEvents):
     def _send_message(self, data: ClientRequest or ClientNotification):
         raise NotImplementedError
 
