@@ -59,48 +59,13 @@ class Plugin(PluginCode):
         lsp_manager.lsp_manager_ui.set_source_view(source_view)
         lsp_manager.lsp_manager_ui.load_lsp_servers_config_placeholders()
 
-        lsp_manager.handler_registry.emit                       = self.emit
-        lsp_manager.handler_registry.emit_to                    = self.emit_to
-        lsp_manager.handler_registry._prompt_goto_request       = self._prompt_goto_request
-        lsp_manager.handler_registry._prompt_completion_request = self._prompt_completion_request
+        lsp_manager.response_registry.set_event_hub(self.emit, self.emit_to, lsp_manager.provider)
 
     def run(self):
         ...
 
     def generate_plugin_element(self):
         ...
-
-    def _prompt_goto_request(self, uri: str, pointer_pos: dict):
-        event  = Event_Factory.create_event(
-            "get_active_view",
-        )
-        self.emit_to("source_views", event)
-        view = event.response
-        view._on_uri_data_received( [uri] )
-
-        buffer = view.get_buffer()
-
-        def move_cursor(buffer, pointer_pos):
-            itr = buffer.get_iter_at_line( pointer_pos["end"]["line"] )
-            itr.forward_chars( pointer_pos["end"]["character"] )
-            buffer.place_cursor(itr)
-            view.scroll_to_iter(itr, 0.2, False, 0, 0)
-
-        GLib.idle_add( move_cursor, buffer, pointer_pos )
-
-    def _prompt_completion_request(self):
-        event  = Event_Factory.create_event(
-            "get_active_view",
-        )
-        self.emit_to("source_views", event)
-        view = event.response
-
-        event  = Event_Factory.create_event(
-            "request_completion",
-            view     = view,
-            provider = lsp_manager.provider
-        )
-        self.emit_to("completion", event)
 
 
 class Handler:

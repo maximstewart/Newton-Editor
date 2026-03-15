@@ -2,7 +2,6 @@
 import os
 
 # Lib imports
-from gi.repository import GLib
 
 # Application imports
 from libs.dto.code.lsp.lsp_messages import get_message_obj
@@ -45,7 +44,7 @@ class LSPClientEvents:
         params["textDocument"]["languageId"] = data["language_id"]
         params["textDocument"]["text"]       = data["text"]
 
-        GLib.idle_add( self.send_notification, method, params )
+        self.send_notification( method, params )
 
     def _lsp_did_save(self, data: dict):
         method = "textDocument/didSave"
@@ -54,7 +53,7 @@ class LSPClientEvents:
         params["textDocument"]["uri"] = data["uri"]
         params["text"]                = data["text"]
 
-        GLib.idle_add( self.send_notification, method, params )
+        self.send_notification( method, params )
 
     def _lsp_did_close(self, data: dict):
         method = "textDocument/didClose"
@@ -62,7 +61,7 @@ class LSPClientEvents:
 
         params["textDocument"]["uri"] = data["uri"]
 
-        GLib.idle_add( self.send_notification, method, params )
+        self.send_notification( method, params )
 
     def _lsp_did_change(self, data: dict):
         method = "textDocument/didChange"
@@ -75,7 +74,7 @@ class LSPClientEvents:
         contentChanges         = params["contentChanges"][0]
         contentChanges["text"] = data["text"]
 
-        GLib.idle_add( self.send_notification, method, params )
+        self.send_notification( method, params )
 
     # def _lsp_did_change(self, data: dict):
     #     method = "textDocument/didChange"
@@ -94,7 +93,7 @@ class LSPClientEvents:
     #     end["line"]            = data["line"]
     #     end["character"]       = data["column"]
 
-    #     GLib.idle_add( self.send_notification, method, params )
+    #     self.send_notification( method, params )
 
     def _lsp_definition(self, data: dict):
         method = "textDocument/definition"
@@ -106,7 +105,7 @@ class LSPClientEvents:
         params["position"]["line"]           = data["line"]
         params["position"]["character"]      = data["column"]
 
-        GLib.idle_add( self.send_request, method, params )
+        self.send_request( method, params )
 
     def _lsp_completion(self, data: dict):
         method = "textDocument/completion"
@@ -118,7 +117,7 @@ class LSPClientEvents:
         params["position"]["line"]           = data["line"]
         params["position"]["character"]      = data["column"]
 
-        GLib.idle_add( self.send_request, method, params )
+        self.send_request( method, params )
 
     def _lsp_java_class_file_contents(self, uri: str):
         method = "java/classFileContents"
@@ -126,4 +125,4 @@ class LSPClientEvents:
             "uri": uri
         }
 
-        GLib.idle_add( self.send_request, method, params )
+        self.send_request( method, params )

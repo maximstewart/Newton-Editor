@@ -12,7 +12,7 @@ from .java import JavaHandler
 
 
 
-class HandlerRegistry(LSPServerEventsMixin):
+class ResponseRegistry(LSPServerEventsMixin):
     def __init__(self):
 
         self._instances: dict         = {}
@@ -21,6 +21,11 @@ class HandlerRegistry(LSPServerEventsMixin):
             "python": PythonHandler,
             "java": JavaHandler,
         }
+
+    def set_event_hub(self, emit, emit_to, provider=None):
+        self.emit = emit
+        self.emit_to = emit_to
+        self._provider = provider
 
 
     def _get_instance(self, handler_cls: type[BaseHandler]) -> BaseHandler:

@@ -7,6 +7,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GtkSource', '4')
 
+from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import GLib
 from gi.repository import GtkSource
@@ -16,6 +17,11 @@ from gi.repository import GtkSource
 
 
 class LSPManagerUI(Gtk.Dialog):
+    __gsignals__ = {
+        'create-client': (GObject.SignalFlags.RUN_LAST, None, (str, str)),
+        'close-client': (GObject.SignalFlags.RUN_LAST, None, (str,)),
+    }
+
     def __init__(self):
         super(LSPManagerUI, self).__init__()
 
@@ -57,8 +63,8 @@ class LSPManagerUI(Gtk.Dialog):
 
         self.hide_bttn     = Gtk.Button(label = "X")
         bttn_box           = Gtk.Box()
-        create_client_bttn = Gtk.Button(label = "Create Language Client")
-        close_client_bttn  = Gtk.Button(label = "Close Language Client")
+        self.create_client_bttn = Gtk.Button(label = "Create Language Client")
+        self.close_client_bttn  = Gtk.Button(label = "Close Language Client")
 
         self.path_entry.set_can_focus(False)
         self.path_entry.set_placeholder_text("Workspace Folder...")
@@ -67,14 +73,14 @@ class LSPManagerUI(Gtk.Dialog):
         self.path_bttn.connect("file-set", self._file_set)
         self.path_bttn.set_halign(Gtk.Align.FILL)
         self.hide_bttn.connect("clicked", lambda widget: self.hide())
-        create_client_bttn.connect("clicked", self._create_client, close_client_bttn)
-        close_client_bttn.connect("clicked", self._close_client, create_client_bttn)
+        self.create_client_bttn.connect("clicked", self._create_client, self.close_client_bttn)
+        self.close_client_bttn.connect("clicked", self._close_client, self.create_client_bttn)
 
         self.main_box.set_column_spacing(15)
         self.main_box.set_row_spacing(15)
 
-        bttn_box.pack_start(create_client_bttn, False, False, 0)
-        bttn_box.pack_start(close_client_bttn, False, False, 0)
+        bttn_box.pack_start(self.create_client_bttn, False, False, 0)
+        bttn_box.pack_start(self.close_client_bttn, False, False, 0)
 
         self.main_box.attach(child = self.path_entry, left = 0, top = 0, width = 4, height = 1)
         self.main_box.attach(child = self.path_bttn,  left = 4, top = 0, width = 1, height = 1)
@@ -87,7 +93,7 @@ class LSPManagerUI(Gtk.Dialog):
 
         content_area.add(self.main_box)
         content_area.show_all()
-        close_client_bttn.hide()
+        self.close_client_bttn.hide()
         bttn_box.hide()
 
     def _show(self, widget):
@@ -173,6 +179,20 @@ class LSPManagerUI(Gtk.Dialog):
         for lang_id in lang_ids:
             self.combo_box.append_text(lang_id)
 
+    def get_init_opts(self, lang_id: str) -> dict:
+        buffer = self.source_view.get_buffer()
+        try:
+            self.servers_config = json.loads(
+                buffer.get_text( *buffer.get_bounds() )
+            )
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {e}")
+            return {}
+
+        if not lang_id or not lang_id in self.servers_config: return {}
+
+        return self.servers_config[lang_id].get("initialization-options", {})
+
     def _create_client(self, widget, sibling):
         if not self.source_view: return
 
@@ -180,35 +200,16 @@ class LSPManagerUI(Gtk.Dialog):
         lang_id = self.combo_box.get_active_text()
 
         if not lang_id: return
-        if not lang_id in self.servers_config: return
 
-        try:
-            self.servers_config = json.loads(
-                buffer.get_text( *buffer.get_bounds() )
-            )
-        except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON: {e}")
-            return
-
-        init_opts     = self.servers_config[lang_id]["initialization-options"]
         workspace_dir = self.path_entry.get_text()
-        result        = None
-
-        result = self.create_client(
-            lang_id, workspace_dir, init_opts
-        )
-
-        if not result: return
-
-        widget.hide()
-        sibling.show()
+        self.emit('create-client', lang_id, workspace_dir)
 
     def _close_client(self, widget, sibling):
         lang_id = self.combo_box.get_active_text()
 
         if not lang_id: return
-        result = self.close_client(lang_id)
-        if not result: return
+        self.emit('close-client', lang_id)
 
-        widget.hide()
-        sibling.show()
+    def toggle_client_buttons(self, show_close: bool):
+        self.create_client_bttn.set_visible(not show_close)
+        self.close_client_bttn.set_visible(show_close)

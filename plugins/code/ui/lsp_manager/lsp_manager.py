@@ -9,7 +9,7 @@ from .provider import Provider
 from .provider_response_cache import ProviderResponseCache
 from .lsp_manager_ui import LSPManagerUI
 from .lsp_manager_client import LSPManagerClient
-from .handlers.registry import HandlerRegistry
+from .response_handlers.response_registry import ResponseRegistry
 
 
 
@@ -26,20 +26,29 @@ class LSPManager:
         self.provider: Provider                    = Provider()
         self.response_cache: ProviderResponseCache = ProviderResponseCache()
         self.lsp_manager_client: LSPManagerClient  = LSPManagerClient()
-        self.handler_registry: HandlerRegistry     = HandlerRegistry()
+        self.response_registry: ResponseRegistry   = ResponseRegistry()
 
     def _load_widgets(self):
         self.lsp_manager_ui: LSPManagerUI = LSPManagerUI()
-        self.lsp_manager_ui.create_client = self.create_client
-        self.lsp_manager_ui.close_client  = self.close_client
+        self.lsp_manager_ui.connect('create-client', self._on_create_client)
+        self.lsp_manager_ui.connect('close-client', self._on_close_client)
 
     def _do_bind_mapping(self):
-        self.response_cache.process_file_load   = self.lsp_manager_client.process_file_load
-        self.response_cache.process_file_close  = self.lsp_manager_client.process_file_close
-        self.response_cache.process_file_save   = self.lsp_manager_client.process_file_save
-        self.response_cache.process_file_change = self.lsp_manager_client.process_file_change
-        self.provider.response_cache            = self.response_cache
+        self.response_cache.set_lsp_client(self.lsp_manager_client)
+        self.provider.response_cache = self.response_cache
 
+    def _on_create_client(self, ui, lang_id: str, workspace_uri: str) -> bool:
+        init_opts = ui.get_init_opts(lang_id)
+        result = self.create_client(lang_id, workspace_uri, init_opts)
+        if result:
+            ui.toggle_client_buttons(show_close=True)
+        return result
+
+    def _on_close_client(self, ui, lang_id: str) -> bool:
+        result = self.close_client(lang_id)
+        if result:
+            ui.toggle_client_buttons(show_close=False)
+        return result
 
     def create_client(
         self,
@@ -50,7 +59,7 @@ class LSPManager:
         client  = self.lsp_manager_client.create_client(
             lang_id, workspace_uri, init_opts
         )
-        handler = self.handler_registry.get_handler(lang_id)
+        handler = self.response_registry.get_handler(lang_id)
         self.lsp_manager_client.active_language_id = lang_id
 
         if not client or not handler:
@@ -58,7 +67,7 @@ class LSPManager:
             self.close_client(lang_id)
             return False
 
-        handler.set_context(self.handler_registry)
+        handler.set_context(self.response_registry)
         handler.set_response_cache(self.response_cache)
 
         client.handle_lsp_response = self.server_response
@@ -68,7 +77,7 @@ class LSPManager:
 
     def close_client(self, lang_id: str) -> bool:
         self.lsp_manager_client.close_client(lang_id)
-        self.handler_registry.close_handler(lang_id)
+        self.response_registry.close_handler(lang_id)
 
         return True
 
@@ -82,17 +91,17 @@ class LSPManager:
             
             controller = self.lsp_manager_client.get_active_client()
             event      = controller.get_event_by_id(lsp_response.id)
-            handler    = self.handler_registry.get_handler(
+            handler    = self.response_registry.get_handler(
                 self.lsp_manager_client.active_language_id, event
             )
 
             if not handler: return
             handler.handle(event, lsp_response.result, controller)
         elif isinstance(lsp_response, LSPResponseNotification):
-            handler = self.handler_registry.get_handler("default", lsp_response.method)
+            handler = self.response_registry.get_handler("default", lsp_response.method)
 
             if not handler: return
 
-            handler.set_context(self.handler_registry)
+            handler.set_context(self.response_registry)
             handler.set_response_cache(self.response_cache)
             handler.handle(lsp_response.method, lsp_response.params, None)

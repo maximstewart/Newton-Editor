@@ -76,6 +76,18 @@ class LSPServerEventsMixin:
 
         GLib.idle_add( move_cursor, buffer, pointer_pos )
 
+    def _prompt_completion_request(self):
+        event = Event_Factory.create_event("get_active_view")
+        self.emit_to("source_views", event)
+        view  = event.response
+
+        event = Event_Factory.create_event(
+            "request_completion",
+            view     = view,
+            provider = self._provider
+        )
+        self.emit_to("completion", event)
+
     def _handle_java_class_file_contents(self, text: str):
         event  = Event_Factory.create_event(
             "get_active_view",
