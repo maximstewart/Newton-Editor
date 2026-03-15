@@ -1,5 +1,4 @@
 # Python imports
-from concurrent.futures import ThreadPoolExecutor
 
 # Lib imports
 import gi
@@ -8,8 +7,6 @@ gi.require_version('GtkSource', '4')
 from gi.repository import GtkSource
 
 # Application imports
-from libs.dto.code.lsp.lsp_message_structs import LSPResponseTypes, LSPResponseRequest, LSPResponseNotification
-
 from core.widgets.code.completion_providers.provider_response_cache_base import ProviderResponseCacheBase
 
 

@@ -33,11 +33,11 @@ class JavaHandler(DefaultHandler):
             controller._lsp_java_class_file_contents(uri)
             return
 
-        self.context._prompt_goto_request(uri, response[0]["range"])
+        self._prompt_goto_request(uri, response[0]["range"])
 
     def _handle_class_file_contents(self, text: str):
         event = Event_Factory.create_event("get_active_view")
-        self.context.emit_to("source_views", event)
+        self.emit_to("source_views", event)
 
         view = event.response
         file = view.command.exec("new_file")

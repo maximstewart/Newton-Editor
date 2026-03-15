@@ -1,5 +1,4 @@
 # Python imports
-from abc import ABC
 
 # Lib imports
 

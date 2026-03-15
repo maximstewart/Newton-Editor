@@ -3,8 +3,6 @@
 # Lib imports
 
 # Application imports
-from ..mixins.lsp_server_events_mixin import LSPServerEventsMixin
-
 from .base import BaseHandler
 from .default import DefaultHandler
 from .python import PythonHandler
@@ -12,7 +10,7 @@ from .java import JavaHandler
 
 
 
-class ResponseRegistry(LSPServerEventsMixin):
+class ResponseRegistry:
     def __init__(self):
 
         self._instances: dict         = {}

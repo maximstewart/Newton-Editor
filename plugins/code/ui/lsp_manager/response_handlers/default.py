@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import GLib
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
@@ -55,13 +58,13 @@ class DefaultHandler(BaseHandler):
                 "info": info,
             }
 
-        self.context._prompt_completion_request()
+        self._prompt_completion_request()
 
     def _handle_definition(self, response, controller):
         if not response: return
 
         uri = response[0]["uri"]
-        self.context._prompt_goto_request(uri, response[0]["range"])
+        self._prompt_goto_request(uri, response[0]["range"])
 
     def _handle_diagnostics(self, params):
         if not params: return
@@ -98,3 +101,34 @@ class DefaultHandler(BaseHandler):
         }
 
         logger.debug(f"LSP Diagnostics for {uri}: {len(errors)} errors, {len(warnings)} warnings, {len(hints)} hints")
+
+    def _prompt_goto_request(self, uri: str, pointer_pos: dict):
+        event  = Event_Factory.create_event(
+            "get_active_view",
+        )
+        self.emit_to("source_views", event)
+        view = event.response
+        view._on_uri_data_received( [uri] )
+
+        buffer = view.get_buffer()
+
+        def move_cursor(buffer, pointer_pos):
+            itr = buffer.get_iter_at_line( pointer_pos["end"]["line"] )
+            itr.forward_chars( pointer_pos["end"]["character"] )
+            buffer.place_cursor(itr)
+            view.scroll_to_iter(itr, 0.2, False, 0, 0)
+
+        GLib.idle_add( move_cursor, buffer, pointer_pos )
+
+    def _prompt_completion_request(self):
+        event = Event_Factory.create_event("get_active_view")
+        self.emit_to("source_views", event)
+        view  = event.response
+
+        event = Event_Factory.create_event(
+            "request_completion",
+            view     = view,
+            provider = self.context._provider
+        )
+        self.emit_to("completion", event)
+
