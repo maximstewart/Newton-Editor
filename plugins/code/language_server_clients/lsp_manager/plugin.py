@@ -62,10 +62,6 @@ class Plugin(PluginCode):
         source_view = event.response
         lsp_manager.lsp_manager_ui.set_source_view(source_view)
 
-        lsp_manager.response_registry.set_event_hub(
-            self.emit, self.emit_to, lsp_manager.provider
-        )
-
     def run(self):
         ...
 

@@ -24,13 +24,17 @@ class EventFactory(Singleton):
         self._event_classes[event_type] = event_class
 
     def register_events(self, events: dict):
+        i = 0
         for name, obj in events:
             if not self._is_valid_event_class(obj): continue
 
             event_type = self._class_name_to_event_type(name)
-            self.register_event(event_type, obj)
 
-        logger.debug(f"Registered {len(events)} event types:")
+            self._event_classes[event_type] = obj
+            Code_Event_Types.add_event_class(name, obj)
+            i += 1
+
+        logger.debug(f"Registered {i} event types:")
 
     def create_event(self, event_type: str, **kwargs) -> BaseEvent:
         if event_type not in self._event_classes:
@@ -63,5 +67,21 @@ class EventFactory(Singleton):
         return re.sub(r'(?<!^)(?=[A-Z])', '_', base_name).lower()
 
 
+class EventNamespace:
+    """Dynamic namespace for event types."""
+
+    def __init__(self):
+        ...
+
+
+    def _is_valid_event_class(self, obj) -> bool:
+        return (inspect.isclass(obj) and issubclass(obj, BaseEvent) and obj != BaseEvent)
+
+    def add_event_class(self, name: str, event_class: Type[BaseEvent]):
+        setattr(self, name, event_class)
+
+
+
+Code_Event_Types = EventNamespace()
 Event_Factory    = EventFactory()
-Code_Event_Types = code
+
