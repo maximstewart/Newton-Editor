@@ -4,15 +4,15 @@ import os
 # Lib imports
 
 # Application imports
-from libs.dto.code.lsp.lsp_messages import get_message_obj
-from libs.dto.code.lsp.lsp_messages import didopen_notification
-from libs.dto.code.lsp.lsp_messages import didsave_notification
-from libs.dto.code.lsp.lsp_messages import didclose_notification
-from libs.dto.code.lsp.lsp_messages import didchange_notification
-from libs.dto.code.lsp.lsp_messages import completion_request
-from libs.dto.code.lsp.lsp_messages import definition_request
-from libs.dto.code.lsp.lsp_messages import references_request
-from libs.dto.code.lsp.lsp_messages import symbols_request
+from ..dto.code.lsp.lsp_messages import get_message_obj
+from ..dto.code.lsp.lsp_messages import didopen_notification
+from ..dto.code.lsp.lsp_messages import didsave_notification
+from ..dto.code.lsp.lsp_messages import didclose_notification
+from ..dto.code.lsp.lsp_messages import didchange_notification
+from ..dto.code.lsp.lsp_messages import completion_request
+from ..dto.code.lsp.lsp_messages import definition_request
+from ..dto.code.lsp.lsp_messages import references_request
+from ..dto.code.lsp.lsp_messages import symbols_request
 
 
 

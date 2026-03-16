@@ -1,0 +1,214 @@
+{
+    "info": "https://download.eclipse.org/jdtls/",
+    "info-init-options": "https://github.com/eclipse-jdtls/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line",
+    "info-import-build": "https://www.javahotchocolate.com/tutorials/build-path.html",
+    "info-external-class-paths": "https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3291",
+    "link": "https://download.eclipse.org/jdtls/milestones/?d",
+    "command": "lsp-ws-proxy --listen 4114 -- jdtls",
+    "alt-command": "lsp-ws-proxy -- jdtls",
+    "alt-command2": "java-language-server",
+    "socket": "ws://127.0.0.1:9999/java",
+    "socket-two": "ws://127.0.0.1:9999/?name=jdtls",
+    "alt-socket": "ws://127.0.0.1:9999/?name=java-language-server",
+    "initialization-options": {
+        "bundles": [
+            "intellicode-core.jar"
+        ],
+        "workspaceFolders": [
+            "file://{workspace.folder}"
+        ],
+        "extendedClientCapabilities": {
+            "classFileContentsSupport": true,
+            "executeClientCommandSupport": false
+        },
+        "settings": {
+            "java": {
+                "autobuild": {
+                    "enabled": true
+                },
+                "jdt": {
+                    "ls": {
+                        "javac": {
+                            "enabled": true
+                        },
+                        "java": {
+                            "home": "{user.home}/Portable_Apps/sdks/javasdk/jdk-22.0.2"
+                        },
+                        "lombokSupport": {
+                            "enabled": true
+                        },
+                        "protobufSupport":{
+                            "enabled": true
+                        },
+                        "androidSupport": {
+                            "enabled": true
+                        }
+                    }
+                },
+                "configuration": {
+                    "updateBuildConfiguration": "automatic",
+                    "maven": {
+                        "userSettings": "{user.home}/.config/jdtls/settings.xml",
+                        "globalSettings": "{user.home}/.config/jdtls/settings.xml"
+                    },
+                    "runtimes": [
+                        {
+                            "name": "JavaSE-17",
+                            "path": "/usr/lib/jvm/java-17-openjdk",
+                            "javadoc": "https://docs.oracle.com/en/java/javase/17/docs/api/",
+                            "default": false
+                        },
+                        {
+                            "name": "JavaSE-22",
+                            "path": "{user.home}/Portable_Apps/sdks/javasdk/jdk-22.0.2",
+                            "javadoc": "https://docs.oracle.com/en/java/javase/22/docs/api/",
+                            "default": true
+                        }
+                    ]
+                },
+                "classPath": [
+                    "{user.home}/.config/jdtls/m2/repository/**/*-sources.jar",
+                    "lib/**/*-sources.jar"
+                ],
+                "docPath": [
+                    "{user.home}/.config/jdtls/m2/repository/**/*-javadoc.jar",
+                    "lib/**/*-javadoc.jar"
+                ],
+                "project": {
+                    "encoding": "ignore",
+                    "outputPath": "bin",
+                    "referencedLibraries": [
+                        "{user.home}/.config/jdtls/m2/repository/**/*.jar",
+                        "lib/**/*.jar"
+                    ],
+                    "importOnFirstTimeStartup": "automatic",
+                    "importHint": true,
+                    "resourceFilters": [
+                        "node_modules",
+                        "\\.git"
+                    ],
+                    "sourcePaths": [
+                        "src",
+                        "{user.home}/.config/jdtls/m2/repository/**/*.jar"
+                    ]
+                },
+                "sources": {
+                    "organizeImports": {
+                        "starThreshold": 99,
+                        "staticStarThreshold": 99
+                    }
+                },
+                "imports": {
+                    "gradle": {
+                        "wrapper": {
+                            "checksums": []
+                        }
+                    }
+                },
+                "import": {
+                    "maven": {
+                        "enabled": true,
+                        "offline": {
+                            "enabled": false
+                        },
+                        "disableTestClasspathFlag": false
+                    },
+                    "gradle": {
+                        "enabled": false,
+                        "wrapper": {
+                            "enabled": true
+                        },
+                        "version": "",
+                        "home": "abs(static/gradle-7.3.3)",
+                        "java": {
+                            "home": "abs(static/launch_jres/17.0.6-linux-x86_64)"
+                        },
+                        "offline": {
+                            "enabled": false
+                        },
+                        "arguments": [],
+                        "jvmArguments": [],
+                        "user": {
+                            "home": ""
+                        },
+                        "annotationProcessing": {
+                            "enabled": true
+                        }
+                    },
+                    "exclusions": [
+                        "**/node_modules/**",
+                        "**/.metadata/**",
+                        "**/archetype-resources/**",
+                        "**/META-INF/maven/**"
+                    ],
+                    "generatesMetadataFilesAtProjectRoot": false
+                },
+                "maven": {
+                    "downloadSources": true,
+                    "updateSnapshots": true
+                },
+                "silentNotification": true,
+                "contentProvider": {
+                    "preferred": "fernflower"
+                },
+                "signatureHelp": {
+                    "enabled": true,
+                    "description": {
+                        "enabled": true
+                    }
+                },
+                "completion": {
+                    "enabled": true,
+                    "engine": "ecj",
+                    "matchCase": "firstletter",
+                    "maxResults": 25,
+                    "guessMethodArguments": true,
+                    "lazyResolveTextEdit": {
+                        "enabled": true
+                    },
+                    "postfix": {
+                        "enabled": true
+                    },
+                    "favoriteStaticMembers": [
+                        "org.junit.Assert.*",
+                        "org.junit.Assume.*",
+                        "org.junit.jupiter.api.Assertions.*",
+                        "org.junit.jupiter.api.Assumptions.*",
+                        "org.junit.jupiter.api.DynamicContainer.*",
+                        "org.junit.jupiter.api.DynamicTest.*"
+                    ],
+                    "importOrder": [
+                        "#",
+                        "java",
+                        "javax",
+                        "org",
+                        "com"
+                    ]
+                },
+                "references": {
+                    "includeAccessors": true,
+                    "includeDecompiledSources": true
+                },
+                "codeGeneration": {
+                    "toString": {
+                        "template": "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
+                    },
+                    "insertionLocation": "afterCursor",
+                    "useBlocks": true
+                },
+                "implementationsCodeLens": {
+                    "enabled": true
+                },
+                "referencesCodeLens": {
+                    "enabled": true
+                },
+                "progressReports": {
+                    "enabled": false
+                },
+                "saveActions": {
+                    "organizeImports": true
+                }
+            }
+        }
+    }
+}

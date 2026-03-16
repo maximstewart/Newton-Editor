@@ -3,8 +3,9 @@
 # Lib imports
 
 # Application imports
+from ..dto.code.lsp.lsp_message_structs import ClientRequest, ClientNotification
+
 from .lsp_client_events import LSPClientEvents
-from libs.dto.code.lsp.lsp_message_structs import ClientRequest, ClientNotification
 
 
 

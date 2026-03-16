@@ -5,8 +5,8 @@ from gi.repository import GLib
 
 # Application imports
 # from libs import websockets
-from libs.dto.code.lsp.lsp_messages import get_message_str, get_message_obj
-from libs.dto.code.lsp.lsp_message_structs import        \
+from ..dto.code.lsp.lsp_messages import get_message_str, get_message_obj
+from ..dto.code.lsp.lsp_message_structs import           \
     LSPResponseTypes, ClientRequest, ClientNotification, \
     LSPResponseRequest, LSPResponseNotification, LSPIDResponseNotification
 

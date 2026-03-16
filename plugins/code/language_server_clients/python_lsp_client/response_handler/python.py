@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from .default import DefaultHandler
+from lsp_manager.response_handlers.default import DefaultHandler
 
 
 

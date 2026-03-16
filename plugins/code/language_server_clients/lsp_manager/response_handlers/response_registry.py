@@ -3,10 +3,8 @@
 # Lib imports
 
 # Application imports
-from .base import BaseHandler
+from .base_handler import BaseHandler
 from .default import DefaultHandler
-from .python import PythonHandler
-from .java import JavaHandler
 
 
 
@@ -15,12 +13,11 @@ class ResponseRegistry:
 
         self._instances: dict         = {}
         self._lang_handlers: dict     = {
-            "default": DefaultHandler,
-            "python": PythonHandler,
-            "java": JavaHandler,
+            "default": DefaultHandler
         }
 
-    def set_event_hub(self, emit, emit_to, provider=None):
+
+    def set_event_hub(self, emit, emit_to, provider = None):
         self.emit = emit
         self.emit_to = emit_to
         self._provider = provider
@@ -35,6 +32,9 @@ class ResponseRegistry:
 
     def register_handler(self, lang_id: str, handler_cls: type[BaseHandler]):
         self._lang_handlers[lang_id] = handler_cls
+
+    def unregister_handler(self, lang_id: str, handler_cls: type[BaseHandler]):
+        del self._lang_handlers[lang_id]
 
     def get_handler(self, lang_id: str = "", method: str = ""):
         handler_cls = self._lang_handlers.get(

@@ -9,7 +9,7 @@ from gi.repository import GtkSource
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
 
-from .default import DefaultHandler
+from lsp_manager.response_handlers.default import DefaultHandler
 
 
 

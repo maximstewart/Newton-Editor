@@ -1,5 +1,4 @@
 # Python imports
-from os import path
 import json
 
 # Lib imports
@@ -25,12 +24,8 @@ class LSPManagerUI(Gtk.Dialog):
     def __init__(self):
         super(LSPManagerUI, self).__init__()
 
-        self._SCRIPT_PTH: str          = path.dirname( path.realpath(__file__) )
-        self._USER_HOME: str           = path.expanduser('~')
-        self._LSP_SERVERS_CONFIG: str  = ""
-        self.servers_config: dict      = {}
+        self.client_configs: dict[str, str] = {}
 
-        self.parent                    = None
         self.source_view               = None
 
         self._setup_styling()
@@ -69,9 +64,10 @@ class LSPManagerUI(Gtk.Dialog):
         self.path_entry.set_can_focus(False)
         self.path_entry.set_placeholder_text("Workspace Folder...")
         self.path_entry.connect("changed", self._path_changed, bttn_box)
+        self.path_bttn.set_halign(Gtk.Align.FILL)
 
         self.path_bttn.connect("file-set", self._file_set)
-        self.path_bttn.set_halign(Gtk.Align.FILL)
+        self.combo_box.connect("changed", self._on_combo_changed)
         self.hide_bttn.connect("clicked", lambda widget: self.hide())
         self.create_client_bttn.connect("clicked", self._create_client, self.close_client_bttn)
         self.close_client_bttn.connect("clicked", self._close_client, self.create_client_bttn)
@@ -115,16 +111,56 @@ class LSPManagerUI(Gtk.Dialog):
 
     def _path_changed(self, widget, buttons_widget):
         if not widget.get_text():
+            self.path_bttn.unselect_all()
+            self.path_bttn.emit("file-set")
             buttons_widget.hide()
             return
 
+        self.set_source_view_text( self.path_entry.get_text() )
         buttons_widget.show()
 
     def _file_set(self, widget):
-        self.path_entry.set_text(
-            widget.get_filename()
+        fname = widget.get_filename()
+        fname = "" if not fname else fname
+        self.path_entry.set_text(fname)
+
+        lang_id = self.combo_box.get_active_text()
+        if not lang_id or lang_id not in self.client_configs: return
+
+        self.set_source_view_text(
+            "{workspace.folder}" if not fname else fname
         )
-        self.load_lsp_servers_config_placeholders()
+
+    def _create_client(self, widget, sibling):
+        if not self.source_view: return
+
+        buffer  = self.source_view.get_buffer()
+        lang_id = self.combo_box.get_active_text()
+
+        if not lang_id: return
+
+        workspace_dir = self.path_entry.get_text()
+        self.emit('create-client', lang_id, workspace_dir)
+
+    def _close_client(self, widget, sibling):
+        lang_id = self.combo_box.get_active_text()
+
+        if not lang_id: return
+        self.emit('close-client', lang_id)
+
+    def _on_combo_changed(self, combo: Gtk.ComboBoxText):
+        lang_id = combo.get_active_text()
+        self.set_source_view_text( self.path_entry.get_text() )
+
+
+    def set_source_view_text(self, workspace_dir: str):
+        lang_id  = self.combo_box.get_active_text()
+        if not lang_id: return
+
+        json_str = self.client_configs[lang_id].replace("{workspace.folder}", workspace_dir)
+        buffer   = self.source_view.get_buffer()
+
+        buffer.set_text(json_str, -1)
 
     def map_parent_resize_event(self, parent):
         parent.connect("size-allocate", lambda w, r: self._map_resize(self, parent))
@@ -147,68 +183,20 @@ class LSPManagerUI(Gtk.Dialog):
 
         scrolled_win.show_all()
 
-    def load_lsp_servers_config(self):
-        try:
-            with open(f"{self._SCRIPT_PTH}/configs/lsp-servers-config.json") as file:
-                self._LSP_SERVERS_CONFIG = file.read()
-        except FileNotFoundError:
-            logger.error(f"Config file not found: {self._SCRIPT_PTH}/configs/lsp-servers-config.json")
-
-    def load_lsp_servers_config_placeholders(self):
-        if not self._LSP_SERVERS_CONFIG: return
-        if not self.source_view: return
-
-        data = self._LSP_SERVERS_CONFIG \
-                .replace("{user.home}", self._USER_HOME) \
-                .replace("{workspace.folder}", self.path_entry.get_text())
-
-        self.servers_config = json.loads(data)
-
-        buffer     = self.source_view.get_buffer()
-        start_itr, \
-        end_itr    = buffer.get_bounds()
-
-        buffer.delete(start_itr, end_itr)
-        buffer.insert(start_itr, data, -1)
-
-        self.set_language_combo_box( list(self.servers_config.keys()) )
-
-    def set_language_combo_box(self, lang_ids: list[str]):
-        self.combo_box.remove_all()
-
-        for lang_id in lang_ids:
-            self.combo_box.append_text(lang_id)
+    def add_client_listing(self, lang_id: str, lang_config: str):
+        self.combo_box.append_text(lang_id)
+        self.client_configs[lang_id] = lang_config
 
     def get_init_opts(self, lang_id: str) -> dict:
-        buffer = self.source_view.get_buffer()
+        if not lang_id or lang_id not in self.client_configs: return {}
+
         try:
-            self.servers_config = json.loads(
-                buffer.get_text( *buffer.get_bounds() )
-            )
+            lang_config = json.loads(self.client_configs[lang_id])
         except json.JSONDecodeError as e:
-            logger.error(f"Invalid JSON: {e}")
+            logger.error(f"Invalid JSON for {lang_id}: {e}")
             return {}
 
-        if not lang_id or not lang_id in self.servers_config: return {}
-
-        return self.servers_config[lang_id].get("initialization-options", {})
-
-    def _create_client(self, widget, sibling):
-        if not self.source_view: return
-
-        buffer  = self.source_view.get_buffer()
-        lang_id = self.combo_box.get_active_text()
-
-        if not lang_id: return
-
-        workspace_dir = self.path_entry.get_text()
-        self.emit('create-client', lang_id, workspace_dir)
-
-    def _close_client(self, widget, sibling):
-        lang_id = self.combo_box.get_active_text()
-
-        if not lang_id: return
-        self.emit('close-client', lang_id)
+        return lang_config.get("initialization-options", {})
 
     def toggle_client_buttons(self, show_close: bool):
         self.create_client_bttn.set_visible(not show_close)

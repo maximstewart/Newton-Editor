@@ -23,6 +23,15 @@ class EventFactory(Singleton):
     def register_event(self, event_type: str, event_class: Type[BaseEvent]):
         self._event_classes[event_type] = event_class
 
+    def register_events(self, events: dict):
+        for name, obj in events:
+            if not self._is_valid_event_class(obj): continue
+
+            event_type = self._class_name_to_event_type(name)
+            self.register_event(event_type, obj)
+
+        logger.debug(f"Registered {len(events)} event types:")
+
     def create_event(self, event_type: str, **kwargs) -> BaseEvent:
         if event_type not in self._event_classes:
             raise ValueError(f"Unknown event type: {event_type}")
@@ -38,14 +47,9 @@ class EventFactory(Singleton):
 
         return event
 
+
     def _auto_register_events(self, events: dict):
-        for name, obj in events:
-            if not self._is_valid_event_class(obj): continue
-
-            event_type = self._class_name_to_event_type(name)
-            self.register_event(event_type, obj)
-
-        logger.debug(f"Auto-registered {len(self._event_classes)} event types")
+        self.register_events(events)
 
     def _is_valid_event_class(self, obj) -> bool:
         return (

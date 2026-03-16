@@ -1,0 +1,100 @@
+{
+    "info": "https://github.com/python-lsp/python-lsp-server",
+    "command": "lsp-ws-proxy -- pylsp",
+    "alt-command": "pylsp",
+    "alt-command2": "lsp-ws-proxy --listen 4114 -- pylsp",
+    "alt-command3": "pylsp --ws --port 4114",
+    "socket": "ws://127.0.0.1:9999/python",
+    "socket-two": "ws://127.0.0.1:9999/?name=pylsp",
+    "initialization-options": {
+        "pylsp": {
+            "rope": {
+                "ropeFolder": "{user.home}/.config/newton/lsps/ropeproject"
+            },
+            "plugins": {
+                "ruff": {
+                    "enabled": true,
+                    "extendSelect": ["I"],
+                    "lineLength": 80
+                },
+                "pycodestyle": {
+                    "enabled": false
+                },
+                "pyflakes": {
+                    "enabled": false
+                },
+                "pylint": {
+                    "enabled": true
+                },
+                "mccabe": {
+                    "enabled": false
+                },
+                "pylsp_rope": {
+                    "rename": false
+                },
+                "rope_rename": {
+                    "enabled": false
+                },
+                "rope_autoimport": {
+                    "enabled": true
+                },
+                "rope_completion": {
+                    "enabled": false,
+                    "eager": false
+                },
+                "jedi_rename": {
+                    "enabled": true
+                },
+                "jedi_completion": {
+                    "enabled": true,
+                    "include_class_objects": true,
+                    "include_function_objects": true,
+                    "fuzzy": false
+                },
+                "jedi": {
+                    "root_dir": "file://{workspace.folder}",
+                    "extra_paths": [
+                        "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
+                    ]
+                }
+            }
+        }
+    }
+},
+"python - jedi-language-server": {
+    "hidden": true,
+    "info": "https://pypi.org/project/jedi-language-server/",
+    "command": "jedi-language-server",
+    "alt-command": "lsp-ws-proxy --listen 3030 -- jedi-language-server",
+    "socket": "ws://127.0.0.1:9999/python",
+    "socket-two": "ws://127.0.0.1:9999/?name=jedi-language-server",
+    "initialization-options": {
+        "jediSettings": {
+            "autoImportModules": [],
+            "caseInsensitiveCompletion": true,
+            "debug": false
+        },
+        "completion": {
+            "disableSnippets": false,
+            "resolveEagerly": false,
+            "ignorePatterns": []
+        },
+        "markupKindPreferred": "markdown",
+        "workspace": {
+            "extraPaths": [
+                "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
+            ],
+            "environmentPath": "{user.home}/Portable_Apps/py-venvs/gtk-apps-venv/venv/bin/python",
+            "symbols": {
+                "ignoreFolders": [
+                    ".nox",
+                    ".tox",
+                    ".venv",
+                    "__pycache__",
+                    "venv"
+                ],
+                "maxSymbols": 20
+            }
+        }
+    }
+}

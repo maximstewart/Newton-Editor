@@ -1,5 +1,5 @@
 """
-    Libs Code DTO(s) Code Package
+    Libs Code DTO(s) Events Package
 """
 
 

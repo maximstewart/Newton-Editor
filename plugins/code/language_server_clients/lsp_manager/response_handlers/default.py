@@ -8,7 +8,7 @@ from gi.repository import GLib
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
 
-from .base import BaseHandler
+from .base_handler import BaseHandler
 
 
 

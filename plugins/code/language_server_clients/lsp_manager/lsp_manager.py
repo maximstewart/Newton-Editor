@@ -3,7 +3,13 @@
 # Lib imports
 
 # Application imports
-from libs.dto.code.lsp.lsp_message_structs import LSPResponseTypes, LSPResponseRequest, LSPResponseNotification
+from libs.controllers.controller_base import ControllerBase
+from libs.event_factory import Event_Factory, Code_Event_Types
+
+from .dto.code.events import \
+    RegisterLspClientEvent, UnregisterLspClientEvent
+from .dto.code.lsp.lsp_message_structs import \
+    LSPResponseTypes, LSPResponseRequest, LSPResponseNotification
 
 from .provider import Provider
 from .provider_response_cache import ProviderResponseCache
@@ -13,7 +19,7 @@ from .response_handlers.response_registry import ResponseRegistry
 
 
 
-class LSPManager:
+class LSPManager(ControllerBase):
     def __init__(self):
         super(LSPManager, self).__init__()
 
@@ -36,6 +42,20 @@ class LSPManager:
     def _do_bind_mapping(self):
         self.response_cache.set_lsp_client(self.lsp_manager_client)
         self.provider.response_cache = self.response_cache
+
+    def _controller_message(self, event: Code_Event_Types.CodeEvent):
+        if isinstance(event, RegisterLspClientEvent):
+            self.response_registry.register_handler(event.lang_id, event.handler)
+            self.lsp_manager_ui.add_client_listing(event.lang_id, event.lang_config)
+        elif isinstance(event, UnregisterLspClientEvent):
+            self.response_registry.unregister_handler(event.lang_id)
+
+#        if isinstance(event, Code_Event_Types.RegisterLspClientEvent):
+#            self.response_registry.register_handler(event.lang_id, event.handler)
+#            self.lsp_manager_ui.add_client_listing(event.lang_id, event.lang_config)
+#        elif isinstance(event, Code_Event_Types.UnregisterLspClientEvent):
+#            self.response_registry.unregister_handler(event.lang_id)
+
 
     def _on_create_client(self, ui, lang_id: str, workspace_uri: str) -> bool:
         init_opts = ui.get_init_opts(lang_id)

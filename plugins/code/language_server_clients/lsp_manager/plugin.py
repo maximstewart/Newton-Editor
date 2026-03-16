@@ -11,6 +11,7 @@ from libs.dto.states import SourceViewStates
 
 from plugins.plugin_types import PluginCode
 
+from .dto.code import events as lsp_events
 from .lsp_manager import LSPManager
 
 
@@ -28,6 +29,10 @@ class Plugin(PluginCode):
         ...
 
     def load(self):
+        Event_Factory.register_events( lsp_events.__dict__.items() )
+
+        self.register_controller("lsp_manager", lsp_manager)
+
         window = self.request_ui_element("main-window")
 
         lsp_manager.lsp_manager_ui.map_parent_resize_event(window)
@@ -55,11 +60,11 @@ class Plugin(PluginCode):
         self.emit_to("source_views", event)
 
         source_view = event.response
-        lsp_manager.lsp_manager_ui.load_lsp_servers_config()
         lsp_manager.lsp_manager_ui.set_source_view(source_view)
-        lsp_manager.lsp_manager_ui.load_lsp_servers_config_placeholders()
 
-        lsp_manager.response_registry.set_event_hub(self.emit, self.emit_to, lsp_manager.provider)
+        lsp_manager.response_registry.set_event_hub(
+            self.emit, self.emit_to, lsp_manager.provider
+        )
 
     def run(self):
         ...
