@@ -1,13 +1,12 @@
 # Newton Editor
-A Python and Gtk+ quasi-IDE.
 
 ### Note
-This is comprised of two branches. The first uses GtkSource.View widget to handle text edits and display.
-The second uses Angular + Electron + Ace Editor handle text editing.
-Both have similar design concepts to VIM with buffers loading to views.
+This repository is comprised of two branches with the first using gtk and GtkSource.View widgets to handle text editing.
+The second bramch uses Angular + Electron with Ace Editor component to handle text editing.
+Both branches have similar design patterns to Vim with 'buffers' loading to views than the traditionally understood one view per one one tab pattern.
 
-* [release/newton_gtk](//code.itdominator.com/itdominator/Newton-Editor/src/branch/release/newton_gtk/)
-* [release/newton_electron](//code.itdominator.com/itdominator/Newton-Editor/src/branch/release/newton_electron/)
+* [release/newton_gtk](https://code.itdominator.com/itdominator/Newton-Editor/src/branch/release/newton_gtk/)
+* [release/newton_electron](https://code.itdominator.com/itdominator/Newton-Editor/src/branch/release/newton_electron/)
 
 # LSP
-* [Newton-Linters](//code.itdominator.com/itdominator/Newton-Linters)
+* [Newton-LSP](https://code.itdominator.com/itdominator/Newton-LSP)
