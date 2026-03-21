@@ -27,7 +27,7 @@ class TabsWidget(Gtk.Notebook):
 
 
     def _setup_styling(self):
-        self.set_scrollable(True)
+        ...
 
     def _setup_signals(self):
         self.connect("page-added", self._page_added)
@@ -67,6 +67,7 @@ class TabsWidget(Gtk.Notebook):
         )
 
         self.emit(event)
+        self._scroll_to_center(tab)
 
     def _bind_tab_menu(self, tab, page_widget):
         def do_context_menu(tab, eve, page_widget):
@@ -80,6 +81,21 @@ class TabsWidget(Gtk.Notebook):
                 do_context_menu,
                 page_widget
             )
+
+    def _scroll_to_center(self, tab):
+        scrolled_win = self.get_parent().get_parent()
+        alloc        = tab.get_allocation()
+        tab_x        = alloc.x
+        tab_width    = alloc.width
+        view_width   = scrolled_win.get_allocated_width()
+        target       = tab_x + tab_width / 2 - view_width / 2
+        adj          = scrolled_win.get_hadjustment()
+        lower        = adj.get_lower()
+        upper        = adj.get_upper()
+        page_size    = adj.get_page_size()
+        target       = max(lower, min(target, upper - page_size))
+
+        adj.set_value(target)
 
     def create_menu(self, page_widget) -> Gtk.Menu:
         context_menu  = Gtk.Menu()
@@ -130,6 +146,7 @@ class TabsWidget(Gtk.Notebook):
                 self.page_num(page_widget)
             )
             self.handler_unblock(self.switch_page_id)
+            self._scroll_to_center(tab)
 
             break
 

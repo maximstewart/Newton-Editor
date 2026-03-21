@@ -9,11 +9,10 @@ ___
 ___
 ### Change
 1. Make **telescope** plugin a generic base to allow query mode additions through plugins
-1. Make **lsp_manager** hard coded values configurable, plus add fields to UI
+1. Make **lsp_manager** hard coded values configurable, plus add respective fields to UI
 
 ___
 ### Fix
-- Fix to make acive tab on **tabs_bar** scroll to center
 - Fix **file_state_watcher** to prompt refrsh if external changes applied
 - Fix on lsp client unload to close files lsp side and unload server endpoint
 - Fix multi-select <Shift\><Ctrl\> left/right block select movement de-sync

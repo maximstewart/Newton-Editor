@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import Gtk
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
@@ -25,8 +28,19 @@ class Plugin(PluginCode):
 
         self.register_controller("tabs", self.tabs_controller)
 
-        code_container.add( self.tabs_controller.tabs_widget )
-        code_container.reorder_child(self.tabs_controller.tabs_widget, 0)
+        scrolled_win = Gtk.ScrolledWindow()
+        viewport     = Gtk.Viewport()
+
+        scrolled_win.set_overlay_scrolling(False)
+        scrolled_win.set_size_request(-1, 50)
+
+        viewport.add( self.tabs_controller.tabs_widget )
+        scrolled_win.add( viewport )
+        code_container.add( scrolled_win )
+        code_container.reorder_child(scrolled_win, 0)
+
+        viewport.show()
+        scrolled_win.show()
 
         event = Event_Factory.create_event("get_files")
         self.emit_to("files", event)
