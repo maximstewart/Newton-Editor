@@ -28,5 +28,8 @@ class Plugin(PluginCode):
         header = self.request_ui_element("header-container")
         header.add( info_bar_widget )
 
+    def unload(self):
+        info_bar_widget.destroy()
+
     def run(self):
         ...

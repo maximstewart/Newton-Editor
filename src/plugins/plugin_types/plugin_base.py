@@ -27,6 +27,9 @@ class PluginBase:
     def load(self):
         raise PluginBaseException("Plugin Base 'load' must be overriden by Plugin")
 
+    def unload(self):
+        raise PluginBaseException("Plugin Base 'unload' must be overriden by Plugin")
+
     def run(self):
         raise PluginBaseException("Plugin Base 'run' must be overriden by Plugin")
 

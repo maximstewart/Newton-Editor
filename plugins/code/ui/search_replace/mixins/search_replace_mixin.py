@@ -17,19 +17,17 @@ class SearchReplaceMixin(SearchMixin, ReplaceMixin):
         search_text = entry.get_text()
         buffer      = self.active_view.get_buffer()
 
-        if buffer.get_has_selection() and not search_text:
-            if not self.mode_bttn_box.in_selection:
-                start_itr, end_itr = buffer.get_selection_bounds()
+        if not buffer.get_has_selection() and search_text: return
+        if self.mode_bttn_box.in_selection: return
 
-                entry.set_text(
-                    buffer.get_text(
-                        start_itr,
-                        end_itr,
-                        include_hidden_chars = False
-                    )
-                )
-
-            return
+        start_itr, end_itr = buffer.get_selection_bounds()
+        entry.set_text(
+            buffer.get_text(
+                start_itr,
+                end_itr,
+                include_hidden_chars = False
+            )
+        )
 
     def _find_entry_search_change(self, entry):
         search_text        = entry.get_text()

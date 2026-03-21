@@ -15,27 +15,27 @@ class ProviderResponseCache(ProviderResponseCacheBase):
     def __init__(self):
         super(ProviderResponseCache, self).__init__()
 
-        self.matchers: dict = {}
-        self._lsp_client = None
+        self.matchers: dict     = {}
+        self.lsp_manager_client = None
 
-    def set_lsp_client(self, lsp_client):
-        self._lsp_client = lsp_client
+    def set_lsp_manager_client(self, lsp_client):
+        self.lsp_manager_client = lsp_client
 
     def process_file_load(self, event):
-        if self._lsp_client:
-            self._lsp_client.process_file_load(event)
+        if self.lsp_manager_client:
+            self.lsp_manager_client.process_file_load(event)
 
     def process_file_close(self, event):
-        if self._lsp_client:
-            self._lsp_client.process_file_close(event)
+        if self.lsp_manager_client:
+            self.lsp_manager_client.process_file_close(event)
 
     def process_file_save(self, event):
-        if self._lsp_client:
-            self._lsp_client.process_file_save(event)
+        if self.lsp_manager_client:
+            self.lsp_manager_client.process_file_save(event)
 
     def process_file_change(self, event):
-        if self._lsp_client:
-            self._lsp_client.process_file_change(event)
+        if self.lsp_manager_client:
+            self.lsp_manager_client.process_file_change(event)
 
     def filter(self, word: str) -> list[dict]:
         return []

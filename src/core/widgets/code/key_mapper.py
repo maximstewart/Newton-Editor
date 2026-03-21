@@ -95,6 +95,28 @@ class KeyMapper:
 
         getattr(self.states[state], press_state)[keyname] = command
 
+    def unmap_command(self, command, entry):
+        press_state = "held" if "held" in entry else "released"
+        keyname     = entry[press_state]
+
+        state       = NoKeyState
+        if "<Control>" in keyname:
+            state = state | CtrlKeyState
+        if "<Shift>" in keyname:
+            state = state | ShiftKeyState
+        if "<Alt>" in keyname:
+            state = state | AltKeyState
+
+        keyname = keyname.replace("<Control>", "") \
+                         .replace("<Shift>",   "") \
+                         .replace("<Alt>",     "") \
+                         .lower()
+
+        mapping = getattr(self.states[state], press_state)
+
+        if keyname in mapping and mapping[keyname] == command:
+            del mapping[keyname]
+
     def _key_press_event(self, eve):
         keyname  = self.get_keyname(eve)
         char_str = self.get_char(eve)

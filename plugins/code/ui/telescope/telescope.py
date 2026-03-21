@@ -33,6 +33,7 @@ class Telescope(Gtk.Dialog):
     def _setup_signals(self):
         self.connect("focus-out-event", self._focus_out_event)
         self.connect("show", self._show)
+        self.connect("destroy", self._handle_destroy)
 
     def _subscribe_to_events(self):
         ...
@@ -93,7 +94,10 @@ class Telescope(Gtk.Dialog):
         self.source_view.set_buffer(buffer)
 
     def map_parent_resize_event(self, parent):
-        parent.connect("size-allocate", lambda w, r: self._map_resize(self, parent))
+        self.size_allocate_id = parent.connect("size-allocate", lambda w, r: self._map_resize(self, parent))
+
+    def unmap_parent_resize_event(self, parent):
+        parent.disconnect(self.size_allocate_id)
 
     def set_source_view(self, source_view):
         scrolled_win     = Gtk.ScrolledWindow()
@@ -103,3 +107,8 @@ class Telescope(Gtk.Dialog):
         self.main_box.pack_end(scrolled_win, True, True, 0)
 
         scrolled_win.show_all()
+
+    def _handle_destroy(self, widget):
+        self.disconnect_by_func(self._focus_out_event)
+        self.disconnect_by_func(self._show)
+        self.disconnect_by_func(self._handle_destroy)

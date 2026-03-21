@@ -28,5 +28,12 @@ class Plugin(PluginCode):
         editors_container = self.request_ui_element("editors-container")
         editors_container.add( code_minimap )
 
+        event = Event_Factory.create_event("get_active_view")
+        self.emit_to("source_views", event)
+        code_minimap.set_smini_view(event.response)
+
+    def unload(self):
+        code_minimap.destroy()
+
     def run(self):
         ...

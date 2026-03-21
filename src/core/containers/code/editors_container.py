@@ -4,7 +4,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from gi.repository import GLib
+#from gi.repository import GLib
 
 # Application imports
 
@@ -31,7 +31,7 @@ class EditorsContainer(Gtk.Paned):
         self.set_wide_handle(True)
 
     def _setup_signals(self):
-        self.map_id = self.connect("map", self._init_map)
+        self.connect("map", self._init_map)
 
     def _subscribe_to_events(self):
         ...
@@ -59,13 +59,7 @@ class EditorsContainer(Gtk.Paned):
         return scrolled_win1, scrolled_win2
 
     def _init_map(self, view):
-        def _first_show_init():
-            self.disconnect(self.map_id)
-            del self.map_id
-
-            self.code_base.first_map_load()
-
-            del self.code_base
-            return False
-
-        GLib.timeout_add(100, _first_show_init)
+        self.disconnect_by_func( self._init_map )
+        self.code_base.first_map_load()
+        self.code_base = None
+        del self.code_base

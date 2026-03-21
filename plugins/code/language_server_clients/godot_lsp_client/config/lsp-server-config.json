@@ -1,0 +1,52 @@
+{
+    "info": "https://github.com/godotengine/godot/blob/4a280218fcfdd69408cceb74577c9e69086be23a/editor/settings/editor_settings.cpp#L1132",
+    "command": "lsp-ws-proxy -- godot",
+    "alt-command": "godot",
+    "alt-command2": "lsp-ws-proxy --listen 4114 -- godot --headless",
+    "alt-command3": "godot --headless --lsp-port 7766",
+    "socket": "ws://127.0.0.1:9999/gdscript",
+    "socket-two": "ws://127.0.0.1:9999/?name=gdscript",
+    "initialization-options": {
+    "processId": ,
+    "clientInfo": {
+        "name": "Godot",
+        "version": "4.4"
+    },
+    "rootUri": "file://{workspace.folder}",
+    "capabilities": {
+        "workspace": {
+            "applyEdit": true,
+            "workspaceEdit": {
+                "documentChanges": true
+            }
+        },
+        "textDocument": {
+            "synchronization": {
+                "dynamicRegistration": true,
+                "willSave": false,
+                "didSave": true,
+                "willSaveWaitUntil": false
+            },
+            "completion": {
+                "dynamicRegistration": true,
+                "completionItem": {
+                    "snippetSupport": true
+                }
+            },
+            "hover": {
+                "dynamicRegistration": true
+            },
+            "definition": {
+                "dynamicRegistration": true
+            },
+            "references": {
+                "dynamicRegistration": true
+            },
+            "documentSymbol": {
+                "dynamicRegistration": true
+            }
+        }
+    },
+    "trace": "off"
+    }
+}

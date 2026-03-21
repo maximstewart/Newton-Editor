@@ -33,5 +33,11 @@ class Plugin(PluginCode):
             )
             self.emit_to("lsp_manager", event)
 
+    def unload(self):
+        event  = Event_Factory.create_event("unregister_lsp_client",
+            lang_id = "java"
+        )
+        self.emit_to("lsp_manager", event)
+
     def run(self):
         ...

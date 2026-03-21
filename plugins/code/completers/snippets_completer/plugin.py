@@ -35,5 +35,15 @@ class Plugin(PluginCode):
         )
         self.emit_to("completion", event)
 
+    def unload(self):
+        event = Event_Factory.create_event(
+            "unregister_provider",
+            provider_name = "Snippets Completer"
+        )
+        self.emit_to("completion", event)
+
+        self.provider = None
+        del self.provider
+
     def run(self):
         ...

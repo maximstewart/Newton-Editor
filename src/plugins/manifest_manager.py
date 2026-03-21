@@ -19,10 +19,12 @@ class ManifestMapperException(Exception):
 class ManifestManager:
     def __init__(self):
 
-        self._plugins_path         = settings_manager.path_manager.get_plugins_path()
+        self._plugins_path: str = \
+            settings_manager.path_manager.get_plugins_path()
 
-        self.pre_launch_manifests: list  = []
-        self.post_launch_manifests: list = []
+        self.pre_launch_manifests: list    = []
+        self.post_launch_manifests: list   = []
+        self.manual_launch_manifests: list = []
 
         self.load_manifests()
 
@@ -37,7 +39,7 @@ class ManifestManager:
         ]:
             self.load(folder, path)
 
-    def load(self, folder, path):
+    def load(self, folder, path) -> ManifestMeta:
         manifest_pth = join(path, "manifest.json")
 
         if not os.path.exists(manifest_pth):
@@ -52,14 +54,22 @@ class ManifestManager:
             manifest_meta.path     = path
             manifest_meta.manifest = manifest
 
+            if not manifest.autoload:
+                self.manual_launch_manifests.append(manifest_meta)
+                return
+
             if manifest.pre_launch:
                 self.pre_launch_manifests.append(manifest_meta)
             else:
                 self.post_launch_manifests.append(manifest_meta)
 
-    def get_pre_launch_plugins(self) -> dict:
+        return manifest_meta
+
+    def get_pre_launch_plugins(self) -> list:
         return self.pre_launch_manifests
 
-    def get_post_launch_plugins(self) -> None:
+    def get_post_launch_plugins(self) -> list:
         return self.post_launch_manifests
 
+    def get_manual_launch_plugins(self) -> list:
+        return self.manual_launch_manifests

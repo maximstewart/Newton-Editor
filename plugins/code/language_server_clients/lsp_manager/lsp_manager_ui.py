@@ -41,7 +41,8 @@ class LSPManagerUI(Gtk.Dialog):
         self.set_hexpand(True)
 
     def _setup_signals(self):
-        self.connect("show", self._show)
+        self.connect("show", self._handle_show)
+        self.connect("destroy", self._handle_destroy)
 
     def _subscribe_to_events(self):
         ...
@@ -68,7 +69,7 @@ class LSPManagerUI(Gtk.Dialog):
 
         self.path_bttn.connect("file-set", self._file_set)
         self.combo_box.connect("changed", self._on_combo_changed)
-        self.hide_bttn.connect("clicked", lambda widget: self.hide())
+        self.hide_bttn_id = self.hide_bttn.connect("clicked", lambda widget: self.hide())
         self.create_client_bttn.connect("clicked", self._create_client, self.close_client_bttn)
         self.close_client_bttn.connect("clicked", self._close_client, self.create_client_bttn)
 
@@ -92,8 +93,17 @@ class LSPManagerUI(Gtk.Dialog):
         self.close_client_bttn.hide()
         bttn_box.hide()
 
-    def _show(self, widget):
+    def _handle_show(self, widget):
         GLib.idle_add(self.path_entry.grab_focus)
+
+    def _handle_destroy(self, widget):
+        self.disconnect_by_func(self._show)
+        self.disconnect_by_func(self._handle_destroy)
+        self.path_bttn.disconnect_by_func(self._file_set)
+        self.combo_box.disconnect_by_func(self._on_combo_changed)
+        self.hide_bttn.disconnect(self.hide_bttn_id)
+        self.create_client_bttn.disconnect_by_func(self._create_client)
+        self.close_client_bttn.disconnect_by_func(self._close_client)
 
     def _map_resize(self, widget, parent):
         parent_x, parent_y = parent.get_position()
@@ -163,7 +173,10 @@ class LSPManagerUI(Gtk.Dialog):
         buffer.set_text(json_str, -1)
 
     def map_parent_resize_event(self, parent):
-        parent.connect("size-allocate", lambda w, r: self._map_resize(self, parent))
+        self.size_allocate_id = parent.connect("size-allocate", lambda w, r: self._map_resize(self, parent))
+
+    def unmap_parent_resize_event(self, parent):
+        parent.disconnect(self.size_allocate_id)
 
     def set_source_view(self, source_view):
         scrolled_win     = Gtk.ScrolledWindow()
@@ -186,6 +199,17 @@ class LSPManagerUI(Gtk.Dialog):
     def add_client_listing(self, lang_id: str, lang_config: str):
         self.combo_box.append_text(lang_id)
         self.client_configs[lang_id] = lang_config
+
+    def remove_client_listing(self, lang_id: str):
+        model = self.combo_box.get_model()
+
+        for i, row in enumerate(model):
+            if row[0] == lang_id:  # assuming text is in column 0
+                self.combo_box.remove(i)
+                break
+
+        if lang_id in self.client_configs:
+            del self.client_configs[lang_id]
 
     def get_init_opts(self, lang_id: str) -> dict:
         if not lang_id or lang_id not in self.client_configs: return {}

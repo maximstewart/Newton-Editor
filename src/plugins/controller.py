@@ -4,25 +4,25 @@ import sys
 import importlib
 import traceback
 
-from concurrent.futures import ThreadPoolExecutor
 from os.path import join
 from os.path import isdir
 
 # Lib imports
 import gi
+from gi.repository import Gtk
 from gi.repository import GLib
 
 # Application imports
+from libs.event_factory import Event_Factory, Code_Event_Types
 from libs.controllers.controller_base import ControllerBase
-
 from libs.dto.plugins.manifest_meta import ManifestMeta
-
 from libs.dto.base_event import BaseEvent
 
 from .manifest_manager import ManifestManager
 from .plugins_controller_mixin import PluginsControllerMixin
 from .plugin_reload_mixin import PluginReloadMixin
 from .plugin_context import PluginContext
+from .plugins_ui import PluginsUI
 
 
 
@@ -40,10 +40,11 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         # path                      = os.path.dirname(os.path.realpath(__file__))
         # sys.path.insert(0, path)  # NOTE: I think I'm not using this correctly...
 
-        self._plugin_collection: list           = []
-
-        self._plugins_path: str                 = settings_manager.path_manager.get_plugins_path()
+        self.plugins_ui: PluginsUI              = PluginsUI()
         self._manifest_manager: ManifestManager = ManifestManager()
+
+        self._plugin_collection: list           = []
+        self._plugins_path: str                 = settings_manager.path_manager.get_plugins_path()
 
         self._set_plugins_watcher()
 
@@ -51,6 +52,14 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
     def _controller_message(self, event: BaseEvent):
         for manifest_meta in self._plugin_collection:
             manifest_meta.instance._controller_message(event)
+
+        if isinstance(event, Code_Event_Types.PopulateSourceViewPopupEvent):
+            event.menu.append( Gtk.SeparatorMenuItem() )
+            item = Gtk.MenuItem(label = "Plugins")
+            item.connect("activate", self.toggle_plugins_ui)
+            event.menu.append(item)
+        elif isinstance(event, Code_Event_Types.TogglePluginsUiEvent):
+            self.toggle_plugins_ui()
 
     def _collect_search_locations(self, path: str, locations: list):
         locations.append(path)
@@ -105,32 +114,45 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
     ):
         if not is_pre_launch:
             GLib.idle_add(
-                self._run_with_pool, module, manifest_meta
+                self.execute_plugin, module, manifest_meta
             )
             return
 
-        self._run_with_pool(module, manifest_meta)
+        self.execute_plugin(module, manifest_meta)
 
-    def _run_with_pool(self, module: type, manifest_meta: ManifestMeta):
-        with ThreadPoolExecutor(max_workers = 1) as executor:
-            future = executor.submit(self.execute_plugin, module, manifest_meta)
-            future.add_done_callback(self._handle_future_exception)
-
-    def _handle_future_exception(self, future):
-        try:
-            future.result()
-        except Exception:
-            logger.exception("Plugin crashed during execution...")
-
-    def pre_launch_plugins(self) -> None:
+    def pre_launch_plugins(self):
         logger.info(f"Loading pre-launch plugins...")
         manifest_metas: list = self._manifest_manager.get_pre_launch_plugins()
         self._load_plugins(manifest_metas, is_pre_launch = True)
 
-    def post_launch_plugins(self) -> None:
+        for manifest_meta in manifest_metas:
+            self.plugins_ui.add_row(manifest_meta, self.toggle_plugin_load_state)
+
+    def post_launch_plugins(self):
         logger.info(f"Loading post-launch plugins...")
         manifest_metas: list = self._manifest_manager.get_post_launch_plugins()
         self._load_plugins(manifest_metas)
+
+        for manifest_meta in manifest_metas:
+            self.plugins_ui.add_row(manifest_meta, self.toggle_plugin_load_state)
+
+    def manual_launch_plugins(self):
+        logger.info(f"Collecting manual-launch plugins...")
+        manifest_metas: list = self._manifest_manager.get_manual_launch_plugins()
+
+        for manifest_meta in manifest_metas:
+            self.plugins_ui.add_row(manifest_meta, self.toggle_plugin_load_state)
+
+    def toggle_plugin_load_state(self, widget, manifest_meta):
+        if manifest_meta.instance:
+            self._plugin_collection.remove(manifest_meta)
+            manifest_meta.instance.unload()
+            manifest_meta.instance = None
+            widget.set_label("Load")
+            return
+
+        self._load_plugins( [manifest_meta] )
+        widget.set_label("Unload")
 
     def execute_plugin(self, module: type, manifest_meta: ManifestMeta):
         plugin                               = module.Plugin()
@@ -148,15 +170,18 @@ class PluginsController(ControllerBase, PluginsControllerMixin, PluginReloadMixi
         self._plugin_collection.append(manifest_meta)
 
     def create_plugin_context(self):
-        plugin_context: PluginContext                = PluginContext()
+        plugin_context: PluginContext                  = PluginContext()
 
-        plugin_context.request_ui_element: callable  = self.request_ui_element
-        plugin_context.emit: callable                = self.emit
-        plugin_context.emit_to: callable             = self.emit_to
-        plugin_context.emit_to_selected: callable    = self.emit_to_selected
-        plugin_context.register_controller: callable = self.register_controller
+        plugin_context.request_ui_element: callable    = self.request_ui_element
+        plugin_context.emit: callable                  = self.emit
+        plugin_context.emit_to: callable               = self.emit_to
+        plugin_context.emit_to_selected: callable      = self.emit_to_selected
+        plugin_context.register_controller: callable   = self.register_controller
+        plugin_context.unregister_controller: callable = self.unregister_controller
 
         return plugin_context
 
+    def toggle_plugins_ui(self, widget = None):
+        self.plugins_ui.hide() if self.plugins_ui.is_visible() else self.plugins_ui.show()
 
 plugins_controller = PluginsController()

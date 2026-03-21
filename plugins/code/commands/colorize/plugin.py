@@ -27,7 +27,19 @@ class Plugin(PluginCode):
             colorize.handle_colorize(event.buffer)
 
     def load(self):
-        event = Event_Factory.create_event("register_command",
+        self._manage_signals("register_command")
+
+    def unload(self):
+        self._manage_signals("unregister_command")
+        event = Event_Factory.create_event("get_source_views")
+
+        self.emit_to("source_views", event)
+        for view in event.response:
+            buffer = view.get_buffer()
+            colorize.clear_color_tags(buffer)
+
+    def _manage_signals(self, action: str):
+        event = Event_Factory.create_event(action,
             command_name = "tggle_colorize",
             command      = Handler,
             binding_mode = "released",
@@ -35,6 +47,7 @@ class Plugin(PluginCode):
         )
 
         self.emit_to("source_views", event)
+
 
     def run(self):
         ...

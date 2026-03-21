@@ -3,7 +3,7 @@
 # Lib imports
 
 # Application imports
-from ..singleton_raised import SingletonRaised
+from ..singleton import Singleton
 
 from ..dto.base_event import BaseEvent
 
@@ -17,7 +17,7 @@ class ControllerBaseException(Exception):
 
 
 
-class ControllerBase(SingletonRaised, EmitDispatcher):
+class ControllerBase(Singleton, EmitDispatcher):
     def __init__(self):
         super(ControllerBase, self).__init__()
 
@@ -42,3 +42,6 @@ class ControllerBase(SingletonRaised, EmitDispatcher):
 
     def register_controller(self, name: str, controller):
         self.controller_message_bus.register_controller(name, controller)
+
+    def unregister_controller(self, name: str):
+        self.controller_message_bus.unregister_controller(name)

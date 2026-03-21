@@ -40,7 +40,7 @@ class LSPManager(ControllerBase):
         self.lsp_manager_ui.connect('close-client', self._on_close_client)
 
     def _do_bind_mapping(self):
-        self.response_cache.set_lsp_client(self.lsp_manager_client)
+        self.response_cache.set_lsp_manager_client(self.lsp_manager_client)
         self.provider.response_cache = self.response_cache
         self.response_registry.set_event_hub(
             self.emit, self.emit_to, self.provider
@@ -52,6 +52,7 @@ class LSPManager(ControllerBase):
             self.lsp_manager_ui.add_client_listing(event.lang_id, event.lang_config)
         elif isinstance(event, Code_Event_Types.UnregisterLspClientEvent):
             self.response_registry.unregister_handler(event.lang_id)
+            self.lsp_manager_ui.remove_client_listing(event.lang_id)
 
     def _on_create_client(self, ui, lang_id: str, workspace_uri: str) -> bool:
         init_opts = ui.get_init_opts(lang_id)
@@ -65,6 +66,10 @@ class LSPManager(ControllerBase):
         if result:
             ui.toggle_client_buttons(show_close=False)
         return result
+
+    def handle_destroy(self):
+        self.lsp_manager_ui.disconnect_by_func(self._on_create_client)
+        self.lsp_manager_ui.disconnect_by_func(self._on_close_client)
 
     def create_client(
         self,

@@ -49,6 +49,17 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
+    def unload(self):
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "search_replace",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = ["<Control>f", "<Control>r"]
+        )
+
+        self.emit_to("source_views", event)
+        search_replace.destroy()
+
     def run(self):
         ...
  
@@ -63,4 +74,7 @@ class Handler:
         logger.debug("Command: Search/Replace")
 
         search_replace.last_key = args[0]
+        if not search_replace.active_view:
+            search_replace.active_view = view
+
         search_replace.hide() if search_replace.is_visible() else search_replace.show()

@@ -32,7 +32,6 @@ class TabWidget(Gtk.Box):
         self.set_orientation(0)
         self.set_hexpand(False)
         self.set_vexpand(False)
-        self.set_can_focus(False)
         self.set_size_request(-1, 12)
 
     def _setup_signals(self):
@@ -43,10 +42,6 @@ class TabWidget(Gtk.Box):
         self.label      = Gtk.Label()
         self.close_bttn = Gtk.Button()
         icon            = Gtk.Image(stock = Gtk.STOCK_CLOSE)
-
-        self.event_box.set_can_focus(False)
-        self.label.set_can_focus(False)
-        self.close_bttn.set_can_focus(False)
 
         self.event_box.set_above_child(True)
         ctx = self.label.get_style_context()

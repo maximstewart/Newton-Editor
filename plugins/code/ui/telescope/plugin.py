@@ -25,7 +25,7 @@ class Plugin(PluginCode):
         if isinstance(event, Code_Event_Types.FocusedViewEvent):
             ...
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
-            telescope.list_box.add_row(event)
+            telescope.list_box.add_row(event.file)
         elif isinstance(event, Code_Event_Types.RemovedFileEvent):
             telescope.list_box.remove_row(event)
         elif isinstance(event, Code_Event_Types.FilePathSetEvent):
@@ -46,7 +46,7 @@ class Plugin(PluginCode):
         )
         self.emit_to("source_views", event)
 
-        event  = Event_Factory.create_event(
+        event = Event_Factory.create_event(
             "create_source_view",
             state = SourceViewStates.INDEPENDENT
         )
@@ -55,11 +55,37 @@ class Plugin(PluginCode):
         source_view = event.response
         telescope.set_source_view(source_view)
 
-        event       = Event_Factory.create_event(
+        event = Event_Factory.create_event(
             "register_completer",
             completer = source_view.get_completion()
         )
         self.emit_to("completion", event)
+
+        event = Event_Factory.create_event("get_files")
+        self.emit_to("files", event)
+        for file in event.response:
+            telescope.list_box.add_row(file)
+
+    def unload(self):
+        window = self.request_ui_element("main-window")
+
+        telescope.unmap_parent_resize_event(window)
+
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "telescope",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = "<Control>b"
+        )
+        self.emit_to("source_views", event)
+
+        event = Event_Factory.create_event(
+            "unregister_completer",
+            completer = telescope.source_view.get_completion()
+        )
+        self.emit_to("completion", event)
+
+        telescope.destroy()
 
 
     def run(self):

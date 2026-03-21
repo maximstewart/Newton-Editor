@@ -31,10 +31,11 @@ class ControllerManager(Singleton, dict):
 
 
     def _crete_controller_message_bus(self) -> ControllerMessageBus:
-        controller_message_bus                     = ControllerMessageBus()
-        controller_message_bus.message_to          = self.message_to
-        controller_message_bus.message             = self.message
-        controller_message_bus.register_controller = self.register_controller
+        controller_message_bus                       = ControllerMessageBus()
+        controller_message_bus.message_to            = self.message_to
+        controller_message_bus.message               = self.message
+        controller_message_bus.register_controller   = self.register_controller
+        controller_message_bus.unregister_controller = self.unregister_controller
 
         return controller_message_bus
 
@@ -50,6 +51,17 @@ class ControllerManager(Singleton, dict):
         controller.set_controller_message_bus( self.message_bus )
 
         self[name] = controller
+
+    def unregister_controller(self, name: str):
+        if not name:
+            raise ControllerManagerException("Must pass in a 'name'...")
+
+        if not name in self.keys():
+            raise ControllerManagerException(
+                f"Can't find controller registered with name of '{name}'..."
+            )
+
+        self.pop(name, None)
 
     def get_controllers_key_list(self) -> list[str]:
         return self.keys()

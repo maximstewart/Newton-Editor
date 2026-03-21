@@ -35,7 +35,6 @@ class InfoBarWidget(Gtk.Box):
     def _subscribe_to_events(self):
         ...
 
-
     def _load_widgets(self):
         self.path_label      = Gtk.Label(label = "...")
         self.line_char_label = Gtk.Label(label = "1:0")
@@ -92,5 +91,3 @@ class InfoBarWidget(Gtk.Box):
         encoding_type = "utf-8" if not encoding_type else encoding_type
 
         self.encoding_label.set_text(encoding_type)
-
-

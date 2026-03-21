@@ -115,9 +115,9 @@ class ListBox(Gtk.ListBox):
 
         self.select_row(next_row)
 
-    def add_row(self, event):
-        label      = Gtk.Label(label = event.file.fname)
-        label.file = event.file
+    def add_row(self, file):
+        label      = Gtk.Label(label = file.fname)
+        label.file = file
         label.show()
         self.add(label)
 

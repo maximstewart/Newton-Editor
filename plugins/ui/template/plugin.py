@@ -24,8 +24,16 @@ class Plugin(PluginUI):
         ui_element = self.request_ui_element("header-container")
         ui_element.add( self.generate_plugin_element() )
 
+    def unload(self):
+        ui_element  = self.request_ui_element("header-container")
+        self.button = self.generate_plugin_element()
+
+        ui_element.add( self.button )
+
     def run(self):
-        ...
+        self.button.disconnect_by_func(self.send_message)
+        self.button.destroy()
+        del button
  
     def generate_plugin_element(self):
         button = Gtk.Button(label = "Hello, World!")

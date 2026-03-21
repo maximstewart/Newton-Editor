@@ -29,8 +29,7 @@ class Application:
 
     def run(self):
         if not settings_manager.is_trace_debug():
-            if not self.load_ipc():
-                return
+            if not self.load_ipc(): return
 
         win = Window()
         win.start()

@@ -28,3 +28,6 @@ class ControllerMessageBus:
 
     def register_controller(self, name: str, controller):
         raise ControllerMessageBusException("Controller Message Bus 'register_controller' must be overriden by Controller Manager...")
+
+    def unregister_controller(self, name: str):
+        raise ControllerMessageBusException("Controller Message Bus 'unregister_controller' must be overriden by Controller Manager...")

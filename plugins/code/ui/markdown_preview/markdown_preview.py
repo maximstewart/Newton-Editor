@@ -7,6 +7,7 @@ gi.require_version('Gdk', '3.0')
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GLib
 
 # Application imports
 from core.widgets.webkit.webkit_ui import WebkitUI
@@ -47,6 +48,7 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
     def _setup_signals(self):
         self.connect("hide", self._handle_hide)
         self.connect("show", self._handle_show)
+        self.connect("destroy", self._handle_destroy)
 
     def _load_widgets(self):
         box             = Gtk.Box()
@@ -71,7 +73,6 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
         box.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.start_stop_bttn.connect("clicked", self._tggle_preview_updates)
-        settings_bttn.connect("clicked", self._handle_settings)
 
         bttn_box.pack_end(self.start_stop_bttn, expand = False, fill = False, padding = 1)
         bttn_box.pack_end(settings_bttn, expand = False, fill = False, padding = 1)
@@ -98,5 +99,8 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
     def _tggle_preview_updates(self, widget):
         self.is_preview_paused = not self.is_preview_paused
 
-    def _handle_settings(self, widget):
-        ...
+    def _handle_destroy(self):
+        self.disconnect_by_func(self._handle_hide)
+        self.disconnect_by_func(self._handle_show)
+        self.disconnect_by_func(self._handle_destroy)
+        self.start_stop_bttn.disconnect_by_func(self._tggle_preview_updates)

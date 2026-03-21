@@ -26,6 +26,16 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
+    def unload(self):
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "toggle_source_view",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = "<Shift><Control>h"
+        )
+
+        self.emit_to("source_views", event)
+
     def run(self):
         ...
 

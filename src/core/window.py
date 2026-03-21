@@ -67,6 +67,7 @@ class Window(Gtk.ApplicationWindow):
     def _setup_signals(self):
         self.connect("focus-in-event", self._on_focus_in_event)
         self.connect("focus-out-event", self._on_focus_out_event)
+#        self.connect("show", self._handle_show)
 
         self.connect("delete-event", self.stop)
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, self.stop)
@@ -74,6 +75,10 @@ class Window(Gtk.ApplicationWindow):
     def _subscribe_to_events(self):
         event_system.subscribe("tear-down", self.stop)
         event_system.subscribe("load-interactive-debug", self._load_interactive_debug)
+
+    def _handle_show(self, widget):
+        self.disconnect_by_func( self._handle_show )
+        self._load_widgets()
 
     def _load_widgets(self):
         widget_registery.expose_object("main-window", self)

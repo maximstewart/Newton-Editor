@@ -29,7 +29,11 @@ class SourceViewSignalMapper:
     def connect_signals(self, source_view: SourceView):
         signal_mappings = self._get_signal_mappings()
         for signal, handler in signal_mappings.items():
-            source_view.connect(signal, handler)
+            if not signal == "populate-popup": 
+                source_view.connect(signal, handler)
+                continue
+
+            source_view.connect_after(signal, handler)
 
     def disconnect_signals(self, source_view: SourceView):
         signal_mappings = self._get_signal_mappings()

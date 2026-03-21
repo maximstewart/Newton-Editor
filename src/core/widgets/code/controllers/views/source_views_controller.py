@@ -33,11 +33,15 @@ class SourceViewsController(ControllerBase, list):
             self._remove_file(event)
         elif isinstance(event, Code_Event_Types.RegisterCommandEvent):
             self._register_command(event)
+        elif isinstance(event, Code_Event_Types.UnregisterCommandEvent):
+            self._unregister_command(event)
 
         if not self.signal_mapper.active_view: return
 
         if isinstance(event, Code_Event_Types.GetActiveViewEvent):
             event.response = self.signal_mapper.active_view
+        elif isinstance(event, Code_Event_Types.GetSourceViewsEvent):
+            event.response = self
         elif isinstance(event, Code_Event_Types.TextChangedEvent):
             self.signal_mapper.active_view.command.exec("update_info_bar")
         elif isinstance(event, Code_Event_Types.SetActiveFileEvent):
@@ -59,6 +63,24 @@ class SourceViewsController(ControllerBase, list):
 
         for view in self:
             view.command.add_command(
+                event.command_name,
+                event.command
+            )
+
+    def _unregister_command(self, event: Code_Event_Types.UnregisterCommandEvent):
+        if not isinstance(event.binding, list):
+            event.binding = [ event.binding ]
+
+        for binding in event.binding:
+            self.state_manager.key_mapper.unmap_command(
+                event.command_name,
+                {
+                    f"{event.binding_mode}": binding
+                }
+            )
+
+        for view in self:
+            view.command.remove_command(
                 event.command_name,
                 event.command
             )

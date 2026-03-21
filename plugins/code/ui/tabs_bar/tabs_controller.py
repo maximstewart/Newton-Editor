@@ -16,7 +16,6 @@ from .tab_widget import TabWidget
 
 
 
-
 class TabsController(ControllerBase):
     def __init__(self):
         super(TabsController, self).__init__()
@@ -35,7 +34,7 @@ class TabsController(ControllerBase):
         elif isinstance(event, Code_Event_Types.FileExternallyDeletedEvent):
             self.tabs_widget.externally_deleted( event.buffer )
         elif isinstance(event, Code_Event_Types.AddedNewFileEvent):
-            self.add_tab(event)
+            self.add_tab(event.file)
         elif isinstance(event, Code_Event_Types.PoppedFileEvent):
             ...
         elif isinstance(event, Code_Event_Types.RemovedFileEvent):
@@ -53,11 +52,11 @@ class TabsController(ControllerBase):
 
             break
 
-    def add_tab(self, event: Code_Event_Types.AddedNewFileEvent):
+    def add_tab(self, file):
         tab      = TabWidget()
-        tab.file = event.file
+        tab.file = file
 
-        tab.label.set_label(event.file.fname)
+        tab.label.set_label(file.fname)
 
         self.tabs_widget.append_page(Gtk.Separator(), tab)
         tab.show_all()
@@ -73,3 +72,13 @@ class TabsController(ControllerBase):
             )
 
             break
+
+    def unload_tabs(self):
+        for page_widget in self.tabs_widget.get_children():
+            tab = self.tabs_widget.get_tab_label(page_widget)
+
+            tab.clear_signals_and_data()
+            self.tabs_widget.remove_page(
+                self.tabs_widget.page_num(page_widget)
+            )
+

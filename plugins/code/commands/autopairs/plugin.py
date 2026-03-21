@@ -39,6 +39,24 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
+    def unload(self):
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "autopairs",
+            command      = Handler,
+            binding_mode = "held",
+            binding      = [
+                "'", "`", "[", "]",
+                '<Shift>"',
+                '<Shift>(',
+                '<Shift>)',
+                '<Shift>{',
+                '<Shift>}'
+            ]
+        )
+
+        self.emit_to("source_views", event)
+        autopairs = None
+
     def run(self):
         ...
 

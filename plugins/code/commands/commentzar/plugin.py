@@ -36,6 +36,16 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
+    def unload(self):
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "keyboard_tggl_comment",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = "<Control>slash"
+        )
+
+        self.emit_to("source_views", event)
+
     def run(self):
         ...
 

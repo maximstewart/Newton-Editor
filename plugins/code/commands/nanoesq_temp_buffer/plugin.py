@@ -21,7 +21,13 @@ class Plugin(PluginCode):
         ...
 
     def load(self):
-        event = Event_Factory.create_event("register_command",
+        self._manage_signals("register_command")
+
+    def load(self):
+        self._manage_signals("unregister_command")
+
+    def _manage_signals(self, action: str):
+        event = Event_Factory.create_event(action,
             command_name = "cut_to_temp_buffer",
             command      = Handler,
             binding_mode = "held",
@@ -30,7 +36,7 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
-        event = Event_Factory.create_event("register_command",
+        event = Event_Factory.create_event(action,
             command_name = "paste_temp_buffer",
             command      = Handler2,
             binding_mode = "held",

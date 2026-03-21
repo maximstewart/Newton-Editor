@@ -36,6 +36,19 @@ class EventFactory(Singleton):
 
         logger.debug(f"Registered {i} event types:")
 
+    def unregister_events(self, events: dict):
+        i = 0
+        for name, obj in events:
+            if not self._is_valid_event_class(obj): continue
+
+            event_type = self._class_name_to_event_type(name)
+
+            del self._event_classes[event_type]
+            Code_Event_Types.remove_event_class(name)
+            i += 1
+
+        logger.debug(f"Unregistered {i} event types:")
+
     def create_event(self, event_type: str, **kwargs) -> BaseEvent:
         if event_type not in self._event_classes:
             raise ValueError(f"Unknown event type: {event_type}")
@@ -79,6 +92,9 @@ class EventNamespace:
 
     def add_event_class(self, name: str, event_class: Type[BaseEvent]):
         setattr(self, name, event_class)
+
+    def remove_event_class(self, name: str):
+        delattr(self, name)
 
 
 

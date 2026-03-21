@@ -10,23 +10,23 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 
 
-def file_is_deleted(event):
+def file_is_deleted(event, emit):
     event.file.was_deleted = True
     event = Event_Factory.create_event(
         "file_externally_deleted",
         file   = event.file,
         buffer = event.buffer
     )
-    self.emit(event)
+    emit(event)
 
 
-def file_is_externally_modified(event):
+def file_is_externally_modified(event, emit):
 #    event = Event_Factory.create_event(
 #        "file_externally_modified",
 #        file   = event.file,
 #        buffer = event.buffer
 #    )
-#    self.emit(event)
+#    emit(event)
 
     ...
 

@@ -12,21 +12,21 @@ class SingletonError(Exception):
 
 
 
-T = TypeVar('T', bound='Singleton')
+T = TypeVar('T', bound = 'Singleton')
+
+
 
 class Singleton:
-    __instance = None
+    _instances = {}
 
     def __new__(cls: Type[T], *args: Any, **kwargs: Any) -> T:
-        if cls.__instance is not None:
-            logger.debug(f"'{cls.__name__}' is a Singleton. Returning  instance...")
-            return cls.__instance
+        if cls in cls._instances: return cls._instances[cls]
 
-        cls.__instance = super(Singleton, cls).__new__(cls)
-        return cls.__instance
+        instance = super().__new__(cls)
+        cls._instances[cls] = instance
+        return instance
 
-    def __init__(self) -> None:
-        if self.__instance is not None:
-            return
-
-        super(Singleton, self).__init__()
+    @classmethod
+    def destroy(cls):
+        if cls in cls._instances:
+            del cls._instances[cls]

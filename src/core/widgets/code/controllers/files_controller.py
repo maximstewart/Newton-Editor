@@ -28,6 +28,8 @@ class FilesController(ControllerBase, list):
             self.remove_file(event)
         elif isinstance(event, Code_Event_Types.GetFileEvent):
             self.get_file(event)
+        elif isinstance(event, Code_Event_Types.GetFilesEvent):
+            event.response = self
         elif isinstance(event, Code_Event_Types.GetSwapFileEvent):
             self.get_swap_file(event)
 

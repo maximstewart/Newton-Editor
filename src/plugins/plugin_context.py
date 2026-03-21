@@ -37,3 +37,6 @@ class PluginContext:
     def register_controller(self, name: str, controller):
         raise PluginContextException("Plugin Context 'register_controller' must be overridden...")
 
+    def unregister_controller(self, name: str):
+        raise PluginContextException("Plugin Context 'unregister_controller' must be overridden...")
+

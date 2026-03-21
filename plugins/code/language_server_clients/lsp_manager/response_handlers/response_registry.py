@@ -33,7 +33,7 @@ class ResponseRegistry:
     def register_handler(self, lang_id: str, handler_cls: type[BaseHandler]):
         self._lang_handlers[lang_id] = handler_cls
 
-    def unregister_handler(self, lang_id: str, handler_cls: type[BaseHandler]):
+    def unregister_handler(self, lang_id: str):
         del self._lang_handlers[lang_id]
 
     def get_handler(self, lang_id: str = "", method: str = ""):

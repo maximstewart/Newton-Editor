@@ -51,6 +51,18 @@ class Plugin(PluginCode):
 
         self.emit_to("source_views", event)
 
+    def unload(self):
+        event = Event_Factory.create_event("unregister_command",
+            command_name = "tggle_markdown_preview",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = "<Shift><Control>m"
+        )
+
+        self.emit_to("source_views", event)
+
+        markdown_preview.destroy()
+
     def run(self):
         ...
 
@@ -67,4 +79,14 @@ class Handler:
         if not markdown_preview.can_hide:
             markdown_preview.can_hide = True
 
-        markdown_preview.popdown() if markdown_preview.is_visible() else markdown_preview.popup()
+        if markdown_preview.is_visible():
+            markdown_preview.popdown()
+            return
+
+        file   = view.command.exec("get_current_file")
+        if not file or not file.get_location(): return
+        buffer = view.get_buffer()
+
+        markdown_preview.popup()
+        markdown_preview.fpath = file.get_location().get_path()
+        markdown_preview._do_markdown_translate(buffer)

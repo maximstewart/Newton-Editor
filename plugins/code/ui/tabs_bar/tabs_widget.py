@@ -33,6 +33,7 @@ class TabsWidget(Gtk.Notebook):
         self.connect("page-added", self._page_added)
         self.switch_page_id = \
             self.connect_after("switch-page", self._switch_page)
+        self.connect("destroy", self._handle_destroy)
 
     def _subscribe_to_events(self):
         ...
@@ -81,25 +82,38 @@ class TabsWidget(Gtk.Notebook):
             )
 
     def create_menu(self, page_widget) -> Gtk.Menu:
-        context_menu     = Gtk.Menu()
+        context_menu  = Gtk.Menu()
+        close_submenu = Gtk.Menu()
+        save_item     = Gtk.MenuItem(label = "Save")
+        save_as_item  = Gtk.MenuItem(label = "Save As")
 
-        close_item       = Gtk.MenuItem(label = "Close Tab")
-        close_left_item  = Gtk.MenuItem(label = "Close Tabs Left")
-        close_right_item = Gtk.MenuItem(label = "Close Tabs Right")
-        close_other_item = Gtk.MenuItem(label = "Close Other Tabs")
-        close_all_item   = Gtk.MenuItem(label = "Close All Tabs")
+        close_actions_menu = Gtk.MenuItem(label = "Close Actions")
+        close_item         = Gtk.MenuItem(label = "Close Tab")
+        close_left_item    = Gtk.MenuItem(label = "Close Tabs Left")
+        close_right_item   = Gtk.MenuItem(label = "Close Tabs Right")
+        close_other_item   = Gtk.MenuItem(label = "Close Other Tabs")
+        close_all_item     = Gtk.MenuItem(label = "Close All Tabs")
 
-        close_item.connect("activate", self.close_item, page_widget)
-        close_left_item.connect("activate", self.close_left_items, page_widget)
+        save_item.connect("activate",    self.save_item, page_widget)
+        save_as_item.connect("activate", self.save_as_item, page_widget)
+
+        close_item.connect("activate",       self.close_item, page_widget)
+        close_left_item.connect("activate",  self.close_left_items, page_widget)
         close_right_item.connect("activate", self.close_right_items, page_widget)
         close_other_item.connect("activate", self.close_other_items, page_widget)
-        close_all_item.connect("activate", self.close_all_items, page_widget)
+        close_all_item.connect("activate",   self.close_all_items, page_widget)
 
-        context_menu.append(close_item)
-        context_menu.append(close_left_item)
-        context_menu.append(close_right_item)
-        context_menu.append(close_other_item)
-        context_menu.append(close_all_item)
+        close_submenu.append(close_item)
+        close_submenu.append(close_left_item)
+        close_submenu.append(close_right_item)
+        close_submenu.append(close_other_item)
+        close_submenu.append(close_all_item)
+
+        close_actions_menu.set_submenu(close_submenu)
+
+        context_menu.append(save_item)
+        context_menu.append(save_as_item)
+        context_menu.append(close_actions_menu)
 
         context_menu.show_all()
 
@@ -142,6 +156,14 @@ class TabsWidget(Gtk.Notebook):
             break
 
 
+    def save_item(self, menu_item, page_widget):
+        tab = self.get_tab_label(page_widget)
+        tab.file.save()
+
+    def save_as_item(self, menu_item, page_widget):
+        tab = self.get_tab_label(page_widget)
+        tab.file.save_as()
+
     def close_item(self, menu_item, page_widget):
         tab = self.get_tab_label(page_widget)
         tab.close_bttn.clicked()
@@ -176,3 +198,9 @@ class TabsWidget(Gtk.Notebook):
         for widget in children[ : ]:
             tab = self.get_tab_label(widget)
             tab.close_bttn.clicked()
+
+    def _handle_destroy(self, widget):
+        self.disconnect_by_func(self._page_added)
+        self.disconnect_by_func(self._switch_page)
+        self.disconnect_by_func(self._handle_destroy)
+

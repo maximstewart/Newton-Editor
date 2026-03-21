@@ -22,7 +22,7 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.active_view                = None
         self.highlight_tag: Gtk.TextTag = None
         self.matches: list[tuple]       = []
-        self.last_key: str              = None
+        self.last_key: str              = "f"
 
         self._setup_styling()
         self._setup_signals()
@@ -48,6 +48,7 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
     def _setup_signals(self):
         self.connect("show", self._handle_show)
         self.connect("hide", self._handle_hide)
+        self.connect("destroy", self._handle_destroy)
 
     def _load_widgets(self):
         self.status_lbl       = Gtk.Label(label = "Find in Current Buffer")
@@ -57,10 +58,10 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.find_entry       = Gtk.SearchEntry()
         self.replace_entry    = Gtk.SearchEntry()
 
-        find_bttn             = Gtk.Button(label = "Find")
-        find_all_bttn         = Gtk.Button(label = "Find All")
-        replace_bttn          = Gtk.Button(label = "Replace")
-        replace_all_bttn      = Gtk.Button(label = "Replace All")
+        self.find_bttn        = Gtk.Button(label = "Find")
+        self.find_all_bttn    = Gtk.Button(label = "Find All")
+        self.replace_bttn     = Gtk.Button(label = "Replace")
+        self.replace_all_bttn = Gtk.Button(label = "Replace All")
 
         self.find_entry.set_hexpand(True)
         self.replace_entry.set_hexpand(True)
@@ -81,21 +82,24 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.replace_entry.connect("key-release-event", self._replace_entry_key_release_event)
         self.replace_entry.connect("activate", self._replace_entry_activate)
 
-        find_bttn.connect(
+        self.find_handler_id = self.find_bttn.connect(
             "clicked",
             lambda button: self._find_entry_next_match(self.find_entry)
         )
-        find_all_bttn.connect(
+
+        self.find_all_handler_id = self.find_all_bttn.connect(
             "clicked",
             lambda button: self._find_entry_search_change(self.find_entry)
         )
-        replace_bttn.connect(
+
+        self.replace_handler_id = self.replace_bttn.connect(
             "clicked",
             lambda button: self._replace_entry_activate(self.replace_entry)
         )
-        replace_all_bttn.connect(
+
+        self.replace_all_handler_id = self.replace_all_bttn.connect(
             "clicked",
-            lambda button: self._replace_all_activate(self.replace_entry) 
+            lambda button: self._replace_all_activate(self.replace_entry)
         )
 
         self.attach(child = self.status_lbl,       left = 0, top = 0, width = 3, height = 1)
@@ -103,12 +107,12 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         self.attach(child = self.mode_bttn_box,    left = 5, top = 0, width = 2, height = 1)
 
         self.attach(child = self.find_entry,       left = 0, top = 1, width = 5, height = 1)
-        self.attach(child = find_bttn,             left = 5, top = 1, width = 1, height = 1)
-        self.attach(child = find_all_bttn,         left = 6, top = 1, width = 1, height = 1)
+        self.attach(child = self.find_bttn,        left = 5, top = 1, width = 1, height = 1)
+        self.attach(child = self.find_all_bttn,    left = 6, top = 1, width = 1, height = 1)
 
         self.attach(child = self.replace_entry,    left = 0, top = 2, width = 5, height = 1)
-        self.attach(child = replace_bttn,          left = 5, top = 2, width = 1, height = 1)
-        self.attach(child = replace_all_bttn,      left = 6, top = 2, width = 1, height = 1)
+        self.attach(child = self.replace_bttn,     left = 5, top = 2, width = 1, height = 1)
+        self.attach(child = self.replace_all_bttn, left = 6, top = 2, width = 1, height = 1)
 
 
     def _handle_show(self, widget):
@@ -117,9 +121,9 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
             self.find_entry.grab_focus()
             return
 
-        self.replace_entry.grab_focus()
         # Fake focus call to prompt search
-        self._find_entry_focus_in_event(self.find_entry, None) 
+        self._find_entry_focus_in_event(self.find_entry, None)
+        self.replace_entry.grab_focus()
 
     def _handle_hide(self, widget):
         if not self.active_view: return
@@ -197,3 +201,22 @@ class SearchReplace(Gtk.Grid, SearchReplaceMixin):
         start_itr, end_itr = buffer.get_bounds()
         buffer.remove_tag(self.highlight_tag, start_itr, end_itr)
 
+    def _handle_destroy(self, widget):
+        self.disconnect_by_func(self._handle_show)
+        self.disconnect_by_func(self._handle_hide)
+        self.disconnect_by_func(self._handle_destroy)
+
+        self.find_entry.disconnect_by_func(self._find_entry_focus_in_event)
+        self.find_entry.disconnect_by_func(self._find_entry_key_release_event)
+        self.find_entry.disconnect_by_func(self._find_entry_activate)
+        self.find_entry.disconnect_by_func(self._find_entry_search_change)
+        self.find_entry.disconnect_by_func(self._find_entry_next_match)
+        self.find_entry.disconnect_by_func(self._find_entry_previous_match)
+
+        self.replace_entry.disconnect_by_func(self._replace_entry_key_release_event)
+        self.replace_entry.disconnect_by_func(self._replace_entry_activate)
+
+        self.find_bttn.disconnect(self.find_handler_id)
+        self.find_all_bttn.disconnect(self.find_all_handler_id)
+        self.replace_bttn.disconnect(self.replace_handler_id)
+        self.replace_all_bttn.disconnect(self.replace_all_handler_id)

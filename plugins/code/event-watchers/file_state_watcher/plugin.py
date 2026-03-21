@@ -21,11 +21,14 @@ class Plugin(PluginCode):
             event.file.check_file_on_disk()
 
             if event.file.is_deleted():
-                file_is_deleted(event)
+                file_is_deleted(event, self.emit)
             elif event.file.is_externally_modified():
-                file_is_externally_modified(event)
+                file_is_externally_modified(event, self.emit)
 
     def load(self):
+        ...
+
+    def unload(self):
         ...
 
     def run(self):

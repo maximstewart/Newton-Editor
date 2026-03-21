@@ -33,44 +33,44 @@ class ModeButtons(Gtk.ButtonBox):
         ctx.add_class("search-replace-mode-buttons")
 
     def _setup_signals(self):
-        ...
+        self.connect("destroy", self._handle_destroy)
 
     def _load_widgets(self):
-        use_regex_bttn    = Gtk.ToggleButton(label = ".*")
-        match_case_bttn   = Gtk.ToggleButton(label = "Aa")
-        in_selection_bttn = Gtk.ToggleButton()
-        whole_word_bttn   = Gtk.ToggleButton()
-        hide_bttn         = Gtk.Button(label = "X")
+        self.use_regex_bttn    = Gtk.ToggleButton(label = ".*")
+        self.match_case_bttn   = Gtk.ToggleButton(label = "Aa")
+        self.in_selection_bttn = Gtk.ToggleButton()
+        self.whole_word_bttn   = Gtk.ToggleButton()
+        self.hide_bttn         = Gtk.Button(label = "X")
 
-        use_regex_bttn.set_sensitive(False)
+        self.use_regex_bttn.set_sensitive(False)
 
-        use_regex_bttn.set_tooltip_text("Use Regex")
-        match_case_bttn.set_tooltip_text("Match Case")
-        in_selection_bttn.set_tooltip_text("Only In Selection")
-        whole_word_bttn.set_tooltip_text("Whole Word")
+        self.use_regex_bttn.set_tooltip_text("Use Regex")
+        self.match_case_bttn.set_tooltip_text("Match Case")
+        self.in_selection_bttn.set_tooltip_text("Only In Selection")
+        self.whole_word_bttn.set_tooltip_text("Whole Word")
 
-        use_regex_bttn.connect("toggled", self._toggled_button, "use_regex")
-        match_case_bttn.connect("toggled", self._toggled_button, "match_case")
-        in_selection_bttn.connect("toggled", self._toggled_button, "in_selection")
-        whole_word_bttn.connect("toggled", self._toggled_button, "whole_word")
+        self.use_regex_bttn.connect("toggled", self._toggled_button, "use_regex")
+        self.match_case_bttn.connect("toggled", self._toggled_button, "match_case")
+        self.in_selection_bttn.connect("toggled", self._toggled_button, "in_selection")
+        self.whole_word_bttn.connect("toggled", self._toggled_button, "whole_word")
 
-        hide_bttn.connect(
+        self.hide_bttn_id = self.hide_bttn.connect(
             "clicked",
             lambda widget: self.get_parent().hide()
         )
 
-        in_selection_bttn.set_image(
+        self.in_selection_bttn.set_image(
             Gtk.Image.new_from_file("images/only-in-selection.png")
         )
-        whole_word_bttn.set_image(
+        self.whole_word_bttn.set_image(
             Gtk.Image.new_from_file("images/whole-word.png")
         )
 
-        self.add(use_regex_bttn)
-        self.add(match_case_bttn)
-        self.add(in_selection_bttn)
-        self.add(whole_word_bttn)
-        self.add(hide_bttn)
+        self.add(self.use_regex_bttn)
+        self.add(self.match_case_bttn)
+        self.add(self.in_selection_bttn)
+        self.add(self.whole_word_bttn)
+        self.add(self.hide_bttn)
 
     def _toggled_button(self, toggle_button, mode: str):
         setattr(self, mode, not getattr(self, mode))
@@ -79,4 +79,12 @@ class ModeButtons(Gtk.ButtonBox):
     def request_update(self):
         raise ModeException("Must by 'monkey' patched from search_replace.py") 
 
+    def _handle_destroy(self, widget):
+        self.disconnect_by_func(self._handle_destroy)
 
+        self.use_regex_bttn.disconnect_by_func(self._toggled_button)
+        self.match_case_bttn.disconnect_by_func(self._toggled_button)
+        self.in_selection_bttn.disconnect_by_func(self._toggled_button)
+        self.whole_word_bttn.disconnect_by_func(self._toggled_button)
+
+        self.hide_bttn.disconnect(self.hide_bttn_id)

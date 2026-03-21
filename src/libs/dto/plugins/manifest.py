@@ -17,6 +17,7 @@ class Manifest:
     version: str       = "0.0.1"
     support: str       = "support@mail.com"
     pre_launch: bool   = False
+    autoload: bool     = True
     requests: Requests = field(default_factory = lambda: Requests())
 
     def __post_init__(self):

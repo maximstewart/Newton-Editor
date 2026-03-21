@@ -34,6 +34,9 @@ class PluginCode(PluginBase):
     def register_controller(self, name: str, controller):
         return self.plugin_context.register_controller(name, controller)
 
+    def unregister_controller(self, name: str):
+        return self.plugin_context.unregister_controller(name)
+
     def request_ui_element(self, element_id: str):
         return self.plugin_context.request_ui_element(element_id)
 

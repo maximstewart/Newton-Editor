@@ -62,6 +62,31 @@ class Plugin(PluginCode):
         source_view = event.response
         lsp_manager.lsp_manager_ui.set_source_view(source_view)
 
+    def unload(self):
+        Event_Factory.unregister_events( lsp_events.__dict__.items() )
+
+        self.unregister_controller("lsp_manager")
+
+        window = self.request_ui_element("main-window")
+
+        lsp_manager.lsp_manager_ui.unmap_parent_resize_event(window)
+
+        event  = Event_Factory.create_event("unregister_command",
+            command_name = "LSP Manager",
+            command      = Handler,
+            binding_mode = "released",
+            binding      = ["<Shift><Control>l", "<Control>g", "<Control>i"]
+        )
+        self.emit_to("source_views", event)
+
+        event  = Event_Factory.create_event(
+            "unregister_provider",
+            provider_name = "LSP Completer"
+        )
+        self.emit_to("completion", event)
+
+        lsp_manager.handle_destroy()
+
     def run(self):
         ...
 
