@@ -45,6 +45,7 @@ class ListBox(Gtk.ListBox):
 
     def _row_activated(self, list_box, row = None):
         row  = self.get_selected_row()
+        if not row: return
         file = row.get_children()[0].file
 
         event = Event_Factory.create_event(
@@ -70,24 +71,62 @@ class ListBox(Gtk.ListBox):
 
     def search_changed(self, entry):
         self.search_buffer_names(entry)
+
         for row in self.get_children():
             if not row.is_visible(): continue
             self.select_row(row)
+            break
+
+    def fuzzy_score(self, query, text):
+        query = query.lower()
+        text  = text.lower()
+        score = 0
+        q_idx = 0
+
+        for char in text:
+            if q_idx < len(query) and char == query[q_idx]:
+                score += 1
+                q_idx += 1
+
+        return score if q_idx == len(query) else 0
+
 
     def search_buffer_names(self, entry):
-        text = entry.get_text()
-        if not text:
-            for row in self.get_children():
-                row.show()
-
-            return
+        query = entry.get_text().lower()
+        rows  = []
 
         for row in self.get_children():
-            child = row.get_children()[0]
+            child            = row.get_children()[0]
+            label_text       = child.get_label()
+            score            = self.fuzzy_score(query, label_text) if query else 1
+            child.label_text = label_text if not hasattr(child, "label_text") else child.label_text
 
-            row.show() \
-            if text in child.get_label() else \
-            row.hide()
+            rows.append((score, row, child, label_text))
+
+        rows.sort(key = lambda x: x[0], reverse = True)
+        for score, row, child, label_text in rows:
+            if query and score > 0:
+                highlighted = self.highlight_match(label_text, query)
+                child.set_markup(highlighted)
+                row.show()
+            elif not query:
+                child.set_label(child.label_text)
+                row.show()
+            else:
+                row.hide()
+
+    def highlight_match(self, text, query):
+        i      = 0
+        result = ""
+
+        for char in text:
+            if i < len(query) and char.lower() == query[i].lower():
+                result += f"<b><i><u>{char}</u></i></b>"
+                i += 1
+            else:
+                result += char
+
+        return result
 
     def activate_row(self):
         self._row_activated(self)
@@ -96,30 +135,44 @@ class ListBox(Gtk.ListBox):
         raise TelescopeListBoxException("ListBox must have 'set_buffer' monkey patched...")
 
     def move_row_selection_up(self):
-        row      = self.get_selected_row()
-        next_row = self.get_row_at_index(row.get_index() - 1)
+        row = self.get_selected_row()
+        if not row: return
 
-        if not next_row:
-            next_row = self.get_row_at_index(
-                len( self.get_children() ) - 1
-            )
+        rows = [r for r in self.get_children() if r.is_visible()]
+        if not rows: return
 
-        self.select_row(next_row)
+        try:
+            idx = rows.index(row)
+        except ValueError:
+            return
+
+        next_idx = (idx - 1) % len(rows)
+        self.select_row(rows[next_idx])
 
     def move_row_selection_down(self):
-        row      = self.get_selected_row()
-        next_row = self.get_row_at_index(row.get_index() + 1)
+        row = self.get_selected_row()
+        if not row: return
 
-        if not next_row:
-            next_row = self.get_row_at_index(0)
+        rows = [r for r in self.get_children() if r.is_visible()]
+        if not rows: return
 
-        self.select_row(next_row)
+        try:
+            idx = rows.index(row)
+        except ValueError:
+            return
+
+        next_idx = (idx + 1) % len(rows)
+        self.select_row(rows[next_idx])
 
     def add_row(self, file):
-        label      = Gtk.Label(label = file.fname)
+        row   = Gtk.ListBoxRow()
+        label = Gtk.Label(label = file.fname)
         label.file = file
-        label.show()
-        self.add(label)
+
+        row.add(label)
+        row.show_all()
+
+        self.add(row)
 
     def remove_row(self, event):
         for row in self.get_children():
