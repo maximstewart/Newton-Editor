@@ -13,8 +13,6 @@ from gi.repository import Gtk
 
 
 def add_prettify_json(buffer, menu):
-    menu.append(separator)
-
     def on_prettify_json(menuitem, buffer):
         start_itr, \
         end_itr = buffer.get_start_iter(), buffer.get_end_iter()

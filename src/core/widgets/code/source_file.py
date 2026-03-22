@@ -120,21 +120,7 @@ class SourceFile(GtkSource.File):
 
         return gfile
 
-
-    def load_path(self, gfile: Gio.File):
-        if not gfile: return
-
-        text         = gfile.load_bytes()[0].get_data().decode("UTF-8")
-        info         = gfile.query_info('standard::content-type', Gio.FileQueryInfoFlags.NONE, None)
-        content_type = info.get_content_type()
-        self.ftype   = Gio.content_type_get_mime_type(content_type) \
-                        .replace("application/", "") \
-                        .replace("text/", "") \
-                        .replace("x-", "")
-
-        self.set_path(gfile)
-        logger.debug(f"File content type: {self.ftype}")
-
+    def _load_data(self, text: str, is_new: bool = True):
         undo_manager = self.buffer.get_undo_manager()
 
         self.buffer.block_changed_signal()
@@ -151,21 +137,49 @@ class SourceFile(GtkSource.File):
 
             self.buffer.delete(start_itr, end_itr)
             self.buffer.insert(start_itr, text, -1)
+            self.is_externally_modified()
             GLib.idle_add(move_insert_to_start)
 
         undo_manager.end_not_undoable_action()
         self.buffer.set_modified(False)
 
-        eve = Event_Factory.create_event(
-            "loaded_new_file",
-            file = self
-        )
-        self.emit(eve)
+        if is_new:
+            eve = Event_Factory.create_event(
+                "loaded_new_file",
+                file = self
+            )
+            self.emit(eve)
 
         self.buffer.unblock_changed_signal()
         self.buffer.unblock_changed_after_signal()
         self.buffer.unblock_modified_changed_signal()
 
+    def is_externally_modified(self) -> bool:
+        stat    = os.stat(self.fpath)
+        current = (stat.st_mtime_ns, stat.st_size)
+
+        is_modified = \
+            hasattr(self, "last_state") and not current == self.last_state
+
+        self.last_state = current
+        return is_modified
+
+    def load_path(self, gfile: Gio.File):
+        if not gfile: return
+        loaded, contents, etag_out = gfile.load_contents()
+        if not loaded: raise Exception("File couldn't be loaded...'")
+
+        text         = contents.decode("UTF-8")
+        info         = gfile.query_info('standard::content-type', Gio.FileQueryInfoFlags.NONE, None)
+        content_type = info.get_content_type()
+        self.ftype   = Gio.content_type_get_mime_type(content_type) \
+                        .replace("application/", "") \
+                        .replace("text/", "") \
+                        .replace("x-", "")
+
+        self.set_path(gfile)
+        logger.debug(f"File content type: {self.ftype}")
+        self._load_data(text)
 
     def set_path(self, gfile: Gio.File):
         if not gfile: return
@@ -177,9 +191,17 @@ class SourceFile(GtkSource.File):
         event = Event_Factory.create_event("file_path_set", file = self)
         self.emit(event)
 
+    def reload(self):
+        loaded, contents, etag_out = self.get_location().load_contents()
+        if not loaded: raise Exception("File couldn't be re-loaded...'")
+
+        text = contents.decode("UTF-8")
+        self._load_data(text, False)
+
     def save(self):
         self._write_file( self.get_location() )
 
+        self.is_externally_modified()
         self.buffer.set_modified(False)
         event = Event_Factory.create_event(
             "saved_file",
