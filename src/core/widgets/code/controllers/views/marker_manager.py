@@ -56,10 +56,28 @@ class MarkerManager(MarkSupportMixin):
                 continue
 
             if has_selection:
+                caret_itr     = buffer.get_iter_at_mark(end_mark)
+                start_itr     = buffer.get_iter_at_mark(start_mark)
+                is_left_edge  = caret_itr.compare(start_itr) <= 0
+                is_right_edge = not is_left_edge
+                can_move      = (
+                    (is_forward and is_right_edge) or
+                    (not is_forward and is_left_edge)
+                )
+
                 self.collapse_selection(buffer, mark_hash, start_mark, end_mark, is_forward)
+                if mode == "word":
+                    if not can_move: continue
+
+                    itr = caret_itr
+                    self._move_iter(buffer, itr, mode, is_forward)
+                    buffer.move_mark(start_mark, itr)
+                    buffer.move_mark(end_mark, itr)
+
                 continue
 
-            # No selection — move both anchor and caret together
+
+            # No selection - move both anchor and caret together
             self._move_iter(buffer, end_itr, mode, is_forward)
 
             buffer.move_mark(start_mark, end_itr)
@@ -81,17 +99,50 @@ class MarkerManager(MarkSupportMixin):
             left  = end_itr
             right = start_itr
 
-        # If moving forward → collapse to right edge
+        # If moving forward -> collapse to right edge
         collapse_itr = right if is_forward else left
 
         buffer.move_mark(start_mark, collapse_itr)
         buffer.move_mark(end_mark, collapse_itr)
 
+    def move_word_snake_case(self, itr: Gtk.TextIter, count: int):
+        def is_word(ch):
+            return ch and (ch.isalnum() or ch == "_")
+
+        def step(fwd):
+            return itr.forward_cursor_position() if fwd else itr.backward_cursor_position()
+
+        def peek(fwd):
+            if fwd: return itr.get_char()
+            tmp = itr.copy()
+            return tmp.backward_cursor_position() and tmp.get_char()
+
+        def walk(fwd, cond):
+            while True:
+                ch = peek(fwd)
+                if not cond(ch): break
+                if not step(fwd): return False
+
+            return True
+
+        fwd = count > 0
+
+        for _ in range(abs(count)):
+            ch = itr.get_char() if fwd else peek(False)
+
+            if is_word(ch):
+                # inside word
+                if not walk(fwd, is_word): return
+            else:
+                # in separators -> skip them, then the word
+                if not walk(fwd, lambda c: not is_word(c)): return
+                if not walk(fwd, is_word): return
+
     def _move_iter(self, buffer, itr_, mode: str, is_forward: bool):
         if mode == "char":
             itr_.forward_char() if is_forward else itr_.backward_char()
         elif mode == "word":
-            itr_.forward_word_end() if is_forward else itr_.backward_word_start()
+            self.move_word_snake_case(itr_, 1 if is_forward else -1)
         elif mode == "line":
             line   = itr_.get_line()
             offset = itr_.get_line_offset()

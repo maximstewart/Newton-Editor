@@ -53,8 +53,15 @@ class SourceViewStateManager:
     def handle_button_release_event(self, source_view, eve):
         return self.states[source_view.state].button_release_event(source_view, eve)
 
+    def handle_scroll_event(self, source_view, eve):
+        return self.states[source_view.state].scroll_event(
+            source_view, eve, self.key_mapper
+        )
+
     def handle_populate_popup(self, source_view, menu, emit):
-        return self.states[source_view.state].populate_popup(source_view, menu, emit)
+        return self.states[source_view.state].populate_popup(
+            source_view, menu, emit
+        )
 
     def _handle_multi_insert_toggle(self, source_view, eve):
         is_control = self.key_mapper.is_control(eve)

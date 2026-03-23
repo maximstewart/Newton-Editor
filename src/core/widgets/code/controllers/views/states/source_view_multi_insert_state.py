@@ -61,7 +61,6 @@ class SourceViewsMultiInsertState(SourceViewsBaseState):
         self.marker_manager.apply_to_marks(buffer, replace_word)
         return True
 
-
     def move_cursor(self, source_view, step, count, is_selection, emit):
         is_forward = count > 0
         buffer     = source_view.get_buffer()
@@ -77,6 +76,8 @@ class SourceViewsMultiInsertState(SourceViewsBaseState):
             self.marker_manager.move_by_line(buffer, is_forward, is_selection)
 
         self._signal_cursor_moved(source_view, emit)
+
+        return False
 
     def key_press_event(self, source_view, event, key_mapper):
         char = key_mapper.get_raw_keyname(event).upper()

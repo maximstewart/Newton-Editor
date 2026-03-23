@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gdk
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
@@ -78,6 +81,29 @@ class SourceViewsBaseState:
         )
 
         return True if not response else response
+
+    def scroll_event(self, source_view, eve, key_mapper):
+        is_control = key_mapper.is_control(eve)
+
+        if not is_control: return
+
+        if eve.direction == Gdk.ScrollDirection.SMOOTH:
+            has_deltas, dx, dy = eve.get_scroll_deltas()
+            if not has_deltas: return False
+
+            if dy < 0:
+                source_view.command.exec("zoom_in")
+            elif dy > 0:
+                source_view.command.exec("zoom_out")
+
+            return True
+
+        if eve.direction == Gdk.ScrollDirection.UP:
+            source_view.command.exec("zoom_in")
+        elif eve.direction == Gdk.ScrollDirection.DOWN:
+            source_view.command.exec("zoom_out")
+
+        return True
 
     def populate_popup(self, source_view, menu, emit):
         buffer = source_view.get_buffer()

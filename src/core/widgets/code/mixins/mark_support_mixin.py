@@ -106,7 +106,6 @@ class MarkSupportMixin:
             name = f"multi-insert-end-{hash}",
             left_gravity = False
         )
-#            left_gravity = True
 
         buffer.add_mark(start_mark, target_iter)
         buffer.add_mark(end_mark, target_iter)

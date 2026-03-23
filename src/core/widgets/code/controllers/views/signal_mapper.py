@@ -57,6 +57,7 @@ class SourceViewSignalMapper:
             "key-release-event":    self._key_release_event,
             "button-press-event":   self._button_press_event,
             "button-release-event": self._button_release_event,
+            "scroll-event":         self._scroll_event,
             "populate-popup":       self._populate_popup
         }
 
@@ -81,5 +82,8 @@ class SourceViewSignalMapper:
     def _button_release_event(self, source_view: SourceView, eve):
         return self.state_manager.handle_button_release_event(source_view, eve)
 
-    def _populate_popup(self, source_view, menu):
+    def _scroll_event(self, source_view: SourceView, eve):
+        return self.state_manager.handle_scroll_event(source_view, eve)
+
+    def _populate_popup(self, source_view: SourceView, menu):
         return self.state_manager.handle_populate_popup(source_view, menu, self.emit)
