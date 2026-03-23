@@ -169,7 +169,12 @@ class SourceFile(GtkSource.File):
         loaded, contents, etag_out = gfile.load_contents()
         if not loaded: raise Exception("File couldn't be loaded...'")
 
-        text         = contents.decode("UTF-8")
+        # Note:
+        # "strict" (default) -> raises an error on invalid bytes
+        # "ignore"           -> skips invalid bytes entirely
+        # "replace"          -> replaces invalid bytes with �
+        # "backslashreplace" -> uses escape sequences like \xFF
+        text         = contents.decode("UTF-8", errors = "replace")
         info         = gfile.query_info('standard::content-type', Gio.FileQueryInfoFlags.NONE, None)
         content_type = info.get_content_type()
         self.ftype   = Gio.content_type_get_mime_type(content_type) \
@@ -177,6 +182,7 @@ class SourceFile(GtkSource.File):
                         .replace("text/", "") \
                         .replace("x-", "")
 
+        del contents
         self.set_path(gfile)
         logger.debug(f"File content type: {self.ftype}")
         self._load_data(text)
