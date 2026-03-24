@@ -76,6 +76,7 @@ class PluginsUI(Gtk.Dialog):
 
         toggle_bttn.toggle_id = \
             toggle_bttn.connect("toggled", callback, manifest_meta)
+        box.toggle_bttn = toggle_bttn
 
         box.add(plugin_lbl)
         box.add(author_lbl)
@@ -96,5 +97,5 @@ class PluginsUI(Gtk.Dialog):
             toggle_bttn.disconnect(toggle_bttn.toggle_id)
 
             self.list_box.remove(row)
-            box.destroy()
+            child.destroy()
             break

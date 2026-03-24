@@ -11,7 +11,7 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 from plugins.plugin_types import PluginCode
 
-from .response_handler import GodotHandler
+from .response_handler import GDScriptHandler
 
 
 
@@ -30,7 +30,7 @@ class Plugin(PluginCode):
             event  = Event_Factory.create_event("register_lsp_client",
                 lang_id     = "gdscript",
                 lang_config = config,
-                handler     = GodotHandler
+                handler     = GDScriptHandler
             )
             self.emit_to("lsp_manager", event)
 

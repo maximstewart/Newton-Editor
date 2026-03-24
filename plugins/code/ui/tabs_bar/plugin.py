@@ -50,7 +50,14 @@ class Plugin(PluginCode):
     def unload(self):
         self.unregister_controller("tabs")
         self.tabs_controller.unload_tabs()
-        self.tabs_controller.tabs_widget.destroy()
+
+        tabs_widget  = self.tabs_controller.tabs_widget
+        viewport     = tabs_widget.get_parent()
+        scrolled_win = viewport.get_parent()
+
+        tabs_widget.destroy()
+        viewport.destroy()
+        scrolled_win.destroy()
 
         self.tabs_controller.tabs_widget = None
         self.tabs_controller             = None

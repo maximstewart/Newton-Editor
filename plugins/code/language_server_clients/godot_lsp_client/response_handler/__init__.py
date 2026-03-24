@@ -1,1 +1,1 @@
-from .python import PythonHandler
+from .gdscript import GDScriptHandler

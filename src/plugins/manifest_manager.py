@@ -56,7 +56,7 @@ class ManifestManager:
 
             if not manifest.autoload:
                 self.manual_launch_manifests.append(manifest_meta)
-                return
+                return manifest_meta
 
             if manifest.pre_launch:
                 self.pre_launch_manifests.append(manifest_meta)

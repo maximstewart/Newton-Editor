@@ -23,7 +23,7 @@ class Plugin(PluginCode):
     def load(self):
         self._manage_signals("register_command")
 
-    def load(self):
+    def unload(self):
         self._manage_signals("unregister_command")
 
     def _manage_signals(self, action: str):

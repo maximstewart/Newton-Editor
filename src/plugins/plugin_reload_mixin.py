@@ -48,13 +48,13 @@ class PluginReloadMixin:
 
     def remove_plugin(self, file: str) -> None:
         logger.info(f"Removing plugin: {file.get_uri()}")
-        for manifest_meta in self._plugin_collection[:]:
-            if not manifest_meta.folder in file.get_uri(): continue
 
-            manifest_meta.instance.unload()
-            manifest_meta.instance = None
-            self._plugin_collection.remove(manifest_meta)
-            self.plugins_ui.remove_row(manifest_meta)
+        manifests = self._manifest_manager.pre_launch_manifests    \
+                    + self._manifest_manager.post_launch_manifests \
+                    + self._manifest_manager.manual_launch_manifests
+
+        for manifest_meta in manifests:
+            if not manifest_meta.folder in file.get_uri(): continue
 
             if manifest_meta in self._manifest_manager.pre_launch_manifests:
                 self._manifest_manager.pre_launch_manifests.remove(manifest_meta)
@@ -62,5 +62,16 @@ class PluginReloadMixin:
                 self._manifest_manager.post_launch_manifests.remove(manifest_meta)
             elif manifest_meta in self._manifest_manager.manual_launch_manifests:
                 self._manifest_manager.manual_launch_manifests.remove(manifest_meta)
+
+            self.plugins_ui.remove_row(manifest_meta)
+            break
+
+        del manifests
+        for manifest_meta in self._plugin_collection[:]:
+            if not manifest_meta.folder in file.get_uri(): continue
+
+            manifest_meta.instance.unload()
+            manifest_meta.instance = None
+            self._plugin_collection.remove(manifest_meta)
 
             break

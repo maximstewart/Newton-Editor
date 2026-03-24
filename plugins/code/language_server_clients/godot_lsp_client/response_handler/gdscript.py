@@ -7,6 +7,6 @@ from lsp_manager.response_handlers.default import DefaultHandler
 
 
 
-class GodotHandler(DefaultHandler):
+class GDScriptHandler(DefaultHandler):
     """Uses default handling, can override if Godot needs special logic."""
     ...
