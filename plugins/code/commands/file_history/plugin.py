@@ -25,7 +25,7 @@ class Plugin(PluginCode):
             if len(history) == history_size:
                 history.pop(0)
 
-            history.append(event.file)
+            history.append(event.file.fpath)
 
     def load(self):
         self._manage_signals("register_command")
@@ -60,6 +60,6 @@ class Handler:
 
         view._on_uri_data_received(
             [
-                history.pop().replace("file://", "")
+                f"file://{history.pop()}"
             ]
         )
