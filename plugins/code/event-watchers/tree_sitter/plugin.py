@@ -1,14 +1,4 @@
 # Python imports
-import sys
-import os
-
-
-BASE_DIR = os.path.dirname( os.path.realpath(__file__) )
-LIBS_DIR = f"{BASE_DIR}/libs"
-
-if str(LIBS_DIR) not in sys.path:
-    sys.path.insert(0, LIBS_DIR)
-
 
 # Lib imports
 
@@ -17,7 +7,7 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 from plugins.plugin_types import PluginCode
 
-import tree_sitter_language_pack as tslp
+from .tree_sitter import Parser, get_parser
 
 
 
@@ -28,50 +18,30 @@ class Plugin(PluginCode):
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.TextChangedEvent):
-            if not tslp.has_language( event.file.ftype ):
-                try:
-                    tslp.download( [event.file.ftype] )
-                except Exception:
-                    logger.info(
-                        f"Tree Sitter Language Pack:\nCouldn't download -> '{event.file.ftype}' language type..."
-                    )
-                    return
+            if not hasattr(event.file, "tree_sitter"):
+                parser = get_parser( event.file.ftype )
+                if not parser: return
 
-            buffer = event.file.buffer
+                event.file.tree_sitter = parser
+
+            buffer     = event.file.buffer
             start_itr, \
             end_itr    = buffer.get_bounds()
             text       = buffer.get_text(start_itr, end_itr, True)
-            result     = tslp.process(
-                text,
-                tslp.ProcessConfig(
-                    language = event.file.ftype
-                )
-            )
 
-            event.file.tree_sitter_meta = result
+            tree = event.file.tree_sitter.parse( text.encode("UTF-8") )
+            event.file.ast = tree
+
+#            root = tree.root_node
+#            print("Root type:", root.type)
+#            for child in root.children:
+#                print(child.type, child.start_point, child.end_point)
 
     def load(self):
-        tslp.configure(
-            cache_dir = f"{BASE_DIR}/cache/tree-sitter-language-pack/v1.0.0/libs"
-        )
+        ...
 
     def unload(self):
         ...
 
     def run(self):
-        # tslp.download(
-        #     [
-        #         "python",
-        #         "java",
-        #         "go",
-        #         "c",
-        #         "cpp",
-        #         "javascript",
-        #         "html",
-        #         "css",
-        #         "json"
-        #     ]
-        # )
-        #         "gdscript"
-
         ...

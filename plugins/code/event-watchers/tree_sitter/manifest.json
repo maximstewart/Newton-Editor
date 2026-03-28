@@ -4,6 +4,5 @@
     "version": "0.0.1",
     "support": "",
     "pre_launch": true,
-    "autoload": false,
     "requests": {}
 }

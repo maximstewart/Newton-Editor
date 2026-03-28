@@ -18,16 +18,12 @@ class BaseControllerMixin:
         files       = []
 
         for arg in unknownargs + [args.new_tab,]:
-            if os.path.isdir( arg.replace("file://", "") ):
-                files.append( f"DIR|{arg.replace('file://', '')}" )
-                continue
+            if os.path.isfile(arg):
+                files.append(f"{arg}")
 
-            # NOTE: If passing line number with file split against :
-            if os.path.isfile( arg.replace("file://", "").split(":")[0] ):
-                files.append( f"FILE|{arg.replace('file://', '')}" )
-                continue
-
-            logger.info(f"Not a File: {arg}")
+            if os.path.isdir(arg):
+                message = f"DIR|{arg}"
+                ipc_server.send_ipc_message(message)
 
         if not files: return
 

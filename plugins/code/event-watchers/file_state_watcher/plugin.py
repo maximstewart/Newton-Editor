@@ -17,13 +17,22 @@ class Plugin(PluginCode):
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.TextChangedEvent):
-            event.file.check_file_on_disk()
+        if not isinstance(event, Code_Event_Types.FocusedViewEvent): return
+        event = Event_Factory.create_event(
+            "get_file", buffer = event.view.get_buffer()
+        )
+        self.emit_to("files", event)
 
-            if event.file.is_deleted():
-                file_is_deleted(event, self.emit)
-            elif event.file.is_externally_modified():
-                file_is_externally_modified(event, self.emit)
+        file = event.response
+        if not file: return
+        if file.ftype == "buffer": return
+
+        file.check_file_on_disk()
+
+        if file.is_deleted():
+            file_is_deleted(file, self.emit)
+        elif file.is_externally_modified():
+            file_is_externally_modified(file, self.emit)
 
     def load(self):
         ...
