@@ -19,10 +19,10 @@ class SourceView(GtkSource.View, SourceViewDnDMixin):
     def __init__(self, state: SourceViewStates = SourceViewStates.INSERT):
         super(SourceView, self).__init__()
 
-        self.state                = state
+        self.state         = state
 
-        self.sibling_right        = None
-        self.sibling_left         = None
+        self.sibling_right = None
+        self.sibling_left  = None
 
         self._setup_styles()
         self._setup_signals()

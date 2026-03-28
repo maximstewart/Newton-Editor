@@ -1,4 +1,5 @@
 # Python imports
+from os import path
 import json
 
 # Lib imports
@@ -24,9 +25,11 @@ class LSPManagerUI(Gtk.Dialog):
     def __init__(self):
         super(LSPManagerUI, self).__init__()
 
+        self._USER_HOME = path.expanduser('~')
+
         self.client_configs: dict[str, str] = {}
 
-        self.source_view               = None
+        self.source_view = None
 
         self._setup_styling()
         self._setup_signals()
@@ -167,9 +170,11 @@ class LSPManagerUI(Gtk.Dialog):
         lang_id  = self.combo_box.get_active_text()
         if not lang_id: return
 
-        json_str = self.client_configs[lang_id].replace("{workspace.folder}", workspace_dir)
-        buffer   = self.source_view.get_buffer()
+        json_str = self.client_configs[lang_id]                       \
+                        .replace("{workspace.folder}", workspace_dir) \
+                        .replace("{user.home}", self._USER_HOME)
 
+        buffer   = self.source_view.get_buffer()
         buffer.set_text(json_str, -1)
 
     def map_parent_resize_event(self, parent):
@@ -204,7 +209,7 @@ class LSPManagerUI(Gtk.Dialog):
         model = self.combo_box.get_model()
 
         for i, row in enumerate(model):
-            if row[0] == lang_id:  # assuming text is in column 0
+            if row[0] == lang_id:
                 self.combo_box.remove(i)
                 break
 
@@ -215,7 +220,9 @@ class LSPManagerUI(Gtk.Dialog):
         if not lang_id or lang_id not in self.client_configs: return {}
 
         try:
-            lang_config = json.loads(self.client_configs[lang_id])
+            buffer      = self.source_view.get_buffer()
+            json_str    = buffer.get_text(*buffer.get_bounds(), -1)
+            lang_config = json.loads(json_str)
         except json.JSONDecodeError as e:
             logger.error(f"Invalid JSON for {lang_id}: {e}")
             return {}

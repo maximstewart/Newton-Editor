@@ -19,13 +19,10 @@ class LSPClient(LSPClientWebsocket):
     def __init__(self):
         super(LSPClient, self).__init__()
 
-        # https://github.com/microsoft/multilspy/tree/main/src/multilspy/language_servers
-        # initialize-params-slim.json was created off of jedi_language_server one
-        # self._init_params   = settings_manager.get_lsp_init_data()
-
         self._language: str                 = ""
+        self._workspace_path: str           = ""
         self._init_params: dict             = {}
-        self._event_history: dict[int, str] = {}
+        self._init_opts: dict               = {}
 
         try:
             _USER_HOME  = path.expanduser('~')
@@ -33,18 +30,28 @@ class LSPClient(LSPClientWebsocket):
             _LSP_INIT_CONFIG = f"{_SCRIPT_PTH}/../configs/initialize-params-slim.json"
 
             with open(_LSP_INIT_CONFIG) as file:
-                data = file.read().replace("{user.home}", _USER_HOME)
+                data = file.read()
                 self._init_params = json.loads(data)
         except Exception as e:
             logger.error( f"LSP Controller: {_LSP_INIT_CONFIG}\n\t\t{repr(e)}" )
 
-        self._message_id: int = -1
-        self._socket          = None
-        self.read_lock        = threading.Lock()
-        self.write_lock       = threading.Lock()
+
+        self._socket                        = None
+        self._message_id: int               = -1
+        self._event_history: dict[int, str] = {}
+
+        self.read_lock                      = threading.Lock()
+        self.write_lock                     = threading.Lock()
+
 
     def set_language(self, language: str):
         self._language = language
+
+    def set_workspace_path(self, workspace_path: str):
+        self._workspace_path = workspace_path
+
+    def set_init_opts(self, init_opts: dict[str, str]):
+        self._init_opts = init_opts
 
     def set_socket(self, socket: str):
         self._socket = socket

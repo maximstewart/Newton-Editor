@@ -17,11 +17,12 @@ from ..dto.code.lsp.lsp_messages import symbols_request
 
 
 class LSPClientEvents:
-    def send_initialize_message(self, init_ops: dict, workspace_file: str, workspace_uri: str):
-        folder_name = os.path.basename(workspace_file)
+    def send_initialize_message(self):
+        folder_name   = os.path.basename(self._workspace_path)
+        workspace_uri = f"file://{self._workspace_path}"
 
         self._init_params["processId"]        = None
-        self._init_params["rootPath"]         = workspace_file
+        self._init_params["rootPath"]         = self._workspace_path
         self._init_params["rootUri"]          = workspace_uri
         self._init_params["workspaceFolders"] = [
             {
@@ -30,7 +31,7 @@ class LSPClientEvents:
             }
         ]
 
-        self._init_params["initializationOptions"] = init_ops
+        self._init_params["initializationOptions"] = self._init_opts
         self.send_request("initialize", self._init_params)
 
     def send_initialized_message(self):

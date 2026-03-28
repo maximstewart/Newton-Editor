@@ -22,9 +22,9 @@ class LSPManagerClient(LSPClientEventsMixin):
 
     def create_client(
         self,
-        lang_id: str = "python",
-        workspace_uri: str = "",
-        init_opts: dict = {}
+        lang_id: str,
+        workspace_path: str,
+        init_opts: dict[str, str]
     ) -> LSPClient:
         if lang_id in self.clients: return None
 
@@ -33,8 +33,10 @@ class LSPManagerClient(LSPClientEventsMixin):
         uri     = f"ws://{address}:{port}/{lang_id}"
         client  = LSPClient()
 
-        client.set_language(lang_id)
         client.set_socket(uri)
+        client.set_language(lang_id)
+        client.set_workspace_path(workspace_path)
+        client.set_init_opts(init_opts)
         client.start_client()
 
         if not client.ws_client.wait_for_connection(timeout = 5.0):

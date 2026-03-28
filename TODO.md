@@ -1,6 +1,5 @@
 ___
 ### Add
-1. Add TreeSitter
 1. Add Collapsable code blocks
 1. Add Godot LSP Client
 1. Add Terminal plugin

@@ -13,9 +13,11 @@ from .requests import Requests
 class Manifest:
     name: str          = ""
     author: str        = ""
-    credit: str        = ""
+    description: str   = ""
     version: str       = "0.0.1"
     support: str       = "support@mail.com"
+    credit: str        = ""
+    copyright: str     = "GPLv2"
     pre_launch: bool   = False
     autoload: bool     = True
     requests: Requests = field(default_factory = lambda: Requests())

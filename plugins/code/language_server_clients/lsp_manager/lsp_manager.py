@@ -54,17 +54,21 @@ class LSPManager(ControllerBase):
             self.response_registry.unregister_handler(event.lang_id)
             self.lsp_manager_ui.remove_client_listing(event.lang_id)
 
-    def _on_create_client(self, ui, lang_id: str, workspace_uri: str) -> bool:
+    def _on_create_client(self, ui, lang_id: str, workspace_path: str) -> bool:
         init_opts = ui.get_init_opts(lang_id)
-        result = self.create_client(lang_id, workspace_uri, init_opts)
+        result    = self.create_client(lang_id, workspace_path, init_opts)
+
         if result:
-            ui.toggle_client_buttons(show_close=True)
+            ui.toggle_client_buttons(show_close = True)
+
         return result
 
     def _on_close_client(self, ui, lang_id: str) -> bool:
         result = self.close_client(lang_id)
+
         if result:
-            ui.toggle_client_buttons(show_close=False)
+            ui.toggle_client_buttons(show_close = False)
+
         return result
 
     def handle_destroy(self):
@@ -73,12 +77,12 @@ class LSPManager(ControllerBase):
 
     def create_client(
         self,
-        lang_id: str = "python",
-        workspace_uri: str = "",
-        init_opts: dict = {}
+        lang_id: str,
+        workspace_path: str,
+        init_opts: dict[str, str]
     ) -> bool:
         client  = self.lsp_manager_client.create_client(
-            lang_id, workspace_uri, init_opts
+            lang_id, workspace_path, init_opts
         )
         handler = self.response_registry.get_handler(lang_id)
         self.lsp_manager_client.active_language_id = lang_id
@@ -92,7 +96,7 @@ class LSPManager(ControllerBase):
         handler.set_response_cache(self.response_cache)
 
         client.handle_lsp_response = self.server_response
-        client.send_initialize_message(init_opts, "", f"file://{workspace_uri}")
+        client.send_initialize_message()
 
         return True
 

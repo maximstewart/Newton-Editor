@@ -155,9 +155,10 @@ class SourceFile(GtkSource.File):
         self.buffer.unblock_modified_changed_signal()
 
     def is_externally_modified(self) -> bool:
-        stat    = os.stat(self.fpath)
-        current = (stat.st_mtime_ns, stat.st_size)
+        if self.fname == "buffer": return
 
+        stat        = os.stat(self.fpath)
+        current     = (stat.st_mtime_ns, stat.st_size)
         is_modified = \
             hasattr(self, "last_state") and not current == self.last_state
 
