@@ -12,7 +12,10 @@ ___
 
 ___
 ### Fix
+- Fix <Ctrl\>z in multi-insert mode being funky. Insure updates happen on block level.
+       I.E, maybe push updates to queue to insure block undo/redo?
+- Fix multi-insert not acting properly with  -  in word.
+       I.E leader desync on <Ctrl\>left/right
 - Fix on lsp client unload to close files lsp side and unload server endpoint
-- Fix Collapsable code blocks icon desync on new/old lines or text cut/pasted
 
 ___

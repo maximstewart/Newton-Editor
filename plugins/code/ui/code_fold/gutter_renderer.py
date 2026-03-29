@@ -16,10 +16,6 @@ from .folding_actions import collapse_range, expand_range
 def handle_collapse(view, fold):
     collapse_range(view, fold)
 
-    for inner in view.fold_starts:
-        if fold["start_line"] < inner["start_line"] <= fold["end_line"]:
-            view.fold_states[inner["id"]] = False
-
 def handle_expand(view, fold):
     expand_range(view, fold)
 
@@ -29,6 +25,11 @@ def handle_block_toggle(collapsed, view, fold):
     else:
         handle_expand(view, fold)
 
+def is_fold_hidden(buffer, fold):
+    iter_ = buffer.get_iter_at_line(fold["start_line"] + 1)
+    tags = iter_.get_tags()
+    return any(tag.get_property("invisible") for tag in tags)
+
 
 def on_query_data(renderer, start_iter, end_iter, state, view):
     line = start_iter.get_line()
@@ -37,10 +38,13 @@ def on_query_data(renderer, start_iter, end_iter, state, view):
         renderer.set_text("", -1)
         return
 
-    fold      = next((f for f in view.fold_starts if f["start_line"] == line), None)
-    collapsed = fold and view.fold_states.get(fold["id"], False)
+    fold = next(
+        (f for f in view.fold_starts if f["start_line"] == line), None
+    )
 
-    renderer.set_text( "▶" if collapsed else "▼", -1 )
+    collapsed = fold and is_fold_hidden(view.get_buffer(), fold)
+
+    renderer.set_text("▶" if collapsed else "▼", -1)
 
 def on_click(view, event, renderer):
     if not event.button == 1:      return False
@@ -59,9 +63,7 @@ def on_click(view, event, renderer):
     for fold in view.fold_starts:
         if not fold["start_line"] == line: continue
 
-        collapsed = view.fold_states.get(fold["id"], False)
-        view.fold_states[fold["id"]] = not collapsed
-
+        collapsed = is_fold_hidden(view.get_buffer(), fold)
         handle_block_toggle(collapsed, view, fold)
 
         renderer.queue_draw()
@@ -74,13 +76,8 @@ def setup_gutter(view):
     gutter = view.get_gutter(Gtk.TextWindowType.LEFT)
     buffer = view.get_buffer()
 
-    if not buffer.get_tag_table().lookup("invisible"):
-        tag = buffer.create_tag("invisible")
-        tag.set_property("invisible", True)
-
     view.fold_starts    = []
     view.fold_start_set = set()
-    view.fold_states    = {}
 
     renderer = GtkSource.GutterRendererText()
     renderer.set_size(12)

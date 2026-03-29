@@ -13,6 +13,7 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 from plugins.plugin_types import PluginCode
 
 from .fold_types import FOLD_NODES
+from .folding_actions import collapse_range
 from .folding_engine import get_folding_ranges
 from .gutter_renderer import setup_gutter
 
@@ -33,6 +34,11 @@ class Plugin(PluginCode):
             if not file: return
             if file.ftype not in FOLD_NODES: return
             if not hasattr(file, "ast"): return
+
+            buffer = file.buffer
+            if not buffer.get_tag_table().lookup("invisible"):
+                tag = buffer.create_tag("invisible")
+                tag.set_property("invisible", True)
 
             self.update_gutter(file, self.view)
         elif isinstance(event, Code_Event_Types.TextChangedEvent):
@@ -78,21 +84,7 @@ class Plugin(PluginCode):
         view.fold_update_source = GLib.timeout_add(delay, callback)
 
     def update_gutter(self, file, view):
-        old_states = getattr(view, "fold_states", {})
-
-        view.fold_starts = get_folding_ranges(file.ftype, file.ast)
+        view.fold_starts    = get_folding_ranges(file.ftype, file.ast)
         view.fold_start_set = {
             fold["start_line"] for fold in view.fold_starts
         }
-
-        buffer = view.get_buffer()
-        if not buffer.get_tag_table().lookup("invisible"):
-            tag = buffer.create_tag("invisible")
-            tag.set_property("invisible", True)
-
-        new_states = {}
-        for fold in view.fold_starts:
-            if not fold["id"] in old_states: continue
-            new_states[fold["id"]] = old_states[fold["id"]]
-
-        view.fold_states = new_states
