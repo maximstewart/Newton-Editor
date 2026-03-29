@@ -1,6 +1,5 @@
 ___
 ### Add
-1. Add Collapsable code blocks
 1. Add Godot LSP Client
 1. Add Terminal plugin
 1. Add Plugin to <Shift\><Ctrl\>| and <Ctrl\>| to split views up, down, left, right
@@ -14,5 +13,6 @@ ___
 ___
 ### Fix
 - Fix on lsp client unload to close files lsp side and unload server endpoint
+- Fix Collapsable code blocks icon desync on new/old lines or text cut/pasted
 
 ___

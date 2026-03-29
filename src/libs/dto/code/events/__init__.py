@@ -6,6 +6,7 @@
 from .code_event import CodeEvent
 from .toggle_plugins_ui_event import TogglePluginsUiEvent
 from .create_source_view_event import CreateSourceViewEvent
+from .created_source_view_event import CreatedSourceViewEvent
 from .register_completer_event import RegisterCompleterEvent
 from .unregister_completer_event import UnregisterCompleterEvent
 from .register_provider_event import RegisterProviderEvent

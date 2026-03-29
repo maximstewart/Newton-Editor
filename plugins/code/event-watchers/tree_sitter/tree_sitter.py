@@ -48,7 +48,7 @@ def get_parser(lang_name: str) -> Parser | None:
 
     language = LANGUAGES[lang_name]
 
-    if not language in LANGUAGES: return
+    if not language: return
 
     parser          = Parser()
     parser.language = language

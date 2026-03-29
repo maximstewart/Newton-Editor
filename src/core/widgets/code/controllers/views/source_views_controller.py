@@ -111,6 +111,12 @@ class SourceViewsController(ControllerBase, list):
         self.signal_mapper.connect_signals(source_view)
 
         self.append(source_view)
+
+        event = Event_Factory.create_event(
+            "created_source_view", view = source_view
+        )
+        self.emit(event)
+
         return source_view
 
     def first_map_load(self):

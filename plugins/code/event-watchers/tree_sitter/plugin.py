@@ -16,21 +16,37 @@ class Plugin(PluginCode):
         super(Plugin, self).__init__()
 
 
+    def set_ast(self, file):
+        if not hasattr(file, "tree_sitter"):
+            parser = get_parser( file.ftype )
+            if not parser: return
+
+            file.tree_sitter = parser
+
+        buffer     = file.buffer
+        start_itr, \
+        end_itr    = buffer.get_bounds()
+        text       = buffer.get_text(start_itr, end_itr, True)
+
+        tree = file.tree_sitter.parse( text.encode("UTF-8") )
+        file.ast = tree
+
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.TextChangedEvent):
-            if not hasattr(event.file, "tree_sitter"):
-                parser = get_parser( event.file.ftype )
-                if not parser: return
+        if isinstance(event, Code_Event_Types.FocusedViewEvent):
+            self.view = event.view
+            event = Event_Factory.create_event(
+                "get_file", buffer = self.view.get_buffer()
+            )
+            self.emit_to("files", event)
 
-                event.file.tree_sitter = parser
+            file = event.response
 
-            buffer     = event.file.buffer
-            start_itr, \
-            end_itr    = buffer.get_bounds()
-            text       = buffer.get_text(start_itr, end_itr, True)
+            if not file: return
+            if file.ftype == "buffer": return
 
-            tree = event.file.tree_sitter.parse( text.encode("UTF-8") )
-            event.file.ast = tree
+            self.set_ast(file)
+        elif isinstance(event, Code_Event_Types.TextChangedEvent):
+            self.set_ast(event.file)
 
 #            root = tree.root_node
 #            print("Root type:", root.type)
