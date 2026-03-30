@@ -145,7 +145,7 @@ class KeyMapper:
         is_shift,   \
         is_alt      = self.get_modkeys_states(eve)
 
-        self.state = NoKeyState
+        self.state  = NoKeyState
         if is_control:
             self.state = self.state | CtrlKeyState
         if is_shift:
@@ -160,6 +160,10 @@ class KeyMapper:
     def is_shift(self, eve):
         modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
         return modifiers & Gdk.ModifierType.SHIFT_MASK
+
+    def is_super(self, eve):
+        modifiers  = Gdk.ModifierType(eve.get_state() & ~Gdk.ModifierType.LOCK_MASK)
+        return modifiers & Gdk.ModifierType.SUPER_MASK
 
     def get_raw_keyname(self, eve) -> str:
         return Gdk.keyval_name(eve.keyval)

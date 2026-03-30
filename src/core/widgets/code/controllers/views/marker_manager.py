@@ -46,47 +46,57 @@ class MarkerManager(MarkSupportMixin):
             start_itr     = buffer.get_iter_at_mark(start_mark)
             end_itr       = buffer.get_iter_at_mark(end_mark)
 
-            if is_selection:
+            self._proc_move(
+                buffer, is_forward, is_selection, mode, mark_hash,
+                start_mark, end_mark, has_selection, start_itr, end_itr
+            )
+
+    def _proc_move(
+        self, buffer, is_forward: bool, is_selection: bool, mode: str,
+        mark_hash, start_mark, end_mark, has_selection, start_itr, end_itr
+    ):
+        if is_selection:
+            if mark_hash:
                 self.buffer_markers[mark_hash]["is_selection"] = True
 
-                self._move_iter(buffer, end_itr, mode, is_forward)
-                buffer.move_mark(end_mark, end_itr)
-
-                self._apply_selection(buffer, start_itr, end_itr)
-                continue
-
-            if has_selection:
-                caret_itr     = buffer.get_iter_at_mark(end_mark)
-                start_itr     = buffer.get_iter_at_mark(start_mark)
-                is_left_edge  = caret_itr.compare(start_itr) <= 0
-                is_right_edge = not is_left_edge
-                can_move      = (
-                    (is_forward and is_right_edge) or
-                    (not is_forward and is_left_edge)
-                )
-
-                self.collapse_selection(buffer, mark_hash, start_mark, end_mark, is_forward)
-                if mode == "word":
-                    if not can_move: continue
-
-                    itr = caret_itr
-                    self._move_iter(buffer, itr, mode, is_forward)
-                    buffer.move_mark(start_mark, itr)
-                    buffer.move_mark(end_mark, itr)
-
-                continue
-
-
-            # No selection - move both anchor and caret together
             self._move_iter(buffer, end_itr, mode, is_forward)
-
-            buffer.move_mark(start_mark, end_itr)
             buffer.move_mark(end_mark, end_itr)
+
+            self._apply_selection(buffer, start_itr, end_itr)
+            return
+
+        if has_selection:
+            caret_itr     = buffer.get_iter_at_mark(end_mark)
+            start_itr     = buffer.get_iter_at_mark(start_mark)
+            is_left_edge  = caret_itr.compare(start_itr) <= 0
+            is_right_edge = not is_left_edge
+            can_move      = (
+                (is_forward and is_right_edge) or
+                (not is_forward and is_left_edge)
+            )
+
+            self.collapse_selection(buffer, mark_hash, start_mark, end_mark, is_forward)
+            if mode == "word":
+                if not can_move: return
+
+                itr = caret_itr
+                self._move_iter(buffer, itr, mode, is_forward)
+                buffer.move_mark(start_mark, itr)
+                buffer.move_mark(end_mark, itr)
+
+            return
+
+        # No selection - move both anchor and caret together
+        self._move_iter(buffer, end_itr, mode, is_forward)
+
+        buffer.move_mark(start_mark, end_itr)
+        buffer.move_mark(end_mark, end_itr)
 
     def collapse_selection(self,
         buffer, mark_hash, start_mark, end_mark, is_forward: bool
     ):
-        self.buffer_markers[mark_hash]["is_selection"] = False
+        if mark_hash:
+            self.buffer_markers[mark_hash]["is_selection"] = False
 
         start_itr = buffer.get_iter_at_mark(start_mark)
         end_itr   = buffer.get_iter_at_mark(end_mark)
@@ -105,19 +115,28 @@ class MarkerManager(MarkSupportMixin):
         buffer.move_mark(start_mark, collapse_itr)
         buffer.move_mark(end_mark, collapse_itr)
 
-    def move_word_snake_case(self, itr: Gtk.TextIter, count: int):
-        def is_word(ch):
+    def move_word(self, itr: Gtk.TextIter, count: int):
+        def not_is_word(ch: str):
+            return not is_word(ch)
+
+        def is_word(ch: str):
             return ch and (ch.isalnum() or ch == "_")
 
-        def step(fwd):
+        def is_special(ch: str):
+            return ch in "-"
+
+        def is_punct(ch: str):
+            return ch in ".;?!"
+
+        def step(fwd: bool):
             return itr.forward_cursor_position() if fwd else itr.backward_cursor_position()
 
-        def peek(fwd):
+        def peek(fwd: bool):
             if fwd: return itr.get_char()
             tmp = itr.copy()
             return tmp.backward_cursor_position() and tmp.get_char()
 
-        def walk(fwd, cond):
+        def walk(fwd, cond: callable):
             while True:
                 ch = peek(fwd)
                 if not cond(ch): break
@@ -126,23 +145,22 @@ class MarkerManager(MarkSupportMixin):
             return True
 
         fwd = count > 0
+        for _ in range( abs(count) ):
+            ch = peek(fwd)
 
-        for _ in range(abs(count)):
-            ch = itr.get_char() if fwd else peek(False)
-
-            if is_word(ch):
-                # inside word
+            if is_special(ch) or is_punct(ch):
+                step(fwd)
+            elif is_word(ch):
                 if not walk(fwd, is_word): return
             else:
-                # in separators -> skip them, then the word
-                if not walk(fwd, lambda c: not is_word(c)): return
+                if not walk(fwd, not_is_word): return
                 if not walk(fwd, is_word): return
 
     def _move_iter(self, buffer, itr_, mode: str, is_forward: bool):
         if mode == "char":
             itr_.forward_char() if is_forward else itr_.backward_char()
         elif mode == "word":
-            self.move_word_snake_case(itr_, 1 if is_forward else -1)
+            self.move_word(itr_, 1 if is_forward else -1)
         elif mode == "line":
             line   = itr_.get_line()
             offset = itr_.get_line_offset()
