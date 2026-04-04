@@ -59,6 +59,7 @@ class SourceViewsMultiInsertState(SourceViewsBaseState):
             buffer.insert(start_itr, text, -1)
 
         self.marker_manager.apply_to_marks(buffer, replace_word)
+
         return True
 
     def move_cursor(

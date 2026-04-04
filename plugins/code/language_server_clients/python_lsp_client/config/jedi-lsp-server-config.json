@@ -60,4 +60,41 @@
             }
         }
     }
+},
+"python - jedi-language-server": {
+    "hidden": true,
+    "info": "https://pypi.org/project/jedi-language-server/",
+    "command": "jedi-language-server",
+    "alt-command": "lsp-ws-proxy --listen 3030 -- jedi-language-server",
+    "socket": "ws://127.0.0.1:9999/python",
+    "socket-two": "ws://127.0.0.1:9999/?name=jedi-language-server",
+    "initialization-options": {
+        "jediSettings": {
+            "autoImportModules": [],
+            "caseInsensitiveCompletion": true,
+            "debug": false
+        },
+        "completion": {
+            "disableSnippets": false,
+            "resolveEagerly": false,
+            "ignorePatterns": []
+        },
+        "markupKindPreferred": "markdown",
+        "workspace": {
+            "extraPaths": [
+                "{user.home}/Portable_Apps/py-venvs/pylsp-venv/venv/lib/python3.10/site-packages"
+            ],
+            "environmentPath": "{user.home}/Portable_Apps/py-venvs/gtk-apps-venv/venv/bin/python",
+            "symbols": {
+                "ignoreFolders": [
+                    ".nox",
+                    ".tox",
+                    ".venv",
+                    "__pycache__",
+                    "venv"
+                ],
+                "maxSymbols": 20
+            }
+        }
+    }
 }

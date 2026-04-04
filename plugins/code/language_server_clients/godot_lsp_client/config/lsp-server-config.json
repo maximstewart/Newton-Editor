@@ -7,46 +7,46 @@
     "socket": "ws://127.0.0.1:9999/gdscript",
     "socket-two": "ws://127.0.0.1:9999/?name=gdscript",
     "initialization-options": {
-    "processId": ,
-    "clientInfo": {
-        "name": "Godot",
-        "version": "4.4"
-    },
-    "rootUri": "file://{workspace.folder}",
-    "capabilities": {
-        "workspace": {
-            "applyEdit": true,
-            "workspaceEdit": {
-                "documentChanges": true
-            }
+        "processId": null,
+        "clientInfo": {
+            "name": "Godot",
+            "version": "4.4"
         },
-        "textDocument": {
-            "synchronization": {
-                "dynamicRegistration": true,
-                "willSave": false,
-                "didSave": true,
-                "willSaveWaitUntil": false
-            },
-            "completion": {
-                "dynamicRegistration": true,
-                "completionItem": {
-                    "snippetSupport": true
+        "rootUri": "file://{workspace.folder}",
+        "capabilities": {
+            "workspace": {
+                "applyEdit": true,
+                "workspaceEdit": {
+                    "documentChanges": true
                 }
             },
-            "hover": {
-                "dynamicRegistration": true
-            },
-            "definition": {
-                "dynamicRegistration": true
-            },
-            "references": {
-                "dynamicRegistration": true
-            },
-            "documentSymbol": {
-                "dynamicRegistration": true
+            "textDocument": {
+                "synchronization": {
+                    "dynamicRegistration": true,
+                    "willSave": false,
+                    "didSave": true,
+                    "willSaveWaitUntil": false
+                },
+                "completion": {
+                    "dynamicRegistration": true,
+                    "completionItem": {
+                        "snippetSupport": true
+                    }
+                },
+                "hover": {
+                    "dynamicRegistration": true
+                },
+                "definition": {
+                    "dynamicRegistration": true
+                },
+                "references": {
+                    "dynamicRegistration": true
+                },
+                "documentSymbol": {
+                    "dynamicRegistration": true
+                }
             }
-        }
-    },
-    "trace": "off"
+        },
+        "trace": "off"
     }
 }

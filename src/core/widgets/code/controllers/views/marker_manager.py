@@ -115,7 +115,7 @@ class MarkerManager(MarkSupportMixin):
         buffer.move_mark(start_mark, collapse_itr)
         buffer.move_mark(end_mark, collapse_itr)
 
-    def move_word(self, itr: Gtk.TextIter, count: int):
+    def move_along_word(self, itr: Gtk.TextIter, count: int):
         def not_is_word(ch: str):
             return not is_word(ch)
 
@@ -160,7 +160,7 @@ class MarkerManager(MarkSupportMixin):
         if mode == "char":
             itr_.forward_char() if is_forward else itr_.backward_char()
         elif mode == "word":
-            self.move_word(itr_, 1 if is_forward else -1)
+            self.move_along_word(itr_, 1 if is_forward else -1)
         elif mode == "line":
             line   = itr_.get_line()
             offset = itr_.get_line_offset()

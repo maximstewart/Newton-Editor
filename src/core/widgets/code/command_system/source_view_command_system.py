@@ -4,12 +4,19 @@
 
 # Application imports
 from libs.event_factory import Event_Factory, Code_Event_Types
+from libs.command_system import CommandSystem
 
 from ..source_view import SourceView
 
 
+from . import commands
 
-class CommandSystemMixin:
+
+
+class SourceViewCommandSystem(CommandSystem):
+    def __init__(self):
+        super(SourceViewCommandSystem, self).__init__(commands)
+
     def toggle_plugins_ui(self):
         event = Event_Factory.create_event( "toggle_plugins_ui" )
 
@@ -81,3 +88,11 @@ class CommandSystemMixin:
         )
 
         self.emit_to("completion", event)
+
+    def emit(self, event: Code_Event_Types.CodeEvent):
+        """ Monkey patch 'emit' from command controller... """
+        ...
+
+    def emit_to(self, controller: str, event: Code_Event_Types.CodeEvent):
+        """ Monkey patch 'emit_to' from command controller... """
+        ...
