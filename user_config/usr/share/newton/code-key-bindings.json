@@ -44,18 +44,6 @@
         },
         "toggle_plugins_ui": {
             "released": "<Control><Shift>p"
-        },
-        "focus_left_sibling": {
-            "released": "<Control>Page_Up"
-        },
-        "focus_right_sibling": {
-            "released": "<Control>Page_Down"
-        },
-        "move_to_left_sibling": {
-            "released": "<Control><Shift>Up"
-        },
-        "move_to_right_sibling": {
-            "released": "<Control><Shift>Down"
         }
     }
 }

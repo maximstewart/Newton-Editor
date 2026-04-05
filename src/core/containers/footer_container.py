@@ -6,8 +6,8 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
-from ..widgets.separator_widget import Separator
-from ..widgets.vte_widget import VteWidget
+from core.widgets.separator_widget import Separator
+from core.widgets.vte_widget import VteWidget
 
 
 

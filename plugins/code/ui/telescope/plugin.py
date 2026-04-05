@@ -52,8 +52,8 @@ class Plugin(PluginCode):
         )
         self.emit_to("source_views", event)
 
-        source_view = event.response
-        telescope.set_source_view(source_view)
+        scrolled_win, source_view = event.response
+        telescope.set_source_view(scrolled_win, source_view)
 
         event = Event_Factory.create_event(
             "register_completer",

@@ -34,7 +34,6 @@ class CodeBase:
         completion_controller   = CompletionController()
         source_views_controller = SourceViewsController()
 
-        # self.controller_manager.register_controller("base", self)
         self.controller_manager.register_controller("files", files_controller)
         self.controller_manager.register_controller("commands", commands_controller)
         self.controller_manager.register_controller("completion", completion_controller)
@@ -43,12 +42,13 @@ class CodeBase:
         self.controller_manager.register_controller("widgets", widget_registery)
 
     def create_source_view(self):
-        source_view = self.controller_manager["source_views"].create_source_view()
+        scrolled_win, \
+        source_view   = self.controller_manager["source_views"].create_source_view()
         self.controller_manager["completion"].register_completer(
             source_view.get_completion()
         )
 
-        return source_view
+        return scrolled_win, source_view
 
     def first_map_load(self):
         self.controller_manager["source_views"].first_map_load()

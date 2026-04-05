@@ -20,9 +20,14 @@ def execute(
     ctx = view.get_parent().get_style_context()
     ctx.add_class("source-view-focused")
 
-    if view.sibling_right:
-        ctx = view.sibling_right.get_parent().get_style_context()
-    elif view.sibling_left:
-        ctx = view.sibling_left.get_parent().get_style_context()
+    lview = view.sibling_left
+    while lview is not None:
+        ctx = lview.get_parent().get_style_context()
+        ctx.remove_class("source-view-focused")
+        lview = lview.sibling_left
 
-    ctx.remove_class("source-view-focused")
+    rview = view.sibling_right
+    while rview is not None:
+        ctx = rview.get_parent().get_style_context()
+        ctx.remove_class("source-view-focused")
+        rview = rview.sibling_right

@@ -6,9 +6,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 # Application imports
+from core.widgets.save_file_dialog import SaveFileDialog
+from core.widgets.controls.open_files_button import OpenFilesButton
+
 from .code.code_container import CodeContainer
-from ..widgets.save_file_dialog import SaveFileDialog
-from ..widgets.controls.open_files_button import OpenFilesButton
 
 
 

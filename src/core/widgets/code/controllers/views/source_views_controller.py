@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 # Application imports
 from libs.controllers.controller_base import ControllerBase
@@ -29,6 +32,8 @@ class SourceViewsController(ControllerBase, list):
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
         if isinstance(event, Code_Event_Types.CreateSourceViewEvent):
             event.response = self.create_source_view(event.state)
+        elif isinstance(event, Code_Event_Types.RemoveSourceViewEvent):
+            self._remove_source_view(event)
         elif isinstance(event, Code_Event_Types.RemovedFileEvent):
             self._remove_file(event)
         elif isinstance(event, Code_Event_Types.RegisterCommandEvent):
@@ -86,7 +91,7 @@ class SourceViewsController(ControllerBase, list):
             )
 
     def _get_command_system(self):
-        event   = Event_Factory.create_event("get_new_command_system")
+        event   = Event_Factory.create_event("create_command_system")
         self.message_to("commands", event)
         command = event.response
 
@@ -103,21 +108,33 @@ class SourceViewsController(ControllerBase, list):
 
             source_view.set_buffer(event.next_file.buffer)
 
-    def create_source_view(self, state: SourceViewStates = SourceViewStates.INSERT):
-        source_view: SourceView = SourceView(state)
-        source_view.command     = self._get_command_system()
-        source_view.command.set_data(source_view)
+    def _remove_source_view(self, event: Code_Event_Types.RemovedFileEvent):
+        event   = Event_Factory.create_event("removed_source_view", view = event.view)
+        self.message(event)
 
+        self.remove(event.view)
+        self.signal_mapper.disconnect_signals(event.view)
+
+    def create_source_view(self, state: SourceViewStates = SourceViewStates.INSERT):
+        scrolled_win: Gtk.ScrolledWindow = Gtk.ScrolledWindow()
+        source_view: SourceView          = SourceView(state)
+        source_view.command              = self._get_command_system()
+
+        scrolled_win.set_hexpand(True)
+        scrolled_win.set_vexpand(True)
+
+        source_view.command.set_data(source_view)
         self.signal_mapper.connect_signals(source_view)
 
         self.append(source_view)
+        scrolled_win.add(source_view)
 
         event = Event_Factory.create_event(
             "created_source_view", view = source_view
         )
         self.emit(event)
 
-        return source_view
+        return scrolled_win, source_view
 
     def first_map_load(self):
         for source_view in self:

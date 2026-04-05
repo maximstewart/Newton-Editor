@@ -7,6 +7,8 @@ from .code_event import CodeEvent
 from .toggle_plugins_ui_event import TogglePluginsUiEvent
 from .create_source_view_event import CreateSourceViewEvent
 from .created_source_view_event import CreatedSourceViewEvent
+from .remove_source_view_event import RemoveSourceViewEvent
+from .removed_source_view_event import RemovedSourceViewEvent
 from .register_completer_event import RegisterCompleterEvent
 from .unregister_completer_event import UnregisterCompleterEvent
 from .register_provider_event import RegisterProviderEvent
@@ -21,7 +23,7 @@ from .filter_out_loaded_files_event import FilterOutLoadedFilesEvent
 from .get_active_view_event import GetActiveViewEvent
 from .get_source_views_event import GetSourceViewsEvent
 
-from .get_new_command_system_event import GetNewCommandSystemEvent
+from .create_command_system_event import CreateCommandSystemEvent
 from .request_completion_event import RequestCompletionEvent
 from .cursor_moved_event import CursorMovedEvent
 from .modified_changed_event import ModifiedChangedEvent

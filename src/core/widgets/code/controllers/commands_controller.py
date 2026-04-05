@@ -17,10 +17,12 @@ class CommandsController(ControllerBase, list):
 
 
     def _controller_message(self, event: Code_Event_Types.CodeEvent):
-        if isinstance(event, Code_Event_Types.GetNewCommandSystemEvent):
-            event.response = self.get_new_command_system()
+        if isinstance(event, Code_Event_Types.CreateCommandSystemEvent):
+            event.response = self.create_command_system()
+        elif isinstance(event, Code_Event_Types.RemovedSourceViewEvent):
+            self.remove_command_system(event)
 
-    def get_new_command_system(self):
+    def create_command_system(self):
         command_system         = SourceViewCommandSystem()
         command_system.emit    = self.emit
         command_system.emit_to = self.emit_to
@@ -28,3 +30,6 @@ class CommandsController(ControllerBase, list):
         self.append(command_system)
 
         return command_system
+
+    def remove_command_system(self, event: Code_Event_Types.RemovedSourceViewEvent):
+        self.remove(event.view.command)

@@ -99,13 +99,9 @@ class Telescope(Gtk.Dialog):
     def unmap_parent_resize_event(self, parent):
         parent.disconnect(self.size_allocate_id)
 
-    def set_source_view(self, source_view):
-        scrolled_win     = Gtk.ScrolledWindow()
+    def set_source_view(self, scrolled_win, source_view):
         self.source_view = source_view
-
-        scrolled_win.add(self.source_view)
         self.main_box.pack_end(scrolled_win, True, True, 0)
-
         scrolled_win.show_all()
 
     def _handle_destroy(self, widget):

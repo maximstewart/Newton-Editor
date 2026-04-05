@@ -2,7 +2,6 @@ ___
 ### Add
 1. Add Godot LSP Client
 1. Add Terminal plugin
-1. Add Plugin to <Shift\><Ctrl\>| and <Ctrl\>| to split views up, down, left, right
 1. Add <Ctrl\>i to **lsp_manager** to list who implements xyz
 
 ___
