@@ -16,6 +16,19 @@ from libs.event_factory import Event_Factory, Code_Event_Types
 
 emit_to: callable = None
 
+def get_source_view(widget):
+    if isinstance(widget, GtkSource.View):
+        return widget
+
+    if isinstance(widget, Gtk.ScrolledWindow):
+        return widget.get_child()
+
+    if isinstance(widget, Gtk.Paned):
+        return get_source_view(widget.get_child1())
+
+    return None
+
+
 def execute(
     source_view,
     char_str,
@@ -39,7 +52,7 @@ def execute(
         remaining    = source_view1
         closing_view = source_view
 
-    remaining_view = remaining.get_child()
+    remaining_view = get_source_view(remaining)
     left           = closing_view.sibling_left
     right          = closing_view.sibling_right
 

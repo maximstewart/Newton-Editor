@@ -30,6 +30,7 @@ class Plugin(PluginCode):
 
         event = Event_Factory.create_event("get_active_view")
         self.emit_to("source_views", event)
+        if not event.response: return
         code_minimap.set_smini_view(event.response)
 
     def unload(self):

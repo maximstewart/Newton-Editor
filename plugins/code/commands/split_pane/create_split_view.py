@@ -54,13 +54,24 @@ def execute(
     pane.pack2( scrolled_win2, True, True )
     container.add(pane)
 
-    pane.show_all()
+    def _show(pane, alloc, is_vertical: bool):
+        if is_vertical:
+            pane.set_position(alloc.width  / 2)
+        else:
+            pane.set_position(alloc.height / 2)
+
+        pane.disconnect(pane.show_id)
 
     is_control, is_shift, is_alt = modkeys_states
-    if is_control and is_shift:
+    alloc = container.get_allocation()
+    if char_str == "|":
+        pane.show_id = pane.connect("show", _show, alloc, True)
         pane.set_orientation(Gtk.Orientation.VERTICAL)
-    elif is_control:
+    elif char_str == "\\":
+        pane.show_id = pane.connect("show", _show, alloc, False)
         pane.set_orientation(Gtk.Orientation.HORIZONTAL)
 
-    source_view2.grab_focus()
+    pane.show_all()
+
     source_view2.command.exec("new_file")
+    source_view2.grab_focus()
