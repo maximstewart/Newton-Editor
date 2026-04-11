@@ -38,7 +38,6 @@ class CommandSystem:
             *args or **kwargs or something else entirely.
         """
         if not hasattr(self.commands, command): return
-
         method = getattr(self.commands, command)
         return method.execute(*args, **kwargs)
 

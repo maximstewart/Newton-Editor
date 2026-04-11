@@ -40,7 +40,8 @@ class SourceFile(GtkSource.File):
             self._mark_set,
             self._insert_text,
             self._after_insert_text,
-            self._modified_changed
+            self._modified_changed,
+            self._delete_range
         )
 
     def _changed(self, buffer: SourceBuffer):
@@ -99,7 +100,19 @@ class SourceFile(GtkSource.File):
     def _modified_changed(self, buffer: SourceBuffer):
         event = Event_Factory.create_event(
             "modified_changed",
-            file = self, buffer = buffer
+            file = self,
+            buffer = buffer
+        )
+
+        self.emit(event)
+
+    def _delete_range(self, buffer: SourceBuffer, start: Gtk.TextIter, end: Gtk.TextIter):
+        event = Event_Factory.create_event(
+            "delete_range",
+            file   = self,
+            buffer = buffer,
+            start  = start,
+            end    = end,
         )
 
         self.emit(event)

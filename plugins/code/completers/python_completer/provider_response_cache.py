@@ -50,7 +50,10 @@ class ProviderResponseCache(ProviderResponseCacheBase):
     def process_file_save(self, event: Code_Event_Types.SavedFileEvent):
         ...
 
-    def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
+    def process_file_text_inserted(self, event: Code_Event_Types.TextInsertedEvent):
+        ...
+
+    def process_file_delete_range(self, event: Code_Event_Types.DeleteRangeEvent):
         ...
 
     def filter(self, word: str) -> list[dict]:

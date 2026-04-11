@@ -12,6 +12,7 @@ from libs.dto.states import SourceViewStates
 from plugins.plugin_types import PluginCode
 
 from .dto.code import events as lsp_events
+from .commands import Commands
 from .lsp_manager import LSPManager
 
 
@@ -35,23 +36,11 @@ class Plugin(PluginCode):
 
         window = self.request_ui_element("main-window")
 
-        lsp_manager.lsp_manager_ui.map_parent_resize_event(window)
+        lsp_manager.ui_manager.map_parent_resize_event(window)
 
-        event  = Event_Factory.create_event("register_command",
-            command_name = "LSP Manager",
-            command      = Handler,
-            binding_mode = "released",
-            binding      = ["<Shift><Control>l", "<Control>g", "<Control>i"]
-        )
-        self.emit_to("source_views", event)
+        self._manage_signals("register_command")
 
-        event  = Event_Factory.create_event(
-            "register_provider",
-            provider_name = "LSP Completer",
-            provider      = lsp_manager.provider,
-            language_ids  = []
-        )
-        self.emit_to("completion", event)
+        self._manage_provider("register_provider")
 
         event  = Event_Factory.create_event(
             "create_source_view",
@@ -59,8 +48,8 @@ class Plugin(PluginCode):
         )
         self.emit_to("source_views", event)
 
-        source_view = event.response
-        lsp_manager.lsp_manager_ui.set_source_view(source_view)
+        scrolled_win, source_view = event.response
+        lsp_manager.ui_manager.set_source_view(scrolled_win, source_view)
 
     def unload(self):
         Event_Factory.unregister_events( lsp_events.__dict__.items() )
@@ -69,56 +58,61 @@ class Plugin(PluginCode):
 
         window = self.request_ui_element("main-window")
 
-        lsp_manager.lsp_manager_ui.unmap_parent_resize_event(window)
+        lsp_manager.ui_manager.unmap_parent_resize_event(window)
 
-        event  = Event_Factory.create_event("unregister_command",
-            command_name = "LSP Manager",
-            command      = Handler,
+        self._manage_signals("unregister_command")
+
+        self._manage_provider("unregister_provider")
+
+        lsp_manager.handle_destroy()
+
+    def _manage_signals(self, action: str):
+        _commands             = Commands
+        _commands.lsp_manager = lsp_manager
+
+        event = Event_Factory.create_event(action,
+            command_name = "lsp_manager_toggle",
+            command      = _commands.lsp_manager_toggle,
             binding_mode = "released",
-            binding      = ["<Shift><Control>l", "<Control>g", "<Control>i"]
+            binding      = "<Shift><Control>l"
         )
         self.emit_to("source_views", event)
 
-        event  = Event_Factory.create_event(
-            "unregister_provider",
-            provider_name = "LSP Completer"
+        event = Event_Factory.create_event(action,
+            command_name = "lsp_references",
+            command      = _commands.lsp_references,
+            binding_mode = "released",
+            binding      = "<Control>i"
+        )
+        self.emit_to("source_views", event)
+
+        event = Event_Factory.create_event(action,
+            command_name = "lsp_implementation",
+            command      = _commands.lsp_implementation,
+            binding_mode = "released",
+            binding      = "<Shift><Control>i"
+        )
+        self.emit_to("source_views", event)
+
+        event = Event_Factory.create_event(action,
+            command_name = "lsp_definition",
+            command      = _commands.lsp_definition,
+            binding_mode = "released",
+            binding      = "<Control>g"
+        )
+        self.emit_to("source_views", event)
+
+    def _manage_provider(self, action: str):
+        event = Event_Factory.create_event(
+            action,
+            provider_name = "LSP Completer",
+            provider      = lsp_manager.provider,
+            language_ids  = []
         )
         self.emit_to("completion", event)
-
-        lsp_manager.handle_destroy()
 
     def run(self):
         ...
 
     def generate_plugin_element(self):
         ...
-
-
-class Handler:
-    @staticmethod
-    def execute(
-        view: any,
-        *args,
-        **kwargs
-    ):
-        logger.debug("Command: LSP Manager")
-
-        char_str = args[0]
-        if char_str in ["g", "i"]:
-            file   = view.command.exec("get_current_file")
-            buffer = view.get_buffer()
-            iter   = buffer.get_iter_at_mark( buffer.get_insert() )
-            line   = iter.get_line()
-            column = iter.get_line_offset()
-
-            if char_str == "g":
-                lsp_manager.lsp_manager_client.process_goto_definition(
-                    file.ftype, file.fpath, line, column
-                )
-
-                return
-
-            if char_str == "i":
-                return
-
-        lsp_manager.lsp_manager_ui.hide() if lsp_manager.lsp_manager_ui.is_visible() else lsp_manager.lsp_manager_ui.show()

@@ -35,10 +35,13 @@ class ProviderResponseCache(ProviderResponseCacheBase):
     def process_file_save(self, event: Code_Event_Types.SavedFileEvent):
         ...
 
-    def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
-        buffer = event.file.buffer
+    def process_file_text_inserted(self, event: Code_Event_Types.TextInsertedEvent):
+        buffer = event.buffer
         self._clear_temp_delay()
         self._set_temp_delay(buffer)
+
+    def process_file_delete_range(self, event: Code_Event_Types.DeleteRangeEvent):
+        ...
 
     def _clear_temp_delay(self):
         if self._temp_timeout_id:

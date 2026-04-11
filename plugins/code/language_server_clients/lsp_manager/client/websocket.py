@@ -9,7 +9,7 @@ from ..libs import websocket
 
 
 
-class WebsocketClient:
+class Websocket:
     def __init__(self):
         self.ws         = None
         self._socket    = None

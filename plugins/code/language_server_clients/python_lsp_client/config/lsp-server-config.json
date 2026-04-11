@@ -47,9 +47,16 @@
                 },
                 "jedi_completion": {
                     "enabled": true,
+                    "fuzzy": true,
+                    "include_params": false,
                     "include_class_objects": true,
-                    "include_function_objects": true,
-                    "fuzzy": false
+                    "include_function_objects": true
+                },
+                "jedi_signature_help": {
+                    "enabled": true
+                },
+                "jedi_references": {
+                    "enabled": true
                 },
                 "jedi": {
                     "root_dir": "file://{workspace.folder}",

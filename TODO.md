@@ -7,7 +7,6 @@ ___
 ___
 ### Change
 1. Make **telescope** plugin a generic base to allow query mode additions through plugins
-1. Make **lsp_manager** hard coded values configurable, plus add respective fields to UI
 
 ___
 ### Fix

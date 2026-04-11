@@ -99,7 +99,7 @@ class MarkdownPreview(Gtk.Popover, MarkdownPreviewMixin):
     def _tggle_preview_updates(self, widget):
         self.is_preview_paused = not self.is_preview_paused
 
-    def _handle_destroy(self):
+    def _handle_destroy(self, widget):
         self.disconnect_by_func(self._handle_hide)
         self.disconnect_by_func(self._handle_show)
         self.disconnect_by_func(self._handle_destroy)

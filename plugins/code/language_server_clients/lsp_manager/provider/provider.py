@@ -32,20 +32,7 @@ class Provider(GObject.GObject, GtkSource.CompletionProvider):
         return "LSP Code Completion"
 
     def do_match(self, context):
-        # Note: If provider is in interactive activation then need to check
-        # view focus as otherwise non focus views start trying to grab it.
-        # completion = context.get_property("completion")
-        # if not completion.get_view().has_focus(): return
-
         iter = self.response_cache.get_iter_correctly(context)
-        iter.backward_char()
-        ch = iter.get_char()
-
-        # NOTE: Look to re-add or apply supporting logic to use spaces
-        # As is it slows down the editor in certain contexts...
-        # if not (ch in ('_', '.', ' ') or ch.isalnum()):
-        if not (ch in ('_', '.') or ch.isalnum()):
-            return False
 
         buffer = iter.get_buffer()
         if buffer.get_context_classes_at_iter(iter) != ['no-spell-check']:
@@ -68,6 +55,7 @@ class Provider(GObject.GObject, GtkSource.CompletionProvider):
 #        return GtkSource.CompletionActivation.NONE
         return GtkSource.CompletionActivation.USER_REQUESTED
 #        return GtkSource.CompletionActivation.INTERACTIVE
+#        return GtkSource.CompletionActivation.USER_REQUESTED | GtkSource.CompletionActivation.INTERACTIVE
 
     def do_populate(self, context):
         results   = self.response_cache.filter_with_context(context)

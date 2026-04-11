@@ -9,8 +9,10 @@ from ..dto.code.lsp.lsp_messages import didopen_notification
 from ..dto.code.lsp.lsp_messages import didsave_notification
 from ..dto.code.lsp.lsp_messages import didclose_notification
 from ..dto.code.lsp.lsp_messages import didchange_notification
+from ..dto.code.lsp.lsp_messages import didchange_notification_range
 from ..dto.code.lsp.lsp_messages import completion_request
 from ..dto.code.lsp.lsp_messages import definition_request
+from ..dto.code.lsp.lsp_messages import implementation_request
 from ..dto.code.lsp.lsp_messages import references_request
 from ..dto.code.lsp.lsp_messages import symbols_request
 
@@ -40,6 +42,7 @@ class LSPClientEvents:
     def _lsp_did_open(self, data: dict):
         method = "textDocument/didOpen"
         params = didopen_notification["params"]
+        self.doc_vers[ data["uri"] ] = -1
 
         params["textDocument"]["uri"]        = data["uri"]
         params["textDocument"]["languageId"] = data["language_id"]
@@ -77,28 +80,50 @@ class LSPClientEvents:
 
         self.send_notification( method, params )
 
-    # def _lsp_did_change(self, data: dict):
-    #     method = "textDocument/didChange"
-    #     params = didchange_notification_range["params"]
+    def _lsp_did_change_range(self, data: dict):
+        method = "textDocument/didChange"
+        params = didchange_notification_range["params"]
 
-    #     params["textDocument"]["uri"]        = data["uri"]
-    #     params["textDocument"]["languageId"] = data["language_id"]
-    #     params["textDocument"]["version"]    = data["version"]
+        params["textDocument"]["uri"]        = data["uri"]
+        params["textDocument"]["languageId"] = data["language_id"]
+        params["textDocument"]["version"]    = data["version"]
 
-    #     contentChanges         = params["contentChanges"][0]
-    #     start                  = contentChanges["range"]["start"]
-    #     end                    = contentChanges["range"]["end"]
-    #     contentChanges["text"] = data["text"]
-    #     start["line"]          = data["line"]
-    #     start["character"]     = 0
-    #     end["line"]            = data["line"]
-    #     end["character"]       = data["column"]
+        contentChanges         = params["contentChanges"][0]
+        start                  = contentChanges["range"]["start"]
+        end                    = contentChanges["range"]["end"]
+        contentChanges["text"] = data["text"]
+        start["line"]          = data["line"]
+        start["character"]     = data["column"]
+        end["line"]            = data["end_line"]
+        end["character"]       = data["end_column"]
 
-    #     self.send_notification( method, params )
+        self.send_notification( method, params )
 
     def _lsp_definition(self, data: dict):
         method = "textDocument/definition"
         params = definition_request["params"]
+
+        params["textDocument"]["uri"]        = data["uri"]
+        params["textDocument"]["languageId"] = data["language_id"]
+        params["textDocument"]["version"]    = data["version"]
+        params["position"]["line"]           = data["line"]
+        params["position"]["character"]      = data["column"]
+
+        self.send_request( method, params )
+
+    def _lsp_implementation(self, data: dict):
+        method = "textDocument/implementation"
+        params = implementation_request["params"]
+
+        params["textDocument"]["uri"]        = data["uri"]
+        params["position"]["line"]           = data["line"]
+        params["position"]["character"]      = data["column"]
+
+        self.send_request( method, params )
+
+    def _lsp_references(self, data: dict):
+        method = "textDocument/references"
+        params = references_request["params"]
 
         params["textDocument"]["uri"]        = data["uri"]
         params["textDocument"]["languageId"] = data["language_id"]
@@ -113,8 +138,6 @@ class LSPClientEvents:
         params = completion_request["params"]
 
         params["textDocument"]["uri"]        = data["uri"]
-        params["textDocument"]["languageId"] = data["language_id"]
-        params["textDocument"]["version"]    = data["version"]
         params["position"]["line"]           = data["line"]
         params["position"]["character"]      = data["column"]
 

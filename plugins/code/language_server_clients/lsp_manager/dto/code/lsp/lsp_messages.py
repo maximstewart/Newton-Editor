@@ -96,10 +96,10 @@ didchange_notification_range = {
             "uri": "file://",
             "languageId": "python",
             "version": 1,
-            "text": ""
 	    },
 	    "contentChanges": [
 	        {
+	            "text": "",
 	            "range": {
 	                "start": {
 	                    "line": 1,
@@ -108,9 +108,8 @@ didchange_notification_range = {
 	                "end": {
 	                    "line": 1,
                         "character": 1,
-	                },
-	                "rangeLength": 0
-	            }
+	                }
+	            },
 	        }
 	    ]
 	}
@@ -125,19 +124,11 @@ completion_request = {
 	"method": "textDocument/completion",
 	"params": {
 	    "textDocument": {
-            "uri": "file://",
-            "languageId": "python",
-            "version": 1,
-            "text": ""
+            "uri": "file://"
 	    },
 	    "position": {
 	        "line": 5,
-            "character": 12,
-            "offset": 0
-	    },
-	    "contet": {
-	        "triggerKind": 3,
-	        "triggerCharacter": ""
+            "character": 12
 	    }
 	}
 }
@@ -155,6 +146,19 @@ definition_request = {
 	        "line": 5,
             "character": 12,
             "offset": 0
+	    }
+	}
+}
+
+implementation_request = {
+	"method": "textDocument/implementation",
+	"params": {
+	    "textDocument": {
+            "uri": "file://"
+	    },
+	    "position": {
+	        "line": 5,
+            "character": 12
 	    }
 	}
 }

@@ -11,7 +11,7 @@ from ..dto.code.lsp.lsp_message_structs import           \
     LSPResponseRequest, LSPResponseNotification, LSPIDResponseNotification
 
 from .lsp_client_base import LSPClientBase
-from .websocket_client import WebsocketClient
+from .websocket import Websocket
 
 
 
@@ -24,26 +24,26 @@ class LSPClientWebsocket(LSPClientBase):
         message      = f"Content-Length: {message_size}\r\n\r\n{message_str}"
 
         logger.debug(f"Client: {message_str}")
-        self.ws_client.send(message_str)
+        self.websocket.send(message_str)
 
     def start_client(self):
-        self.ws_client = WebsocketClient()
-        self.ws_client.set_socket(self._socket)
-        self.ws_client.set_callback(self._monitor_lsp_response)
-        self.ws_client.start_client()
+        self.websocket = Websocket()
+        self.websocket.set_socket(self._socket)
+        self.websocket.set_callback(self._monitor_lsp_response)
+        self.websocket.start_client()
 
-        return self.ws_client
+        return self.websocket
 
     def stop_client(self):
-        if not hasattr(self, "ws_client"): return
-        self.ws_client.close_client()
+        if not hasattr(self, "websocket"): return
+        self.websocket.close_client()
 
     def _monitor_lsp_response(self, data: dict | None):
-        if not data: return
+        if not data: return {}
 
         message      = get_message_obj(data)
         keys         = message.keys()
-        lsp_response = None
+        lsp_response = data
 
         if "result" in keys:
             lsp_response = LSPResponseRequest(**get_message_obj(data))
@@ -51,6 +51,7 @@ class LSPClientWebsocket(LSPClientBase):
         if "method" in keys:
             lsp_response = LSPResponseNotification(**get_message_obj(data)) if not "id" in keys else LSPIDResponseNotification( **get_message_obj(data) )
 
-        if not lsp_response: return
+        if isinstance(lsp_response, str):
+            lsp_response = get_message_obj(lsp_response)
 
         GLib.idle_add(self.handle_lsp_response, lsp_response)

@@ -4,14 +4,15 @@ from concurrent.futures import ThreadPoolExecutor
 # Lib imports
 
 # Application imports
-from .mixins.lsp_client_events_mixin import LSPClientEventsMixin
+from .config import get_lsp_connect_timout
+from .mixins.client_manager_events_mixin import ClientManagerEventsMixin
 from .client.lsp_client import LSPClient
 
 
 
-class LSPManagerClient(LSPClientEventsMixin):
+class ClientManager(ClientManagerEventsMixin):
     def __init__(self):
-        super(LSPManagerClient, self).__init__()
+        super(ClientManager, self).__init__()
 
         self._cache_refresh_timeout_id: int = None
 
@@ -24,13 +25,13 @@ class LSPManagerClient(LSPClientEventsMixin):
         self,
         lang_id: str,
         workspace_path: str,
-        init_opts: dict[str, str]
+        init_opts: dict[str, str],
+        address: str = "127.0.0.1",
+        port: str    = "9999"
     ) -> LSPClient:
         if lang_id in self.clients: return None
 
-        address = "127.0.0.1"
-        port    = 9999
-        uri     = f"ws://{address}:{port}/{lang_id}"
+        uri     = f"ws://{address}:{port}/{lang_id}?workspace={workspace_path}"
         client  = LSPClient()
 
         client.set_socket(uri)
@@ -39,7 +40,7 @@ class LSPManagerClient(LSPClientEventsMixin):
         client.set_init_opts(init_opts)
         client.start_client()
 
-        if not client.ws_client.wait_for_connection(timeout = 5.0):
+        if not client.websocket.wait_for_connection(timeout = get_lsp_connect_timout()):
             logger.error(f"Failed to connect to LSP server for {lang_id}")
             return None
 

@@ -41,8 +41,10 @@ class CompletionController(ControllerBase):
             self.provider_process_file_close(event)
         elif isinstance(event, Code_Event_Types.SavedFileEvent):
             self.provider_process_file_save(event)
-        elif isinstance(event, Code_Event_Types.TextChangedEvent):
-            self.provider_process_file_change(event)
+        elif isinstance(event, Code_Event_Types.TextInsertedEvent):
+            self.provider_process_file_text_inserted(event)
+        elif isinstance(event, Code_Event_Types.DeleteRangeEvent):
+            self.provider_process_file_delete_range(event)
         elif isinstance(event, Code_Event_Types.RequestCompletionEvent):
             self.request_unbound_completion(event)
 
@@ -88,9 +90,13 @@ class CompletionController(ControllerBase):
         for provider in self._providers.values():
             provider.response_cache.process_file_save(event)
 
-    def provider_process_file_change(self, event: Code_Event_Types.TextChangedEvent):
+    def provider_process_file_text_inserted(self, event: Code_Event_Types.TextInsertedEvent):
         for provider in self._providers.values():
-            provider.response_cache.process_file_change(event)
+            provider.response_cache.process_file_text_inserted(event)
+
+    def provider_process_file_delete_range(self, event: Code_Event_Types.DeleteRangeEvent):
+        for provider in self._providers.values():
+            provider.response_cache.process_file_delete_range(event)
 
     def request_unbound_completion(self, event: Code_Event_Types.RequestCompletionEvent):
         completer = event.view.get_completion()

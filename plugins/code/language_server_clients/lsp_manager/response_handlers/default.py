@@ -21,6 +21,10 @@ class DefaultHandler(BaseHandler):
                 self._handle_completion(response)
             case "textDocument/definition":
                 self._handle_definition(response, controller)
+            case "textDocument/references":
+                ...
+            case "textDocument/implementation":
+                ...
             case "textDocument/publishDiagnostics":
                 self._handle_diagnostics(response)
 
@@ -130,5 +134,5 @@ class DefaultHandler(BaseHandler):
             view     = view,
             provider = self.context._provider
         )
-        self.emit_to("completion", event)
 
+        self.emit_to("completion", event)

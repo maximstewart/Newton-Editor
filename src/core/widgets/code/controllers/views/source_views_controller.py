@@ -128,6 +128,7 @@ class SourceViewsController(ControllerBase, list):
 
         self.append(source_view)
         scrolled_win.add(source_view)
+        scrolled_win.show_all()
 
         event = Event_Factory.create_event(
             "created_source_view", view = source_view

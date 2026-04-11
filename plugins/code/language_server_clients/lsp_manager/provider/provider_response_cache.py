@@ -33,9 +33,13 @@ class ProviderResponseCache(ProviderResponseCacheBase):
         if self.lsp_manager_client:
             self.lsp_manager_client.process_file_save(event)
 
-    def process_file_change(self, event):
+    def process_file_text_inserted(self, event):
         if self.lsp_manager_client:
-            self.lsp_manager_client.process_file_change(event)
+            self.lsp_manager_client.process_file_text_inserted(event)
+
+    def process_file_delete_range(self, event):
+        if self.lsp_manager_client:
+            self.lsp_manager_client.process_file_delete_range(event)
 
     def filter(self, word: str) -> list[dict]:
         return []

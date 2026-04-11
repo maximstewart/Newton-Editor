@@ -26,6 +26,7 @@ from .get_source_views_event import GetSourceViewsEvent
 from .create_command_system_event import CreateCommandSystemEvent
 from .request_completion_event import RequestCompletionEvent
 from .cursor_moved_event import CursorMovedEvent
+from .delete_range_event import DeleteRangeEvent
 from .modified_changed_event import ModifiedChangedEvent
 from .text_changed_event import TextChangedEvent
 from .text_inserted_event import TextInsertedEvent

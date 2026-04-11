@@ -41,18 +41,14 @@ class Plugin(PluginCode):
     def load(self):
         separator_right  = self.request_ui_element("separator-right")
         markdown_preview.set_relative_to(separator_right)
-
-        event = Event_Factory.create_event("register_command",
-            command_name = "tggle_markdown_preview",
-            command      = Handler,
-            binding_mode = "released",
-            binding      = "<Shift><Control>m"
-        )
-
-        self.emit_to("source_views", event)
+        self._manage_signals("register_command")
 
     def unload(self):
-        event = Event_Factory.create_event("unregister_command",
+        self._manage_signals("unregister_command")
+        markdown_preview.destroy()
+
+    def _manage_signals(self, action: str):
+        event = Event_Factory.create_event(action,
             command_name = "tggle_markdown_preview",
             command      = Handler,
             binding_mode = "released",
@@ -60,8 +56,6 @@ class Plugin(PluginCode):
         )
 
         self.emit_to("source_views", event)
-
-        markdown_preview.destroy()
 
     def run(self):
         ...

@@ -36,8 +36,11 @@ class ProviderResponseCacheBase:
     def process_file_save(self, event: Code_Event_Types.SavedFileEvent):
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_save' not implemented...")
 
-    def process_file_change(self, event: Code_Event_Types.TextChangedEvent):
-        raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_change' not implemented...")
+    def process_file_text_inserted(self, event: Code_Event_Types.TextInsertedEvent):
+        raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_text_inserted' not implemented...")
+
+    def process_file_delete_range(self, event: Code_Event_Types.DeleteRangeEvent):
+        raise ProviderResponseCacheException("ProviderResponseCacheBase 'process_file_delete_range' not implemented...")
 
     def filter(self, word: str) -> list[dict]:
         raise ProviderResponseCacheException("ProviderResponseCacheBase 'filter' not implemented...")

@@ -31,6 +31,7 @@ class SourceBuffer(GtkSource.Buffer):
         _insert_text,
         _after_insert_text,
         _modified_changed,
+        _delete_range,
     ):
 
         self._handler_ids = [
@@ -39,7 +40,8 @@ class SourceBuffer(GtkSource.Buffer):
             self.connect("mark-set",          _mark_set),
             self.connect("insert-text",       _insert_text),
             self.connect_after("insert-text", _after_insert_text),
-            self.connect("modified-changed",  _modified_changed)
+            self.connect("modified-changed",  _modified_changed),
+            self.connect("delete-range",      _delete_range)
         ]
 
     def block_changed_signal(self):
@@ -54,6 +56,9 @@ class SourceBuffer(GtkSource.Buffer):
     def block_modified_changed_signal(self):
         self.handler_block(self._handler_ids[5])
 
+    def block_delete_range(self):
+        self.handler_block(self._handler_ids[6])
+
     def unblock_changed_signal(self):
         self.handler_unblock(self._handler_ids[0])
 
@@ -65,6 +70,9 @@ class SourceBuffer(GtkSource.Buffer):
 
     def unblock_modified_changed_signal(self):
         self.handler_unblock(self._handler_ids[5])
+
+    def unblock_delete_range(self):
+        self.handler_block(self._handler_ids[6])
 
     def clear_signals(self):
         for handle_id in self._handler_ids:

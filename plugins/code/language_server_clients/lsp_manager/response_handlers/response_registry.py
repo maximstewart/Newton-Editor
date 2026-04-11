@@ -40,7 +40,7 @@ class ResponseRegistry:
         handler_cls = self._lang_handlers.get(
             lang_id, self._lang_handlers.get("default", DefaultHandler)
         )
-        
+
         if not handler_cls: return None
 
         return self._get_instance(handler_cls)

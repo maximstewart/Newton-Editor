@@ -1,13 +1,9 @@
 # Python imports
-import threading
-from os import path
-import json
 
 # Lib imports
-import gi
-from gi.repository import GLib
 
 # Application imports
+from ..config import get_lsp_init_config
 from ..dto.code.lsp.lsp_messages import get_message_str
 from ..dto.code.lsp.lsp_message_structs import \
     LSPResponseTypes, ClientRequest, ClientNotification
@@ -19,29 +15,14 @@ class LSPClient(LSPClientWebsocket):
     def __init__(self):
         super(LSPClient, self).__init__()
 
+        self._socket: str                   = ""
         self._language: str                 = ""
         self._workspace_path: str           = ""
-        self._init_params: dict             = {}
-        self._init_opts: dict               = {}
-
-        try:
-            _USER_HOME  = path.expanduser('~')
-            _SCRIPT_PTH = path.dirname( path.realpath(__file__) )
-            _LSP_INIT_CONFIG = f"{_SCRIPT_PTH}/../configs/initialize-params-slim.json"
-
-            with open(_LSP_INIT_CONFIG) as file:
-                data = file.read()
-                self._init_params = json.loads(data)
-        except Exception as e:
-            logger.error( f"LSP Controller: {_LSP_INIT_CONFIG}\n\t\t{repr(e)}" )
-
-
-        self._socket                        = None
         self._message_id: int               = -1
         self._event_history: dict[int, str] = {}
-
-        self.read_lock                      = threading.Lock()
-        self.write_lock                     = threading.Lock()
+        self._init_params: dict             = get_lsp_init_config()
+        self._init_opts: dict[str, str]     = {}
+        self.doc_vers: dict[str, int]       = {}
 
 
     def set_language(self, language: str):
@@ -57,7 +38,7 @@ class LSPClient(LSPClientWebsocket):
         self._socket = socket
 
     def unset_socket(self):
-        self._socket = None
+        self._socket = ""
 
     def send_notification(self, method: str, params: dict = {}):
         self._send_message( ClientNotification(method, params) )
@@ -71,5 +52,5 @@ class LSPClient(LSPClientWebsocket):
         if not message_id in self._event_history: return
         return self._event_history[message_id]
 
-    def handle_lsp_response(self, lsp_response: LSPResponseTypes):
+    def handle_lsp_response(self, lsp_response: LSPResponseTypes | dict):
         raise NotImplementedError
