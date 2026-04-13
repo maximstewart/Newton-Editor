@@ -2,7 +2,10 @@
 
 # Lib imports
 import gi
+gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GLib
 
 # Application imports
 
@@ -25,6 +28,7 @@ class PluginsUI(Gtk.Dialog):
 
         self.set_title("Plugins")
         self.set_size_request(450, 530)
+        self.set_modal(False)
         self.set_deletable(False)
         self.set_skip_pager_hint(True)
         self.set_skip_taskbar_hint(True)
@@ -35,9 +39,13 @@ class PluginsUI(Gtk.Dialog):
 
         window = widget_registery.get_object("main-window")
         self.set_transient_for(window)
+        self.set_destroy_with_parent(True)
+
+        self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
 
     def _setup_signals(self):
-        ...
+        self.connect("focus-out-event", self._on_focus_out)
+        self.connect("key-release-event", self._on_key_release)
 
     def _subscribe_to_events(self):
         ...
@@ -58,6 +66,19 @@ class PluginsUI(Gtk.Dialog):
         content_area.add(scrolled_win)
 
         scrolled_win.show_all()
+
+    def _on_key_release(self, widget, event):
+        ctrl_pressed  = event.state & Gdk.ModifierType.CONTROL_MASK
+        shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
+
+        if ctrl_pressed:
+            if shift_pressed:
+                if event.keyval == Gdk.KEY_P:
+                    self.hide()
+
+    def _on_focus_out(self, *args):
+        self.hide()
+        GLib.idle_add(self.hide)
 
     def add_row(self, manifest_meta, callback: callable):
         box         = Gtk.Box()

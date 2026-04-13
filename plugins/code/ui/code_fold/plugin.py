@@ -25,15 +25,19 @@ class Plugin(PluginCode):
             self.view = event.view
 
             event = Event_Factory.create_event(
-                "get_file", buffer=self.view.get_buffer()
+                "get_file", buffer = self.view.get_buffer()
             )
             self.emit_to("files", event)
 
             file = event.response
 
             if not file: return
-            if file.ftype not in FOLD_NODES: return
-            if not hasattr(file, "ast"): return
+            if file.ftype not in FOLD_NODES:
+                self.view.fold_start_set = {}
+                return
+            if not hasattr(file, "ast"):
+                self.view.fold_start_set = {}
+                return
 
             buffer = file.buffer
             if not buffer.get_tag_table().lookup("invisible"):

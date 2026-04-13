@@ -1,5 +1,6 @@
 # Python imports
 import os
+from os import path
 
 # Lib imports
 import gi
@@ -28,8 +29,7 @@ class VteWidget(Vte.Terminal):
     def __init__(self):
         super(VteWidget, self).__init__()
 
-        self.cd_cmd_prefix: tuple = ("cd".encode(), "cd ".encode())
-        self.dont_process: bool   = False
+        self._USER_HOME: str = path.expanduser('~')
 
         self._setup_styling()
         self._setup_signals()
@@ -52,16 +52,16 @@ class VteWidget(Vte.Terminal):
         self.set_scroll_on_output(True)
 
     def _setup_signals(self):
-       self.connect("commit", self._handle_commit)
-       self.connect("current-directory-uri-changed", self._handle_path_change)
-       self.connect("selection-changed", self._handle_selection)
-       self.connect("button-press-event", self._on_button_press)
-       self.connect("key-press-event", self._on_key_press)
-       self.connect("key-release-event", self._on_key_release)
-       self.connect("destroy", self._handle_destroy)
+        self.connect("commit", self._handle_commit)
+        self.connect("current-directory-uri-changed", self._handle_path_change)
+        self.connect("selection-changed", self._handle_selection)
+        self.connect("button-press-event", self._on_button_press)
+        self.connect("key-press-event", self._on_key_press)
+        self.connect("key-release-event", self._on_key_release)
+        self.connect("destroy", self._handle_destroy)
 
     def _subscribe_to_events(self):
-        event_system.subscribe("update_term_path", self.update_term_path)
+        ...
 
     def _load_widgets(self):
         ...
@@ -87,19 +87,14 @@ class VteWidget(Vte.Terminal):
 
         self.spawn_async(
             Vte.PtyFlags.DEFAULT,
-            settings_manager.path_manager.get_home_path(),
+            self._USER_HOME,
             ["/bin/bash"],
             env,
             GLib.SpawnFlags.DEFAULT,
             None, None, -1, None, None,
         )
 
-        startup_cmds = [
-        ]
-
         self.set_scrollback_lines(15000)
-        for i in startup_cmds:
-            self.run_command(i)
 
     def _handle_destroy(self, terminal):
         logger.debug("Destroying terminal...")
@@ -111,13 +106,8 @@ class VteWidget(Vte.Terminal):
         terminal.disconnect_by_func(terminal._on_key_release)
         terminal.disconnect_by_func(terminal._handle_destroy)
 
-    def _handle_path_change(self, terminal):
-        if not hasattr(self, "label"): return
-
-        uri = terminal.get_current_directory_uri().replace("file://", "")
-
-        terminal.label.set_text(uri)
-        terminal.label.set_tooltip_text(uri)
+    def _handle_commit(self, terminal, text, size):
+        ...
 
     def _handle_selection(self, *args):
         if self.get_has_selection():
@@ -142,49 +132,45 @@ class VteWidget(Vte.Terminal):
 
                     return True
 
+            if event.keyval in [
+                Gdk.KEY_period, Gdk.KEY_t, Gdk.KEY_w, Gdk.KEY_Up, Gdk.KEY_Down
+            ]:
+                if event.keyval == Gdk.KEY_period:
+                    if hasattr(self, "hide_view"):
+                        GLib.timeout_add(200, self.hide_view)
+                elif event.keyval == Gdk.KEY_t:
+                    if hasattr(self, "create_terminal"):
+                        self.create_terminal()
+                elif event.keyval == Gdk.KEY_w:
+                    if hasattr(self, "close_terminal"):
+                        self.close_terminal()
+                elif event.keyval == Gdk.KEY_Up:
+                    if hasattr(self, "prev_terminal"):
+                        self.prev_terminal()
+                elif event.keyval == Gdk.KEY_Down:
+                    if hasattr(self, "next_terminal"):
+                        self.next_terminal()
+
+                return True
+
         return False
 
     def _on_key_release(self, widget, event):
         ...
 
-    def _handle_commit(self, terminal, text, size):
-        if self.dont_process:
-            self.dont_process = False
-            return
+    def _handle_path_change(self, terminal):
+        if not hasattr(self, "label"): return
 
-        if not text.encode() == "\r".encode(): return
+        uri = terminal.get_current_directory_uri().replace("file://", "")
 
-        text, attributes = self.get_text()
+        terminal.label.set_text(uri)
+        terminal.label.set_tooltip_text(uri)
 
-        if not text: return
+    def get_home_path(self):
+        return self._USER_HOME
 
-        lines            = text.strip().splitlines()
-        command_ran      = None
-
-        try:
-            command_ran  = lines[-1].split("-->:")[1].strip()
-        except VteWidgetException as e:
-            logger.debug(e)
-            return
-
-        if not command_ran[0:3].encode() in self.cd_cmd_prefix:
-            return
-
-        target_path = command_ran.split( command_ran[0:3] )[1]
-        if target_path in (".", "./"): return
-
-        if not target_path:
-            target_path = settings_manager.get_home_path()
-
-        event = Event("pty_path_updated", "", target_path)
-        event_system.emit("handle_bridge_event", (event,))
-
-    def update_term_path(self, fpath: str):
-        self.dont_process = True
-
-        cmds = [f"cd '{fpath}'\n", "clear\n"]
-        for cmd in cmds:
-            self.run_command(cmd)
+    def bind_label(self, label: Gtk.Label):
+        self.label = label
 
     def run_command(self, cmd: str):
         self.feed_child_binary(bytes(cmd, 'utf8'))

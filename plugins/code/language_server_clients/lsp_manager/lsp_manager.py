@@ -1,6 +1,9 @@
 # Python imports
 
 # Lib imports
+import gi
+
+from gi.repository import GLib
 
 # Application imports
 from libs.controllers.controller_base import ControllerBase
@@ -109,8 +112,16 @@ class LSPManager(ControllerBase):
         return True
 
     def close_client(self, lang_id: str) -> bool:
-        self.client_manager.close_client(lang_id)
-        self.response_registry.close_handler(lang_id)
+        controller = self.client_manager.get_active_client()
+        controller.send_shutdown_request()
+
+        def _close():
+            self.client_manager.close_client(lang_id)
+            self.response_registry.close_handler(lang_id)
+
+            return False
+
+        GLib.timeout_add(5000, _close)
 
         return True
 

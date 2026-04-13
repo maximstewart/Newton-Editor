@@ -1,7 +1,5 @@
 ___
 ### Add
-1. Add Godot LSP Client
-1. Add Terminal plugin
 1. Add <Ctrl\>i to **lsp_manager** to list who implements xyz
 
 ___
@@ -10,8 +8,8 @@ ___
 
 ___
 ### Fix
+- Fix LSP WS Server to Godot LSP Server communication
 - Fix <Ctrl\>z in multi-insert mode being funky. Insure updates happen on block level.
        I.E, maybe push updates to queue to insure block undo/redo?
-- Fix on lsp client unload to close files lsp side and unload server endpoint
 
 ___

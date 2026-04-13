@@ -183,7 +183,6 @@ references_request = {
 	}
 }
 
-
 symbols_request = {
 	"method": "textDocument/documentSymbol",
 	"params": {
@@ -195,3 +194,14 @@ symbols_request = {
 	    }
 	}
 }
+
+shutdown_request = {
+	"method": "shutdown",
+	"params": None
+}
+
+exit_request = {
+	"method": "exit",
+	"params": None
+}
+

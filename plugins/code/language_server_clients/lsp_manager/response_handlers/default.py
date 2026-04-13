@@ -17,6 +17,10 @@ class DefaultHandler(BaseHandler):
 
     def handle(self, method: str, response, controller):
         match method:
+            case "initialize":
+                controller.send_initialized_notification()
+            case "shutdown":
+                controller.send_exit_notification()
             case "textDocument/completion":
                 self._handle_completion(response)
             case "textDocument/definition":

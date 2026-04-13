@@ -15,6 +15,8 @@ from ..dto.code.lsp.lsp_messages import definition_request
 from ..dto.code.lsp.lsp_messages import implementation_request
 from ..dto.code.lsp.lsp_messages import references_request
 from ..dto.code.lsp.lsp_messages import symbols_request
+from ..dto.code.lsp.lsp_messages import shutdown_request
+from ..dto.code.lsp.lsp_messages import exit_request
 
 
 
@@ -36,8 +38,14 @@ class LSPClientEvents:
         self._init_params["initializationOptions"] = self._init_opts
         self.send_request("initialize", self._init_params)
 
-    def send_initialized_message(self):
+    def send_initialized_notification(self):
         self.send_notification("initialized")
+
+    def send_shutdown_request(self):
+        self.send_request("shutdown")
+
+    def send_exit_notification(self):
+        self.send_notification("exit")
 
     def _lsp_did_open(self, data: dict):
         method = "textDocument/didOpen"
