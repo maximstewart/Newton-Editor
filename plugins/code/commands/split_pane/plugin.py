@@ -55,7 +55,7 @@ class Plugin(PluginCode):
             command_name = "close_split_view",
             command      = _close_split_view,
             binding_mode = "released",
-            binding      = "<Shift><Control>w"
+            binding      = "<Alt>\\"
         )
 
         self.emit_to("source_views", event)

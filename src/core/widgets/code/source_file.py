@@ -61,7 +61,20 @@ class SourceFile(GtkSource.File):
         location: Gtk.TextIter,
         text: str, length: int
     ):
-        ...
+        event = Event_Factory.create_event(
+            "text_insert",
+            file     = self,
+            buffer   = self.buffer,
+            location = location,
+            text     = text,
+            length   = length
+        )
+
+        # Note: 'idle_add' needed b/c markers don't get thir positions
+        #      updated relative to the initial insert.
+        #      If not used, seg faults galor during multi insert.
+        # GLib.idle_add(self.emit, event)
+        self.emit(event)
 
     def _after_insert_text(
         self,

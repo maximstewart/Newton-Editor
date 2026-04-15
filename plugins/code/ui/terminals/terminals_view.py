@@ -1,16 +1,22 @@
 # Python imports
+import os
+import shlex
 
 # Lib imports
 import gi
-gi.require_version('Gtk', '3.0')
+gi.require_version('Gio', '2.0')
 gi.require_version('Gdk', '3.0')
+gi.require_version('Gtk', '3.0')
 
+from gi.repository import Gio
+from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GLib
-from gi.repository import Gdk
 from gi.repository import Pango
 
 # Application imports
+from libs.event_factory import Event_Factory, Code_Event_Types
+
 from .vte_widget import VteWidget
 
 
@@ -19,7 +25,8 @@ class TerminalsView(Gtk.Notebook):
     def __init__(self):
         super(TerminalsView, self).__init__()
 
-        self.code_view = None
+        self.MARKERS: list = ["src", ".git", ".gitignore", "README.md"]
+        self.code_view     = None
 
         self._setup_styling()
         self._setup_signals()
@@ -58,11 +65,12 @@ class TerminalsView(Gtk.Notebook):
         label      = Gtk.Label(label = "...")
         vte_widget = VteWidget()
 
-        vte_widget.hide_view       = self.hide
-        vte_widget.create_terminal = self.create_terminal
-        vte_widget.close_terminal  = self.close_terminal
-        vte_widget.prev_terminal   = self.prev_terminal
-        vte_widget.next_terminal   = self.next_terminal
+        vte_widget.hide_view             = self.hide
+        vte_widget.go_to_project_or_home = self.go_to_project_or_home
+        vte_widget.create_terminal       = self.create_terminal
+        vte_widget.close_terminal        = self.close_terminal
+        vte_widget.prev_terminal         = self.prev_terminal
+        vte_widget.next_terminal         = self.next_terminal
 
         label.set_text( vte_widget.get_home_path() )
         label.set_tooltip_text( vte_widget.get_home_path() )
@@ -98,8 +106,64 @@ class TerminalsView(Gtk.Notebook):
     def _create_terminal(self, widget):
         self.create_terminal()
 
+    def has_marker(self, gfile):
+        try:
+            enumerator = gfile.enumerate_children(
+                "standard::name,standard::type",
+                Gio.FileQueryInfoFlags.NONE,
+                None
+            )
+
+            while True:
+                info = enumerator.next_file(None)
+                if info is None:
+                    break
+
+                if info.get_name() in self.MARKERS:
+                    enumerator.close(None)
+                    return True
+
+            enumerator.close(None)
+        except Exception:
+            pass
+
+        return False
+
+    def find_project_path_or_home(self, current: Gio.File):
+        if not current: return
+
+        home = Gio.File.new_for_path( os.path.expanduser("~") )
+        while True:
+            if self.has_marker(current):
+                return current.get_path()
+
+            if current.equal(home):
+                return current.get_path()
+
+            parent = current.get_parent()
+            if parent is None:
+                return current.get_path()
+
+            current = parent
+
     def set_code_view(self, widget):
         self.code_view = widget
+
+    def go_to_project_or_home(self):
+        event  = Event_Factory.create_event("get_file",
+            buffer = self.code_view.get_buffer()
+        )
+
+        self.emit_to("files", event)
+
+        if event.response.ftype == "buffer": return
+
+        gfile  = event.response.get_location().get_parent()
+        fpath  = self.find_project_path_or_home(gfile)
+        i      = self.get_current_page() 
+        widget = self.get_nth_page(i)
+
+        widget.run_command(f"cd {shlex.quote(fpath)} && clear\n")
 
     def create_terminal(self):
         label, vte_widget = self._generate_terminal_parts()
@@ -116,7 +180,7 @@ class TerminalsView(Gtk.Notebook):
         size = self.get_n_pages()
         if size == 1: return
 
-        i     = self.get_current_page() 
+        i      = self.get_current_page() 
         widget = self.get_nth_page(i)
         self.remove_page(i)
         widget.destroy()

@@ -29,6 +29,7 @@ from .cursor_moved_event import CursorMovedEvent
 from .delete_range_event import DeleteRangeEvent
 from .modified_changed_event import ModifiedChangedEvent
 from .text_changed_event import TextChangedEvent
+from .text_insert_event import TextInsertEvent
 from .text_inserted_event import TextInsertedEvent
 from .focused_view_event import FocusedViewEvent
 from .set_active_file_event import SetActiveFileEvent

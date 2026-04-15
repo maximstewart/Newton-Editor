@@ -24,7 +24,8 @@ class Plugin(PluginCode):
         ...
 
     def load(self):
-        footer = self.request_ui_element("footer-container")
+        terminals_view.emit_to = self.emit_to
+        footer                 = self.request_ui_element("footer-container")
         footer.add( terminals_view )
 
         self._manage_signals("register_command")

@@ -122,6 +122,10 @@ class VteWidget(Vte.Terminal):
         ctrl_pressed  = event.state & Gdk.ModifierType.CONTROL_MASK
         shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
 
+        if event.keyval == Gdk.KEY_Home:
+            self.go_to_project_or_home()
+            return True
+
         if ctrl_pressed:
             if shift_pressed:
                 if event.keyval in [Gdk.KEY_C, Gdk.KEY_V]:
